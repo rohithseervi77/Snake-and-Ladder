@@ -14,6 +14,9 @@ import { RevisionModal } from './components/Dashboard/RevisionModal';
 import { AdaptiveModal } from './components/Dashboard/AdaptiveModal';
 import { SettingsModal } from './components/Dashboard/SettingsModal';
 import { VictoryModal } from './components/Dashboard/VictoryModal';
+import { ShopModal } from './components/Shop/ShopModal';
+import { AchievementsModal } from './components/Achievements/AchievementsModal';
+import { MovementToast } from './components/Common/MovementToast';
 
 export const App: React.FC = () => {
   const {
@@ -29,12 +32,17 @@ export const App: React.FC = () => {
     isAdaptiveModalOpen,
     isSettingsModalOpen,
     isVictoryModalOpen,
+    isShopModalOpen,
+    isAchievementsModalOpen,
+    currentNotification,
     isAutoplayRunning,
     isAutoplayPaused,
     autoplaySpeed,
     handleRollDice,
     handleOpenSquareChallenge,
     handleCompleteChallenge,
+    handlePurchaseCosmetic,
+    handleEquipCosmetic,
     startAutoplay,
     pauseAutoplay,
     resumeAutoplay,
@@ -42,11 +50,14 @@ export const App: React.FC = () => {
     setAutoplaySpeed,
     handleResetGame,
     updateSettings,
+    dismissNotification,
     setIsResetModalOpen,
     setIsRevisionModalOpen,
     setIsAdaptiveModalOpen,
     setIsSettingsModalOpen,
     setIsVictoryModalOpen,
+    setIsShopModalOpen,
+    setIsAchievementsModalOpen,
     setIsChallengeOpen
   } = useGameState();
 
@@ -58,7 +69,9 @@ export const App: React.FC = () => {
     <div className="min-h-screen w-full bg-[#080d1a] text-slate-100 flex flex-col font-sans select-none antialiased">
       {/* Top Application Header */}
       <Header
-        currentPosition={displayedPosition}
+        totalXp={gameState.totalScore}
+        coinBalance={gameState.coins}
+        streak={gameState.streak}
         learnerProfile={gameState.learnerProfile}
         settings={gameState.settings}
         onToggleSound={() => updateSettings({ soundEnabled: !gameState.settings.soundEnabled })}
@@ -66,11 +79,19 @@ export const App: React.FC = () => {
         onOpenAdaptive={() => setIsAdaptiveModalOpen(true)}
         onOpenRevision={() => setIsRevisionModalOpen(true)}
         onOpenReset={() => setIsResetModalOpen(true)}
+        onOpenShop={() => setIsShopModalOpen(true)}
+        onOpenAchievements={() => setIsAchievementsModalOpen(true)}
+      />
+
+      {/* Floating Movement Reward / Penalty / Level-Up Toast */}
+      <MovementToast
+        notification={currentNotification}
+        onDismiss={dismissNotification}
       />
 
       {/* Main Game Dashboard */}
       <main className="flex-1 w-full max-w-[1720px] mx-auto p-2 sm:p-4 md:p-6 flex flex-col lg:flex-row gap-4 items-start justify-center">
-        {/* Left Sidebar: Rules & Legend (Hidden on small, drawer on mobile) */}
+        {/* Left Sidebar: Rules & Legend (Hidden on mobile, accessible via bottom drawer) */}
         <div className="hidden lg:block flex-shrink-0">
           <LeftSidebar />
         </div>
@@ -81,6 +102,8 @@ export const App: React.FC = () => {
           <BoardGrid
             currentPosition={displayedPosition}
             completedSquares={gameState.completedSquares}
+            equippedMarker={gameState.equippedCosmetics.playerMarker}
+            boardTheme={gameState.equippedCosmetics.boardTheme}
             onSelectSquare={(sq) => handleOpenSquareChallenge(sq.id)}
           />
 
@@ -88,6 +111,7 @@ export const App: React.FC = () => {
           <DiceControls
             currentPosition={displayedPosition}
             lastDiceRoll={lastDiceRoll}
+            diceSkin={gameState.equippedCosmetics.diceSkin}
             isRolling={isRolling}
             isMoving={isMoving}
             isAutoplayRunning={isAutoplayRunning}
@@ -112,9 +136,15 @@ export const App: React.FC = () => {
           <RightSidebar
             currentSquare={currentSquare}
             completedCount={gameState.completedSquares.length}
+            totalAttempts={gameState.learnerProfile.totalAttempts}
+            totalCorrect={gameState.learnerProfile.totalCorrect}
+            accuracy={gameState.learnerProfile.overallAccuracy}
+            streak={gameState.streak}
+            recoveryStreak={gameState.recoveryStreak}
             laddersClimbed={gameState.laddersClimbed}
             snakesEncountered={gameState.snakesEncountered}
             totalScore={gameState.totalScore}
+            coinBalance={gameState.coins}
             recentActivities={gameState.recentActivities}
             onStartChallenge={handleOpenSquareChallenge}
           />
@@ -125,22 +155,47 @@ export const App: React.FC = () => {
       <MobileDrawer
         currentSquare={currentSquare}
         completedCount={gameState.completedSquares.length}
+        totalAttempts={gameState.learnerProfile.totalAttempts}
+        totalCorrect={gameState.learnerProfile.totalCorrect}
+        accuracy={gameState.learnerProfile.overallAccuracy}
+        streak={gameState.streak}
+        recoveryStreak={gameState.recoveryStreak}
         laddersClimbed={gameState.laddersClimbed}
         snakesEncountered={gameState.snakesEncountered}
         totalScore={gameState.totalScore}
+        coinBalance={gameState.coins}
         recentActivities={gameState.recentActivities}
         onStartChallenge={handleOpenSquareChallenge}
       />
 
-      {/* Interactive Challenge Modal */}
+      {/* Interactive Challenge Modal with Stakes, Penalties & Retries */}
       {activeChallenge && (
         <ChallengeModal
           challenge={activeChallenge}
           isOpen={isChallengeOpen}
+          consecutiveIncorrect={gameState.consecutiveIncorrect}
           onClose={() => setIsChallengeOpen(false)}
-          onSubmit={(res) => handleCompleteChallenge(res, isAutoplayRunning)}
+          onSubmit={(res, isFirst, isRecovery) => handleCompleteChallenge(res, isFirst, isRecovery, isAutoplayRunning)}
         />
       )}
+
+      {/* Cosmetics & Themes Shop Modal */}
+      <ShopModal
+        isOpen={isShopModalOpen}
+        onClose={() => setIsShopModalOpen(false)}
+        coinBalance={gameState.coins}
+        purchasedIds={gameState.purchasedCosmetics}
+        equipped={gameState.equippedCosmetics}
+        onPurchaseItem={handlePurchaseCosmetic}
+        onEquipItem={handleEquipCosmetic}
+      />
+
+      {/* Achievements Modal */}
+      <AchievementsModal
+        isOpen={isAchievementsModalOpen}
+        onClose={() => setIsAchievementsModalOpen(false)}
+        achievements={gameState.achievements}
+      />
 
       {/* Spaced Revision Modal */}
       <RevisionModal

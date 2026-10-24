@@ -21,6 +21,7 @@ interface BoardCellProps {
   square: SquareMetadata;
   isCurrent: boolean;
   isCompleted: boolean;
+  equippedMarker?: string;
   onSelect: (square: SquareMetadata) => void;
 }
 
@@ -28,6 +29,7 @@ export const BoardCell: React.FC<BoardCellProps> = ({
   square,
   isCurrent,
   isCompleted,
+  equippedMarker,
   onSelect
 }) => {
   // Map color categories to refined indie-gaming palette
@@ -143,7 +145,7 @@ export const BoardCell: React.FC<BoardCellProps> = ({
 
       {/* Player Marker (if current position) */}
       {isCurrent && (
-        <PlayerMarker />
+        <PlayerMarker equippedMarker={equippedMarker} />
       )}
     </div>
   );

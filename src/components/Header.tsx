@@ -4,16 +4,22 @@ import {
   Settings, 
   Volume2, 
   VolumeX, 
-  User, 
   BrainCircuit, 
   RotateCcw,
-  Sparkles
+  Sparkles,
+  ShoppingBag,
+  Trophy,
+  Flame,
+  Coins
 } from 'lucide-react';
 import { LearnerProfile } from '../types/learner';
 import { GameSettings } from '../types/game';
+import { calculateLevelInfo } from '../engine/economyEngine';
 
 interface HeaderProps {
-  currentPosition: number;
+  totalXp: number;
+  coinBalance: number;
+  streak: number;
   learnerProfile: LearnerProfile;
   settings: GameSettings;
   onToggleSound: () => void;
@@ -21,111 +27,148 @@ interface HeaderProps {
   onOpenAdaptive: () => void;
   onOpenRevision: () => void;
   onOpenReset: () => void;
+  onOpenShop: () => void;
+  onOpenAchievements: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  currentPosition,
+  totalXp,
+  coinBalance,
+  streak,
   learnerProfile,
   settings,
   onToggleSound,
   onOpenSettings,
   onOpenAdaptive,
   onOpenRevision,
-  onOpenReset
+  onOpenReset,
+  onOpenShop,
+  onOpenAchievements
 }) => {
   const dueRevisionCount = learnerProfile.revisionQueue.filter(r => r.isDue).length;
-  const levelProgress = ((learnerProfile.totalXp % 150) / 150) * 100;
+  const levelInfo = calculateLevelInfo(totalXp);
 
   return (
-    <header className="w-full bg-[#0d1527] border-b border-[#1e293b] px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-slate-200">
+    <header className="w-full bg-[#0d1527] border-b border-[#1e293b] px-3 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-slate-200 sticky top-0 z-40 backdrop-blur-md">
       {/* Left: Brand & Tagline */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-md shadow-blue-500/20 text-white font-bold">
-          <Code2 className="w-6 h-6" />
+        <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-md shadow-blue-500/20 text-white font-bold">
+          <Code2 className="w-5 h-5 sm:w-6 sm:h-6" />
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-black tracking-tight text-white m-0">Code & Ladders</h1>
-            <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md">
-              DSA Quest
+            <h1 className="text-base sm:text-lg font-black tracking-tight text-white m-0">Code & Ladders</h1>
+            <span className="hidden sm:inline-block px-1.5 py-0.2 text-[9px] uppercase font-bold tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md">
+              DSA Adventure
             </span>
           </div>
-          <p className="text-xs text-slate-400 font-medium m-0">
-            DSA Learning &bull; One Square at a Time
+          <p className="text-[10px] sm:text-xs text-slate-400 font-medium m-0">
+            Learn Data Structures &bull; Roll &bull; Solve &bull; Level Up
           </p>
         </div>
       </div>
 
-      {/* Center: Slogan */}
-      <div className="hidden lg:flex flex-col items-center">
-        <span className="text-sm font-semibold tracking-wide text-slate-300">
-          Roll &bull; Learn &bull; Solve &bull; Level Up
-        </span>
-        <span className="text-xs text-slate-500">
-          From Arrays to Advanced DP &mdash; 100 Squares, 1 Journey.
-        </span>
+      {/* Center: Progression, Coins, Streak */}
+      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+        {/* Streak Counter */}
+        <div 
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-950/40 border border-orange-600/40 text-orange-400 font-bold text-xs"
+          title={`Current Streak: ${streak} correct in a row`}
+        >
+          <Flame className="w-4 h-4 fill-orange-400 text-orange-400 animate-pulse" />
+          <span className="font-mono">{streak}</span>
+          <span className="hidden md:inline text-[10px] uppercase font-semibold text-orange-300/80">Streak</span>
+        </div>
+
+        {/* Coin Balance */}
+        <button
+          onClick={onOpenShop}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-600/40 text-amber-300 font-bold text-xs transition cursor-pointer"
+          title="Open Cosmetic Shop"
+        >
+          <Coins className="w-4 h-4 text-amber-400 fill-amber-400/20" />
+          <span className="font-mono">{coinBalance}</span>
+          <span className="hidden md:inline text-[10px] uppercase font-semibold text-amber-300/80">Coins</span>
+        </button>
+
+        {/* Player Level Badge */}
+        <div className="flex items-center gap-2 px-3 py-1 bg-[#141e33] border border-[#24324f] rounded-xl">
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11px] font-bold text-slate-200">
+                Lvl {levelInfo.level} &bull; <span className="text-blue-400">{levelInfo.title}</span>
+              </span>
+              <span className="text-[10px] text-slate-400 font-mono">
+                {totalXp} XP
+              </span>
+            </div>
+            <div className="w-24 sm:w-28 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-0.5">
+              <div 
+                className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-300"
+                style={{ width: `${Math.min(100, Math.max(5, levelInfo.progressPercent))}%` }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Right: User Profile & Quick Actions */}
-      <div className="flex items-center gap-3">
+      {/* Right: Quick Action Buttons */}
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Shop Button */}
+        <button
+          onClick={onOpenShop}
+          title="Cosmetics Shop"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-950/40 hover:bg-amber-900/60 border border-amber-700/50 text-amber-300 text-xs font-semibold transition cursor-pointer"
+        >
+          <ShoppingBag className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Shop</span>
+        </button>
+
+        {/* Achievements Button */}
+        <button
+          onClick={onOpenAchievements}
+          title="DSA Achievements"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-yellow-950/40 hover:bg-yellow-900/60 border border-yellow-700/50 text-yellow-300 text-xs font-semibold transition cursor-pointer"
+        >
+          <Trophy className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Badges</span>
+        </button>
+
         {/* Adaptive Intelligence Pill */}
         <button
           onClick={onOpenAdaptive}
-          title="Open Adaptive DSA Intelligence"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-700/50 text-indigo-300 text-xs font-medium transition cursor-pointer"
+          title="Adaptive DSA Intelligence"
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-700/50 text-indigo-300 text-xs font-medium transition cursor-pointer"
         >
-          <BrainCircuit className="w-4 h-4 text-indigo-400" />
-          <span className="hidden sm:inline">Adaptive Mastery</span>
+          <BrainCircuit className="w-3.5 h-3.5 text-indigo-400" />
+          <span className="hidden lg:inline">Mastery</span>
         </button>
 
         {/* Spaced Revision Pill */}
         <button
           onClick={onOpenRevision}
           title="Spaced Repetition Review Queue"
-          className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/50 text-emerald-300 text-xs font-medium transition cursor-pointer"
+          className="relative flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/50 text-emerald-300 text-xs font-medium transition cursor-pointer"
         >
-          <Sparkles className="w-4 h-4 text-emerald-400" />
-          <span className="hidden sm:inline">Revision</span>
+          <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="hidden lg:inline">Review</span>
           {dueRevisionCount > 0 && (
-            <span className="ml-1 px-1.5 py-0.2 bg-emerald-500 text-black text-[10px] font-black rounded-full">
+            <span className="px-1 py-0.2 bg-emerald-500 text-black text-[9px] font-black rounded-full">
               {dueRevisionCount}
             </span>
           )}
         </button>
 
-        {/* Developer Level Badge */}
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#141e33] border border-[#24324f] rounded-xl">
-          <div className="w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center text-slate-300">
-            <User className="w-4 h-4" />
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] font-semibold text-slate-300">
-                Level {learnerProfile.level}
-              </span>
-              <span className="text-[10px] text-blue-400 font-mono">
-                {learnerProfile.totalXp} XP
-              </span>
-            </div>
-            <div className="w-20 sm:w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-0.5">
-              <div 
-                className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-300"
-                style={{ width: `${Math.min(100, Math.max(5, levelProgress))}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
         {/* Audio Toggle */}
         <button
           onClick={onToggleSound}
           title={settings.soundEnabled ? 'Mute Sounds' : 'Unmute Sounds'}
-          className="p-2 rounded-lg bg-[#141e33] hover:bg-[#1e2d4d] border border-[#24324f] text-slate-300 hover:text-white transition cursor-pointer"
+          className="p-1.5 rounded-lg bg-[#141e33] hover:bg-[#1e2d4d] border border-[#24324f] text-slate-300 hover:text-white transition cursor-pointer"
         >
           {settings.soundEnabled ? (
-            <Volume2 className="w-4 h-4 text-blue-400" />
+            <Volume2 className="w-3.5 h-3.5 text-blue-400" />
           ) : (
-            <VolumeX className="w-4 h-4 text-slate-500" />
+            <VolumeX className="w-3.5 h-3.5 text-slate-500" />
           )}
         </button>
 
@@ -133,18 +176,18 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onOpenSettings}
           title="Game Settings"
-          className="p-2 rounded-lg bg-[#141e33] hover:bg-[#1e2d4d] border border-[#24324f] text-slate-300 hover:text-white transition cursor-pointer"
+          className="p-1.5 rounded-lg bg-[#141e33] hover:bg-[#1e2d4d] border border-[#24324f] text-slate-300 hover:text-white transition cursor-pointer"
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-3.5 h-3.5" />
         </button>
 
         {/* Reset Game */}
         <button
           onClick={onOpenReset}
           title="Reset Game Progress"
-          className="p-2 rounded-lg bg-[#141e33] hover:bg-rose-950/50 hover:border-rose-800/50 border border-[#24324f] text-slate-400 hover:text-rose-400 transition cursor-pointer"
+          className="p-1.5 rounded-lg bg-[#141e33] hover:bg-rose-950/50 hover:border-rose-800/50 border border-[#24324f] text-slate-400 hover:text-rose-400 transition cursor-pointer"
         >
-          <RotateCcw className="w-4 h-4" />
+          <RotateCcw className="w-3.5 h-3.5" />
         </button>
       </div>
     </header>

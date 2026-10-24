@@ -7,15 +7,18 @@ import { SnakeLadderSvg } from './SnakeLadderSvg';
 interface BoardGridProps {
   currentPosition: number;
   completedSquares: number[];
+  equippedMarker?: string;
+  boardTheme?: string;
   onSelectSquare: (square: SquareMetadata) => void;
 }
 
 export const BoardGrid: React.FC<BoardGridProps> = ({
   currentPosition,
   completedSquares,
+  equippedMarker,
+  boardTheme = 'theme-obsidian-navy',
   onSelectSquare
 }) => {
-  // Generate the 100 cells mapped in 10x10 serpentine order from top (row 0) to bottom (row 9)
   const orderedSquares = useMemo(() => {
     const list: SquareMetadata[] = [];
     for (let gridRow = 0; gridRow < 10; gridRow++) {
@@ -33,8 +36,22 @@ export const BoardGrid: React.FC<BoardGridProps> = ({
 
   const completedSet = useMemo(() => new Set(completedSquares), [completedSquares]);
 
+  const getThemeClass = () => {
+    switch (boardTheme) {
+      case 'theme-cyberpunk-indigo':
+        return 'bg-[#120a26] border-indigo-700/50 shadow-indigo-950/50';
+      case 'theme-emerald-matrix':
+        return 'bg-[#051711] border-emerald-700/50 shadow-emerald-950/50';
+      case 'theme-solar-amber':
+        return 'bg-[#191004] border-amber-700/50 shadow-amber-950/50';
+      case 'theme-obsidian-navy':
+      default:
+        return 'bg-[#090f1d] border-[#1e293b] shadow-slate-950/50';
+    }
+  };
+
   return (
-    <div className="relative w-full max-w-[850px] aspect-square mx-auto p-1.5 sm:p-2.5 bg-[#090f1d] border border-[#1e293b] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-center">
+    <div className={`relative w-full max-w-[850px] aspect-square mx-auto p-1.5 sm:p-2.5 rounded-2xl sm:rounded-3xl border shadow-2xl overflow-hidden flex flex-col justify-center transition-colors duration-500 ${getThemeClass()}`}>
       {/* 10x10 Grid */}
       <div className="relative w-full h-full grid grid-cols-10 grid-rows-10 gap-1 sm:gap-1.5">
         {orderedSquares.map(square => (
@@ -43,6 +60,7 @@ export const BoardGrid: React.FC<BoardGridProps> = ({
             square={square}
             isCurrent={square.id === currentPosition}
             isCompleted={completedSet.has(square.id)}
+            equippedMarker={equippedMarker}
             onSelect={onSelectSquare}
           />
         ))}

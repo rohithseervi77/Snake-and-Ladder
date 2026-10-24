@@ -1,28 +1,31 @@
 import React, { useState } from 'react';
 import { 
   X, 
-  HelpCircle, 
   CheckCircle, 
   AlertOctagon, 
   Lightbulb, 
   Zap, 
-  Clock, 
   Bug, 
   Layers, 
-  ArrowRight 
+  ArrowRight,
+  TrendingUp,
+  RotateCcw
 } from 'lucide-react';
 import { Challenge, ChallengeAttemptResult } from '../../types/challenge';
+import { calculateCorrectMovement, calculateIncorrectPenalty } from '../../engine/economyEngine';
 
 interface ChallengeModalProps {
   challenge: Challenge;
   isOpen: boolean;
+  consecutiveIncorrect: number;
   onClose: () => void;
-  onSubmit: (result: ChallengeAttemptResult) => void;
+  onSubmit: (result: ChallengeAttemptResult, isFirstAttempt: boolean, isRecovery: boolean) => void;
 }
 
 export const ChallengeModal: React.FC<ChallengeModalProps> = ({
   challenge,
   isOpen,
+  consecutiveIncorrect,
   onClose,
   onSubmit
 }) => {
@@ -30,8 +33,21 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
   const [showHint, setShowHint] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(1);
+  const [hadPreviousFailure, setHadPreviousFailure] = useState(false);
 
   if (!isOpen) return null;
+
+  const isOptimization = challenge.type === 'optimize_algorithm' && !!challenge.optimizationComparison;
+  const isSnakeDebugging = challenge.skillCategory === 'debugging' || !!challenge.bugInfo;
+
+  const prospectiveReward = calculateCorrectMovement(
+    challenge.difficulty,
+    attemptCount === 1 && !hadPreviousFailure,
+    hadPreviousFailure
+  );
+
+  const prospectivePenalty = calculateIncorrectPenalty(consecutiveIncorrect + 1);
 
   const handleSubmit = () => {
     if (selectedOption === null) return;
@@ -39,40 +55,70 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
     const correct = selectedOption === (challenge.correctOptionIndex ?? 0);
     setIsCorrect(correct);
     setHasSubmitted(true);
+
+    if (!correct) {
+      setHadPreviousFailure(true);
+    }
   };
 
   const handleFinish = () => {
+    const isFirst = attemptCount === 1 && !hadPreviousFailure;
+    const isRecovery = hadPreviousFailure && isCorrect;
+
     onSubmit({
       challengeId: challenge.id,
       squareId: challenge.squareId,
       isCorrect,
       selectedOptionIndex: selectedOption ?? undefined,
-      scoreAwarded: isCorrect ? (challenge.difficulty === 'hard' ? 100 : challenge.difficulty === 'medium' ? 60 : 30) : 0,
+      scoreAwarded: isCorrect ? (challenge.difficulty === 'hard' ? 60 : challenge.difficulty === 'medium' ? 35 : 20) : 3,
       timeSpentSeconds: 15,
       hintUsed: showHint,
       skillCategory: challenge.skillCategory,
       topic: challenge.topic,
       feedback: isCorrect ? 'Concept verified successfully' : challenge.explanation
-    });
+    }, isFirst, isRecovery);
 
     // Reset local state
     setSelectedOption(null);
     setShowHint(false);
     setHasSubmitted(false);
+    setAttemptCount(1);
+    setHadPreviousFailure(false);
   };
 
-  const isOptimization = challenge.type === 'optimize_algorithm' && !!challenge.optimizationComparison;
-  const isSnakeDebugging = challenge.skillCategory === 'debugging' || !!challenge.bugInfo;
+  const handleRetry = () => {
+    // Player failed attempt and wants to try again to get Recovery reward!
+    const isFirst = attemptCount === 1 && !hadPreviousFailure;
+    
+    // First trigger the penalty movement for the incorrect attempt
+    onSubmit({
+      challengeId: challenge.id,
+      squareId: challenge.squareId,
+      isCorrect: false,
+      selectedOptionIndex: selectedOption ?? undefined,
+      scoreAwarded: 3,
+      timeSpentSeconds: 15,
+      hintUsed: showHint,
+      skillCategory: challenge.skillCategory,
+      topic: challenge.topic,
+      feedback: challenge.explanation
+    }, isFirst, false);
+
+    // Allow retry on this challenge
+    setAttemptCount(prev => prev + 1);
+    setHasSubmitted(false);
+    setSelectedOption(null);
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
       <div 
-        className="relative w-full max-w-2xl max-h-[92vh] flex flex-col bg-[#0f172a] border border-[#233554] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-slate-200"
+        className="relative w-full max-w-2xl max-h-[92vh] flex flex-col bg-[#0c1427] border border-[#233554] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-slate-200"
         role="dialog"
         aria-modal="true"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#1e293b] bg-[#0c1427]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#1e293b] bg-[#0a1020]">
           <div className="flex items-center gap-2.5">
             {isOptimization ? (
               <span className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30">
@@ -88,8 +134,11 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
               </span>
             )}
             <div>
-              <span className="text-xs uppercase font-bold tracking-wider text-slate-400">
-                Square {challenge.squareId} &bull; {challenge.topic}
+              <span className="text-[11px] uppercase font-bold tracking-wider text-slate-400 flex items-center gap-2">
+                <span>Tile {challenge.squareId} &bull; {challenge.topic}</span>
+                <span className="px-1.5 py-0.2 rounded bg-slate-800 text-blue-300 font-mono text-[10px]">
+                  {challenge.difficulty.toUpperCase()}
+                </span>
               </span>
               <h2 className="text-base sm:text-lg font-bold text-white leading-tight">
                 {challenge.title}
@@ -103,6 +152,18 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Dynamic Movement Stakes Banner */}
+        <div className="px-5 py-2 bg-[#121c33] border-b border-[#1c2944] flex items-center justify-between text-[11px] flex-wrap gap-2">
+          <div className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>Success: {prospectiveReward.badgeText}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-rose-400 font-semibold">
+            <AlertOctagon className="w-3.5 h-3.5" />
+            <span>Mistake: {prospectivePenalty.badgeText}</span>
+          </div>
         </div>
 
         {/* Modal Body */}
@@ -151,12 +212,12 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
             </div>
           )}
 
-          {/* Code Snippet (if present and not optimization) */}
+          {/* Code Snippet */}
           {!isOptimization && challenge.codeSnippet && (
             <div className="rounded-xl overflow-hidden border border-[#233554] bg-[#070d18]">
               <div className="px-3 py-1.5 bg-[#0a1220] border-b border-[#1b2a44] text-[11px] font-mono text-slate-400 flex items-center justify-between">
-                <span>Algorithm Snippet</span>
-                <span className="text-[10px] text-blue-400">TypeScript / Pseudo</span>
+                <span>Code Example</span>
+                <span className="text-[10px] text-blue-400">TypeScript / Python</span>
               </div>
               <pre className="p-3.5 font-mono text-xs text-blue-200 overflow-x-auto leading-relaxed">
                 <code>{challenge.codeSnippet}</code>
@@ -164,11 +225,11 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
             </div>
           )}
 
-          {/* Dry Run Tracing Steps (if present) */}
+          {/* Dry Run Tracing Steps */}
           {challenge.traceSteps && (
             <div className="flex flex-col gap-1.5 p-3 rounded-xl bg-[#0d1629] border border-[#1d2d4c]">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Dry-Run Execution Trace
+                Execution Dry-Run
               </span>
               <div className="flex flex-col gap-1">
                 {challenge.traceSteps.map((s, i) => (
@@ -183,11 +244,11 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
             </div>
           )}
 
-          {/* Multiple Choice Options */}
+          {/* Options List */}
           {challenge.options && (
             <div className="flex flex-col gap-2 mt-1">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Select the Optimal Solution:
+                Select the Optimal Answer:
               </span>
               {challenge.options.map((opt, idx) => {
                 const isSelected = selectedOption === idx;
@@ -195,9 +256,9 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
 
                 if (hasSubmitted) {
                   if (idx === challenge.correctOptionIndex) {
-                    optionStyle = 'bg-emerald-950/50 border-emerald-500 text-emerald-200 font-semibold';
+                    optionStyle = 'bg-emerald-950/60 border-emerald-500 text-emerald-200 font-semibold shadow-md shadow-emerald-500/10';
                   } else if (isSelected && !isCorrect) {
-                    optionStyle = 'bg-rose-950/50 border-rose-500 text-rose-200';
+                    optionStyle = 'bg-rose-950/60 border-rose-500 text-rose-200 shadow-md shadow-rose-500/10';
                   }
                 } else if (isSelected) {
                   optionStyle = 'bg-blue-600/20 border-blue-500 text-white shadow-md shadow-blue-500/20';
@@ -220,7 +281,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
             </div>
           )}
 
-          {/* Hint Disclosure */}
+          {/* Hint Button & Disclosure */}
           {challenge.hints && challenge.hints.length > 0 && (
             <div className="mt-1">
               {!showHint ? (
@@ -229,7 +290,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
                   className="flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-semibold cursor-pointer"
                 >
                   <Lightbulb className="w-3.5 h-3.5" />
-                  Need a hint? (-10 XP bonus)
+                  Request algorithmic hint
                 </button>
               ) : (
                 <div className="p-3 rounded-xl bg-amber-950/20 border border-amber-800/40 text-amber-200 text-xs">
@@ -248,20 +309,22 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
           {/* Post-submission Evaluation & Explanation */}
           {hasSubmitted && (
             <div className={`p-4 rounded-xl border flex flex-col gap-2 ${
-              isCorrect ? 'bg-emerald-950/40 border-emerald-600 text-emerald-200' : 'bg-rose-950/40 border-rose-600 text-rose-200'
+              isCorrect ? 'bg-emerald-950/50 border-emerald-600 text-emerald-200' : 'bg-rose-950/50 border-rose-600 text-rose-200'
             }`}>
-              <div className="flex items-center gap-2 font-bold text-sm">
-                {isCorrect ? (
-                  <>
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
-                    <span>Correct! Concept Mastered</span>
-                  </>
-                ) : (
-                  <>
-                    <AlertOctagon className="w-4 h-4 text-rose-400" />
-                    <span>Incorrect Attempt</span>
-                  </>
-                )}
+              <div className="flex items-center justify-between font-bold text-sm">
+                <div className="flex items-center gap-2">
+                  {isCorrect ? (
+                    <>
+                      <CheckCircle className="w-5 h-5 text-emerald-400" />
+                      <span>{prospectiveReward.explanation}</span>
+                    </>
+                  ) : (
+                    <>
+                      <AlertOctagon className="w-5 h-5 text-rose-400" />
+                      <span>{prospectivePenalty.explanation}</span>
+                    </>
+                  )}
+                </div>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
                 {challenge.explanation}
@@ -271,7 +334,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="px-5 py-3.5 border-t border-[#1e293b] bg-[#0c1427] flex items-center justify-between">
+        <div className="px-5 py-3.5 border-t border-[#1e293b] bg-[#0a1020] flex items-center justify-between">
           <div className="text-xs text-slate-400 font-medium">
             Category: <span className="text-slate-200 capitalize">{challenge.skillCategory}</span> &bull; 
             Difficulty: <span className="text-slate-200 capitalize">{challenge.difficulty}</span>
@@ -286,12 +349,20 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
               >
                 Submit Answer
               </button>
+            ) : !isCorrect ? (
+              <button
+                onClick={handleRetry}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Retry for Comeback (+1 Recovery Tile)</span>
+              </button>
             ) : (
               <button
                 onClick={handleFinish}
                 className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-emerald-600/30 transition flex items-center gap-1.5 cursor-pointer"
               >
-                <span>Continue</span>
+                <span>Continue Forward</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}

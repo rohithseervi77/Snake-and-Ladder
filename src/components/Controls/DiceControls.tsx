@@ -4,6 +4,7 @@ import { Compass, Sparkles } from 'lucide-react';
 interface DiceControlsProps {
   currentPosition: number;
   lastDiceRoll: number;
+  diceSkin?: string;
   isRolling: boolean;
   isMoving: boolean;
   isAutoplayRunning: boolean;
@@ -13,64 +14,93 @@ interface DiceControlsProps {
 export const DiceControls: React.FC<DiceControlsProps> = ({
   currentPosition,
   lastDiceRoll,
+  diceSkin = 'dice-classic-ivory',
   isRolling,
   isMoving,
   isAutoplayRunning,
   onRollDice
 }) => {
+  const getSkinStyles = () => {
+    switch (diceSkin) {
+      case 'dice-ruby-prism':
+        return {
+          cubeBg: 'bg-gradient-to-br from-rose-500 to-red-700 border-rose-400 shadow-rose-900/40',
+          pipColor: 'bg-white'
+        };
+      case 'dice-emerald-cyber':
+        return {
+          cubeBg: 'bg-gradient-to-br from-emerald-600 to-teal-800 border-emerald-400 shadow-emerald-900/40',
+          pipColor: 'bg-emerald-200'
+        };
+      case 'dice-gold-royale':
+        return {
+          cubeBg: 'bg-gradient-to-br from-amber-400 to-yellow-600 border-amber-300 shadow-amber-900/40',
+          pipColor: 'bg-slate-950'
+        };
+      case 'dice-classic-ivory':
+      default:
+        return {
+          cubeBg: 'bg-white border-slate-300 shadow-slate-900/30',
+          pipColor: 'bg-slate-900'
+        };
+    }
+  };
+
+  const { cubeBg, pipColor } = getSkinStyles();
+
   // Render dice face pips (1 to 6)
   const renderDicePips = (value: number) => {
     switch (value) {
       case 1:
-        return <div className="w-2.5 h-2.5 rounded-full bg-slate-900 mx-auto my-auto" />;
+        return <div className={`w-2.5 h-2.5 rounded-full ${pipColor} mx-auto my-auto`} />;
       case 2:
         return (
           <div className="w-full h-full p-1 flex justify-between">
-            <div className="w-2 h-2 rounded-full bg-slate-900" />
-            <div className="w-2 h-2 rounded-full bg-slate-900 self-end" />
+            <div className={`w-2 h-2 rounded-full ${pipColor}`} />
+            <div className={`w-2 h-2 rounded-full ${pipColor} self-end`} />
           </div>
         );
       case 3:
         return (
           <div className="w-full h-full p-1 flex flex-col justify-between items-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900 self-start" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900 self-center" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900 self-end" />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor} self-start`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor} self-center`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor} self-end`} />
           </div>
         );
       case 4:
         return (
           <div className="w-full h-full p-1 grid grid-cols-2 gap-1 items-center justify-items-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
           </div>
         );
       case 5:
         return (
           <div className="w-full h-full p-1 grid grid-cols-3 gap-0.5 items-center justify-items-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
             <div />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
             <div />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
             <div />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
             <div />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
           </div>
         );
       case 6:
       default:
         return (
           <div className="w-full h-full p-1 grid grid-cols-2 gap-1 items-center justify-items-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${pipColor}`} />
           </div>
         );
     }
@@ -89,7 +119,7 @@ export const DiceControls: React.FC<DiceControlsProps> = ({
       >
         {/* Animated 3D Die Cube */}
         <div 
-          className={`w-9 h-9 rounded-lg bg-white shadow-md border-b-2 border-slate-300 flex items-center justify-center transition-transform ${
+          className={`w-9 h-9 rounded-lg ${cubeBg} shadow-md border-b-2 flex items-center justify-center transition-transform ${
             isRolling ? 'animate-spin' : ''
           }`}
         >
@@ -109,7 +139,7 @@ export const DiceControls: React.FC<DiceControlsProps> = ({
       {/* Center Position Badge */}
       <div className="flex items-center gap-2 px-3.5 py-1.5 bg-[#141e33] border border-[#24324f] rounded-xl text-slate-300">
         <Compass className="w-4 h-4 text-blue-400" />
-        <span className="text-xs font-semibold">Current Position:</span>
+        <span className="text-xs font-semibold">Current Tile:</span>
         <span className="text-xs font-black text-white bg-blue-600/30 border border-blue-500/40 px-2 py-0.5 rounded-md">
           {currentPosition}
         </span>
@@ -121,7 +151,7 @@ export const DiceControls: React.FC<DiceControlsProps> = ({
           <div className="flex justify-between items-center text-[11px] mb-1">
             <span className="text-slate-400 font-medium flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-emerald-400" />
-              Overall Progress
+              Board Progress
             </span>
             <span className="font-mono font-bold text-emerald-400">{currentPosition} / 100</span>
           </div>

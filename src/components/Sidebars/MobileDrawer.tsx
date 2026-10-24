@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HelpCircle, BarChart3, Layers, X } from 'lucide-react';
+import { HelpCircle, BarChart3, X } from 'lucide-react';
 import { LeftSidebar } from './LeftSidebar';
 import { RightSidebar } from './RightSidebar';
 import { SquareMetadata } from '../../types/curriculum';
@@ -8,9 +8,15 @@ import { ActivityRecord } from '../../types/game';
 interface MobileDrawerProps {
   currentSquare: SquareMetadata;
   completedCount: number;
+  totalAttempts: number;
+  totalCorrect: number;
+  accuracy: number;
+  streak: number;
+  recoveryStreak: number;
   laddersClimbed: number;
   snakesEncountered: number;
   totalScore: number;
+  coinBalance: number;
   recentActivities: ActivityRecord[];
   onStartChallenge: (squareId: number) => void;
 }
@@ -18,9 +24,15 @@ interface MobileDrawerProps {
 export const MobileDrawer: React.FC<MobileDrawerProps> = ({
   currentSquare,
   completedCount,
+  totalAttempts,
+  totalCorrect,
+  accuracy,
+  streak,
+  recoveryStreak,
   laddersClimbed,
   snakesEncountered,
   totalScore,
+  coinBalance,
   recentActivities,
   onStartChallenge
 }) => {
@@ -41,7 +53,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#141e35] border border-emerald-500/40 text-emerald-300 shadow-xl font-bold text-xs cursor-pointer"
         >
           <BarChart3 className="w-4 h-4" />
-          Current & Stats
+          Challenge & Stats
         </button>
       </div>
     );
@@ -66,7 +78,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
                 activeTab === 'progress' ? 'bg-emerald-600 text-white' : 'text-slate-400'
               }`}
             >
-              Challenge & Progress
+              Challenge & Stats
             </button>
           </div>
           <button 
@@ -84,9 +96,15 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
             <RightSidebar
               currentSquare={currentSquare}
               completedCount={completedCount}
+              totalAttempts={totalAttempts}
+              totalCorrect={totalCorrect}
+              accuracy={accuracy}
+              streak={streak}
+              recoveryStreak={recoveryStreak}
               laddersClimbed={laddersClimbed}
               snakesEncountered={snakesEncountered}
               totalScore={totalScore}
+              coinBalance={coinBalance}
               recentActivities={recentActivities}
               onStartChallenge={(sq) => {
                 setActiveTab('none');
