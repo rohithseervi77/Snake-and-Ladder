@@ -43,14 +43,14 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
       <div className="fixed bottom-3 right-3 lg:hidden z-40 flex items-center gap-2">
         <button
           onClick={() => setActiveTab('rules')}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#111827] border border-[#263449] text-[#22D3EE] shadow-xl font-bold text-xs hover:bg-[#172033] cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[var(--card-bg)] border border-[var(--border-subtle)] text-[#06B6D4] shadow-xl font-bold text-xs hover:bg-[var(--card-secondary-bg)] cursor-pointer transition-colors"
         >
-          <HelpCircle className="w-4 h-4 text-[#22D3EE]" />
+          <HelpCircle className="w-4 h-4 text-[#06B6D4]" />
           Rules & Legend
         </button>
         <button
           onClick={() => setActiveTab('progress')}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#111827] border border-[#263449] text-[#10B981] shadow-xl font-bold text-xs hover:bg-[#172033] cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[var(--card-bg)] border border-[var(--border-subtle)] text-[#10B981] shadow-xl font-bold text-xs hover:bg-[var(--card-secondary-bg)] cursor-pointer transition-colors"
         >
           <BarChart3 className="w-4 h-4 text-[#10B981]" />
           Challenge & Stats
@@ -60,14 +60,14 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end bg-[#080D1A]/80 backdrop-blur-sm">
-      <div className="w-full max-h-[85vh] bg-[#111827] border-t border-[#263449] rounded-t-3xl p-4 overflow-y-auto flex flex-col text-[#F8FAFC]">
-        <div className="flex items-center justify-between pb-3 border-b border-[#263449] mb-3">
+    <div className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end bg-black/60 backdrop-blur-sm">
+      <div className="w-full max-h-[85vh] bg-[var(--modal-bg)] border-t border-[var(--border-subtle)] rounded-t-3xl p-4 overflow-y-auto flex flex-col text-[var(--text-primary)]">
+        <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] mb-3">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('rules')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                activeTab === 'rules' ? 'bg-[#2563EB] text-[#F8FAFC]' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                activeTab === 'rules' ? 'bg-[#6366F1] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
               How It Works & Legend
@@ -75,7 +75,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
             <button
               onClick={() => setActiveTab('progress')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                activeTab === 'progress' ? 'bg-[#2563EB] text-[#F8FAFC]' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                activeTab === 'progress' ? 'bg-[#6366F1] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
               Challenge & Stats
@@ -83,7 +83,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
           </div>
           <button 
             onClick={() => setActiveTab('none')}
-            className="p-1.5 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] cursor-pointer"
+            className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>

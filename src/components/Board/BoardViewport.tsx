@@ -200,39 +200,39 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
   const tileHeight = Math.round(BASE_TILE_HEIGHT * zoom);
 
   return (
-    <div className="flex flex-col w-full h-full bg-[#0B1220] rounded-2xl border border-[#263449] shadow-2xl overflow-hidden relative">
+    <div className="flex flex-col w-full h-full bg-[var(--board-bg)] rounded-2xl border border-[var(--border-subtle)] shadow-md overflow-hidden relative transition-colors duration-200">
       {/* 1. TOP VIEWPORT TOOLBAR */}
-      <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-2 bg-[#111827] border-b border-[#263449] z-30 backdrop-blur-md shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-2 bg-[var(--header-bg)] border-b border-[var(--border-subtle)] z-30 backdrop-blur-md shrink-0">
         {/* Left: Focus & Stepper Navigation */}
         <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
           {/* Focus You Button */}
           <button
             onClick={() => scrollToTile(currentPosition, true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2563EB]/20 hover:bg-[#2563EB]/30 border border-[#2563EB]/60 text-[#22D3EE] text-xs font-black transition-all shadow-md active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--color-indigo-light)] hover:bg-[var(--color-indigo-border)] border border-[var(--color-indigo)] text-[var(--color-indigo)] text-xs font-black transition-all shadow-sm active:scale-95 cursor-pointer"
             title="Smoothly center and highlight your current position"
           >
-            <Crosshair className="w-3.5 h-3.5 text-[#22D3EE] animate-spin-slow" />
+            <Crosshair className="w-3.5 h-3.5 text-[var(--color-indigo)] animate-spin-slow" />
             <span>Focus You (Lvl {currentPosition})</span>
           </button>
 
           {/* Previous / Next Level Stepper */}
-          <div className="flex items-center bg-[#080D1A] rounded-xl border border-[#263449] p-0.5 shadow-inner">
+          <div className="flex items-center bg-[var(--card-secondary-bg)] rounded-xl border border-[var(--border-subtle)] p-0.5 shadow-inner">
             <button
               onClick={() => scrollToTile(currentPosition - 1, true)}
               disabled={currentPosition <= 1}
-              className="flex items-center gap-0.5 px-2 py-1 text-[#94A3B8] hover:text-[#F8FAFC] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition rounded-lg cursor-pointer"
+              className="flex items-center gap-0.5 px-2 py-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition rounded-lg cursor-pointer"
               title={`View previous level (${currentPosition - 1})`}
             >
               <ChevronLeft className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Lvl {currentPosition - 1}</span>
             </button>
 
-            <span className="text-[10px] text-[#64748B] px-1 font-mono">|</span>
+            <span className="text-[10px] text-[var(--text-muted)] px-1 font-mono">|</span>
 
             <button
               onClick={() => scrollToTile(currentPosition + 1, true)}
               disabled={currentPosition >= 100}
-              className="flex items-center gap-0.5 px-2 py-1 text-[#94A3B8] hover:text-[#F8FAFC] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition rounded-lg cursor-pointer"
+              className="flex items-center gap-0.5 px-2 py-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition rounded-lg cursor-pointer"
               title={`View next level (${currentPosition + 1})`}
             >
               <span className="hidden sm:inline">Lvl {currentPosition + 1}</span>
@@ -250,17 +250,17 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
                 value={jumpInput}
                 onChange={(e) => setJumpInput(e.target.value)}
                 placeholder="1–100"
-                className={`w-16 sm:w-20 px-2 py-1 rounded-lg bg-[#080D1A] border text-xs font-mono font-bold text-[#F8FAFC] placeholder-[#64748B] focus:outline-none transition ${
+                className={`w-16 sm:w-20 px-2 py-1 rounded-lg bg-[var(--card-bg)] border text-xs font-mono font-bold text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none transition ${
                   jumpError 
-                    ? 'border-[#F43F5E] ring-2 ring-[#F43F5E]/30' 
-                    : 'border-[#263449] focus:border-[#22D3EE]'
+                    ? 'border-[var(--color-rose)] ring-2 ring-[var(--color-rose-border)]' 
+                    : 'border-[var(--border-subtle)] focus:border-[var(--color-cyan)]'
                 }`}
                 title="Enter any level number from 1 to 100"
               />
             </div>
             <button
               type="submit"
-              className="px-2.5 py-1 rounded-lg bg-[#2563EB] hover:bg-[#3B82F6] text-[#F8FAFC] text-xs font-bold transition cursor-pointer active:scale-95"
+              className="px-2.5 py-1 rounded-lg bg-[var(--color-indigo)] hover:bg-[var(--color-indigo-hover)] text-white text-xs font-bold transition cursor-pointer active:scale-95"
             >
               Go
             </button>
@@ -270,17 +270,17 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
         {/* Right: Position Indicator & Zoom Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Live Viewport Position Indicator */}
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#080D1A] border border-[#263449] text-[11px] font-mono text-[#94A3B8] shadow-inner">
-            <Eye className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />
-            <span className="font-semibold text-[#F8FAFC]">{visibleRangeText}</span>
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-secondary)] shadow-inner">
+            <Eye className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />
+            <span className="font-semibold text-[var(--text-primary)]">{visibleRangeText}</span>
           </div>
 
           {/* Zoom Toolbar */}
-          <div className="flex items-center bg-[#080D1A] rounded-xl border border-[#263449] p-0.5 shadow-inner">
+          <div className="flex items-center bg-[var(--card-secondary-bg)] rounded-xl border border-[var(--border-subtle)] p-0.5 shadow-inner">
             <button
               onClick={handleZoomOut}
               disabled={zoomIndex === 0}
-              className="p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] disabled:opacity-30 disabled:hover:text-[#64748B] transition-colors rounded cursor-pointer"
+              className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:hover:text-[var(--text-muted)] transition-colors rounded cursor-pointer"
               title="Zoom Out"
             >
               <ZoomOut className="w-3.5 h-3.5" />
@@ -288,7 +288,7 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
 
             <button
               onClick={handleResetZoom}
-              className="px-2 py-0.5 text-xs font-mono font-bold text-[#F8FAFC] hover:text-[#22D3EE] transition-colors cursor-pointer"
+              className="px-2 py-0.5 text-xs font-mono font-bold text-[var(--text-primary)] hover:text-[var(--color-cyan)] transition-colors cursor-pointer"
               title="Reset Zoom to 100%"
             >
               {Math.round(zoom * 100)}%
@@ -297,7 +297,7 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
             <button
               onClick={handleZoomIn}
               disabled={zoomIndex === ZOOM_STEPS.length - 1}
-              className="p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] disabled:opacity-30 disabled:hover:text-[#64748B] transition-colors rounded cursor-pointer"
+              className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:hover:text-[var(--text-muted)] transition-colors rounded cursor-pointer"
               title="Zoom In"
             >
               <ZoomIn className="w-3.5 h-3.5" />
@@ -306,7 +306,7 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
             {zoom !== 1.0 && (
               <button
                 onClick={handleResetZoom}
-                className="p-1.5 ml-0.5 text-[#94A3B8] hover:text-[#F59E0B] transition-colors rounded border-l border-[#263449] cursor-pointer"
+                className="p-1.5 ml-0.5 text-[var(--text-secondary)] hover:text-[var(--color-amber)] transition-colors rounded border-l border-[var(--border-subtle)] cursor-pointer"
                 title="Reset to 100%"
               >
                 <RotateCcw className="w-3 h-3" />
@@ -317,9 +317,9 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
       </div>
 
       {/* 2. SECTION / ROW NAVIGATION CHIPS (1-10 ... 91-100) */}
-      <div className="flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 bg-[#111827]/90 border-b border-[#263449] overflow-x-auto text-[11px] font-mono shrink-0 custom-scrollbar z-20">
-        <span className="text-[#94A3B8] font-semibold uppercase text-[10px] tracking-wider shrink-0 mr-1 flex items-center gap-1">
-          <Compass className="w-3 h-3 text-[#22D3EE]" />
+      <div className="flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 bg-[var(--header-bg)] border-b border-[var(--border-subtle)] overflow-x-auto text-[11px] font-mono shrink-0 custom-scrollbar z-20">
+        <span className="text-[var(--text-secondary)] font-semibold uppercase text-[10px] tracking-wider shrink-0 mr-1 flex items-center gap-1">
+          <Compass className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
           <span>Jump Row:</span>
         </span>
         {ROW_SECTIONS.map((sec) => {
@@ -330,30 +330,25 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
               onClick={() => scrollToTile(sec.center, true)}
               className={`px-2 py-0.5 rounded-md font-bold transition shrink-0 cursor-pointer text-xs ${
                 isPlayerInRow
-                  ? 'bg-[#2563EB]/25 border border-[#2563EB] text-[#22D3EE] shadow-sm shadow-[#2563EB]/30'
-                  : 'bg-[#172033] hover:bg-[#1E293B] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC]'
+                  ? 'bg-[var(--color-indigo-light)] border border-[var(--color-indigo)] text-[var(--color-indigo)] shadow-sm'
+                  : 'bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
               title={`Scroll to levels ${sec.label}`}
             >
               {sec.label}
-              {isPlayerInRow && <span className="ml-1 text-[9px] text-[#22D3EE]">●</span>}
+              {isPlayerInRow && <span className="ml-1 text-[9px] text-[var(--color-indigo)]">●</span>}
             </button>
           );
         })}
       </div>
 
-      {/* 3. SCROLLABLE BOARD CANVAS (No vertical centering flex to ensure 0-max scrollability!) */}
+      {/* 3. SCROLLABLE BOARD CANVAS */}
       <div 
         ref={viewportRef}
         onScroll={handleScroll}
         className="flex-1 w-full overflow-x-auto overflow-y-auto board-scroll-viewport relative select-none scroll-smooth focus:outline-none"
         tabIndex={0}
       >
-        {/* Inner canvas wrapper:
-            - items-center centers horizontally on wide displays
-            - justify-start aligns content from top (Row 10 / Lvl 100)
-            - pb-36 provides abundant bottom margin so Row 1 (Lvl 1-10) is fully accessible and centered
-        */}
         <div className="min-w-fit min-h-fit w-full flex flex-col items-center justify-start p-4 sm:p-8 pb-36 sm:pb-48">
           <BoardGrid
             currentPosition={currentPosition}
@@ -372,10 +367,10 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
       {canScrollUp && (
         <button
           onClick={() => scrollPage('up')}
-          className="absolute top-20 left-1/2 -translate-x-1/2 z-30 px-3 py-1 rounded-full bg-[#111827]/95 hover:bg-[#172033] border border-[#263449] text-[#22D3EE] text-[11px] font-bold shadow-xl backdrop-blur-md flex items-center gap-1.5 transition-all animate-bounce cursor-pointer active:scale-95"
+          className="absolute top-20 left-1/2 -translate-x-1/2 z-30 px-3 py-1 rounded-full bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--color-cyan)] text-[11px] font-bold shadow-xl backdrop-blur-md flex items-center gap-1.5 transition-all animate-bounce cursor-pointer active:scale-95"
           title="Scroll up to view higher levels"
         >
-          <ChevronUp className="w-3.5 h-3.5 text-[#22D3EE]" />
+          <ChevronUp className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
           <span>Levels Above (Scroll Up)</span>
         </button>
       )}
@@ -383,10 +378,10 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
       {canScrollDown && (
         <button
           onClick={() => scrollPage('down')}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 px-3 py-1 rounded-full bg-[#111827]/95 hover:bg-[#172033] border border-[#263449] text-[#22D3EE] text-[11px] font-bold shadow-xl backdrop-blur-md flex items-center gap-1.5 transition-all animate-bounce cursor-pointer active:scale-95"
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 px-3 py-1 rounded-full bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--color-cyan)] text-[11px] font-bold shadow-xl backdrop-blur-md flex items-center gap-1.5 transition-all animate-bounce cursor-pointer active:scale-95"
           title="Scroll down to view lower levels"
         >
-          <ChevronDown className="w-3.5 h-3.5 text-[#22D3EE]" />
+          <ChevronDown className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
           <span>Levels Below (Scroll Down)</span>
         </button>
       )}

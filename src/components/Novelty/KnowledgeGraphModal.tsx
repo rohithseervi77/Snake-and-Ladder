@@ -148,24 +148,24 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
   const completedSet = new Set(completedSquares);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#080D1A]/85 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md animate-fadeIn">
       <div 
-        className="relative w-full max-w-4xl max-h-[92vh] bg-[#111827] border border-[#263449] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-[#F8FAFC] flex flex-col"
+        className="relative w-full max-w-4xl max-h-[92vh] bg-[var(--modal-bg)] border border-[var(--border-subtle)] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-[var(--text-primary)] flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-labelledby="knowledge-graph-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#263449] bg-[#0B1220]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--border-subtle)] bg-[var(--card-secondary-bg)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#2563EB]/20 border border-[#2563EB]/40 flex items-center justify-center text-[#22D3EE] shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#06B6D4]/20 border border-[#06B6D4]/40 flex items-center justify-center text-[#06B6D4] shrink-0">
               <Share2 className="w-5 h-5 animate-pulse" />
             </div>
             <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#22D3EE] font-mono">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#06B6D4] font-mono">
                 Curriculum Dependency Architecture
               </span>
-              <h2 id="knowledge-graph-title" className="text-base sm:text-lg font-black text-[#F8FAFC] leading-tight">
+              <h2 id="knowledge-graph-title" className="text-base sm:text-lg font-black text-[var(--text-primary)] leading-tight">
                 DSA Knowledge Graph
               </h2>
             </div>
@@ -173,7 +173,7 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-[#172033] hover:bg-[#263449] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC] transition cursor-pointer"
+            className="p-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
             aria-label="Close Knowledge Graph"
           >
             <X className="w-5 h-5" />
@@ -184,7 +184,7 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 flex flex-col lg:flex-row gap-5 text-xs sm:text-sm">
           {/* Left: 10-Stage Pipeline Map */}
           <div className="flex-1 flex flex-col gap-2">
-            <span className="text-[11px] font-mono font-bold text-[#94A3B8] uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-bold text-[var(--text-secondary)] uppercase tracking-wider">
               100-Level Curriculum Roadmap (Click Stage to Inspect)
             </span>
 
@@ -204,27 +204,27 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
                     onClick={() => setSelectedNode(node)}
                     className={`p-3 rounded-xl border text-left flex flex-col justify-between transition cursor-pointer ${
                       isSelected
-                        ? 'bg-[#2563EB]/20 border-2 border-[#2563EB] text-[#F8FAFC] shadow-lg shadow-[#2563EB]/25 scale-[1.01]'
-                        : 'bg-[#172033] border-[#263449] text-[#94A3B8] hover:border-[#22D3EE]'
+                        ? 'bg-[#6366F1]/20 border-2 border-[#6366F1] text-[var(--text-primary)] shadow-lg shadow-[#6366F1]/25 scale-[1.01]'
+                        : 'bg-[var(--card-secondary-bg)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[#06B6D4]'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-1 mb-1">
-                      <span className="font-mono text-[10px] text-[#94A3B8]">
+                      <span className="font-mono text-[10px] text-[var(--text-secondary)]">
                         Tiles {node.range[0]}–{node.range[1]}
                       </span>
-                      <span className="font-mono text-[10px] font-bold text-[#22D3EE]">
+                      <span className="font-mono text-[10px] font-bold text-[#06B6D4]">
                         {progressPct}% Done
                       </span>
                     </div>
 
-                    <h4 className="font-bold text-xs text-[#F8FAFC] leading-tight">
+                    <h4 className="font-bold text-xs text-[var(--text-primary)] leading-tight">
                       {node.name}
                     </h4>
 
                     {/* Mini progress bar */}
-                    <div className="w-full h-1 bg-[#080D1A] rounded-full overflow-hidden mt-2 border border-[#263449]">
+                    <div className="w-full h-1 bg-[var(--card-bg)] rounded-full overflow-hidden mt-2 border border-[var(--border-subtle)]">
                       <div 
-                        className="h-full bg-[#22D3EE] rounded-full"
+                        className="h-full bg-[#06B6D4] rounded-full"
                         style={{ width: `${progressPct}%` }}
                       />
                     </div>
@@ -235,29 +235,29 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
           </div>
 
           {/* Right: Selected Node Prerequisite & Architectural Analysis */}
-          <div className="w-full lg:w-80 p-4 rounded-2xl bg-[#172033] border border-[#263449] flex flex-col justify-between gap-3 shrink-0">
+          <div className="w-full lg:w-80 p-4 rounded-2xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] flex flex-col justify-between gap-3 shrink-0">
             <div>
-              <div className="flex items-center justify-between text-[11px] font-mono text-[#22D3EE] pb-2 border-b border-[#263449]">
+              <div className="flex items-center justify-between text-[11px] font-mono text-[#06B6D4] pb-2 border-b border-[var(--border-subtle)]">
                 <span>Stage {GRAPH_NODES.findIndex(n => n.stageId === selectedNode.stageId) + 1} of 10</span>
                 <span>Tiles {selectedNode.range[0]}–{selectedNode.range[1]}</span>
               </div>
 
-              <h3 className="text-base font-black text-[#F8FAFC] mt-2">
+              <h3 className="text-base font-black text-[var(--text-primary)] mt-2">
                 {selectedNode.name}
               </h3>
 
-              <p className="text-[11px] text-[#94A3B8] mt-1 leading-relaxed">
+              <p className="text-[11px] text-[var(--text-secondary)] mt-1 leading-relaxed">
                 {selectedNode.rationale}
               </p>
 
               {/* Prerequisites */}
               <div className="mt-3">
-                <span className="text-[10px] font-mono font-bold text-[#94A3B8] uppercase tracking-wider block mb-1">
+                <span className="text-[10px] font-mono font-bold text-[var(--text-secondary)] uppercase tracking-wider block mb-1">
                   Prerequisites Required:
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {selectedNode.prerequisites.map((req, i) => (
-                    <span key={i} className="px-1.5 py-0.5 rounded bg-[#080D1A] text-[#94A3B8] text-[10px] font-medium border border-[#263449]">
+                    <span key={i} className="px-1.5 py-0.5 rounded bg-[var(--card-bg)] text-[var(--text-secondary)] text-[10px] font-medium border border-[var(--border-subtle)]">
                       {req}
                     </span>
                   ))}
@@ -280,12 +280,12 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
 
               {/* Key Data Structures */}
               <div className="mt-2.5">
-                <span className="text-[10px] font-mono font-bold text-[#22D3EE] uppercase tracking-wider block mb-1">
+                <span className="text-[10px] font-mono font-bold text-[#06B6D4] uppercase tracking-wider block mb-1">
                   Key Data Structures:
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {selectedNode.keyDataStructures.map((ds, i) => (
-                    <span key={i} className="px-1.5 py-0.5 rounded bg-[#080D1A] text-[#22D3EE] text-[10px] font-mono border border-[#263449]">
+                    <span key={i} className="px-1.5 py-0.5 rounded bg-[var(--card-bg)] text-[#06B6D4] text-[10px] font-mono border border-[var(--border-subtle)]">
                       {ds}
                     </span>
                   ))}
@@ -299,7 +299,7 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
                 onClose();
                 onJumpToStage(selectedNode.range[0]);
               }}
-              className="w-full py-2 px-3 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-[#F8FAFC] font-bold text-xs tracking-wide transition shadow-md shadow-[#2563EB]/25 flex items-center justify-center gap-1.5 cursor-pointer mt-2"
+              className="w-full py-2 px-3 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] text-white font-bold text-xs tracking-wide transition shadow-md shadow-[#6366F1]/25 flex items-center justify-center gap-1.5 cursor-pointer mt-2"
             >
               <Play className="w-3.5 h-3.5 fill-white" />
               <span>Scroll to Stage (Tile {selectedNode.range[0]})</span>
@@ -308,11 +308,11 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#263449] bg-[#0B1220] flex items-center justify-between text-xs text-[#94A3B8]">
+        <div className="px-5 py-3 border-t border-[var(--border-subtle)] bg-[var(--card-secondary-bg)] flex items-center justify-between text-xs text-[var(--text-secondary)]">
           <span>Every stage directly establishes prerequisites for downstream interview topics.</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-[#172033] hover:bg-[#263449] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC] font-bold text-xs transition cursor-pointer"
+            className="px-4 py-1.5 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-bold text-xs transition cursor-pointer"
           >
             Close Graph
           </button>

@@ -159,15 +159,15 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#080D1A]/85 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md animate-fadeIn">
       <div 
-        className="relative w-full max-w-3xl max-h-[92vh] bg-[#111827] border border-[#263449] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-[#F8FAFC] flex flex-col"
+        className="relative w-full max-w-3xl max-h-[92vh] bg-[var(--modal-bg)] border border-[var(--border-subtle)] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-[var(--text-primary)] flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-labelledby="decision-lab-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#263449] bg-[#0B1220]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--border-subtle)] bg-[var(--card-secondary-bg)]">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-[#F59E0B]/20 border border-[#F59E0B]/40 flex items-center justify-center text-[#F59E0B] shrink-0">
               <Cpu className="w-5 h-5 animate-pulse" />
@@ -176,7 +176,7 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
               <span className="text-[10px] uppercase font-bold tracking-wider text-[#F59E0B] font-mono">
                 Production-Scale Architecture Lab
               </span>
-              <h2 id="decision-lab-title" className="text-base sm:text-lg font-black text-[#F8FAFC] leading-tight">
+              <h2 id="decision-lab-title" className="text-base sm:text-lg font-black text-[var(--text-primary)] leading-tight">
                 Algorithm Decision Lab
               </h2>
             </div>
@@ -184,7 +184,7 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-[#172033] hover:bg-[#263449] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC] transition cursor-pointer"
+            className="p-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
             aria-label="Close Decision Lab"
           >
             <X className="w-5 h-5" />
@@ -194,38 +194,38 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
         {/* Modal Body */}
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 flex flex-col gap-4 text-xs sm:text-sm">
           {/* Scenario Overview Banner */}
-          <div className="p-4 rounded-2xl bg-[#172033] border border-[#263449] flex flex-col gap-2">
+          <div className="p-4 rounded-2xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] flex flex-col gap-2">
             <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
-              <span className="px-2 py-0.5 rounded bg-[#080D1A] border border-[#F59E0B]/40 text-[#F59E0B] font-bold">
+              <span className="px-2 py-0.5 rounded bg-[var(--card-bg)] border border-[#F59E0B]/40 text-[#F59E0B] font-bold">
                 Scale: {currentScenario.scaleMetric}
               </span>
-              <span className="text-[#94A3B8]">
+              <span className="text-[var(--text-secondary)]">
                 Scenario {scenarioIndex + 1} of {SCENARIOS.length}
               </span>
             </div>
 
-            <h3 className="text-sm sm:text-base font-bold text-[#F8FAFC] leading-snug">
+            <h3 className="text-sm sm:text-base font-bold text-[var(--text-primary)] leading-snug">
               {currentScenario.title}
             </h3>
 
-            <p className="text-xs text-[#CBD5E1] leading-relaxed">
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
               {currentScenario.scenarioText}
             </p>
 
-            <div className="p-2.5 rounded-xl bg-[#080D1A] border border-[#263449] text-[11px] text-[#22D3EE] font-mono">
-              <strong className="text-[#F8FAFC]">Constraint:</strong> {currentScenario.constraint}
+            <div className="p-2.5 rounded-xl bg-[var(--card-bg)] border border-[var(--border-subtle)] text-[11px] text-[#06B6D4] font-mono">
+              <strong className="text-[var(--text-primary)]">Constraint:</strong> {currentScenario.constraint}
             </div>
           </div>
 
           {/* Step 1: Choose Algorithm */}
           <div className="flex flex-col gap-2">
-            <span className="text-[11px] font-mono font-bold text-[#94A3B8] uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-bold text-[var(--text-secondary)] uppercase tracking-wider">
               Step 1: Choose Production-Scale Algorithm Strategy
             </span>
             <div className="flex flex-col gap-2">
               {currentScenario.options.map((opt, idx) => {
                 const isSelected = selectedOption === idx;
-                let cardStyle = 'bg-[#172033] border-[#263449] text-[#94A3B8] hover:border-[#22D3EE]';
+                let cardStyle = 'bg-[var(--card-secondary-bg)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[#6366F1]';
 
                 if (isEvaluated) {
                   if (opt.isOptimal) {
@@ -234,7 +234,7 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
                     cardStyle = 'bg-[#F43F5E]/20 border-2 border-[#F43F5E] text-[#F43F5E]';
                   }
                 } else if (isSelected) {
-                  cardStyle = 'bg-[#2563EB]/20 border-2 border-[#2563EB] text-[#F8FAFC] shadow-md shadow-[#2563EB]/25';
+                  cardStyle = 'bg-[#6366F1]/20 border-2 border-[#6366F1] text-[var(--text-primary)] shadow-md shadow-[#6366F1]/25';
                 }
 
                 return (
@@ -245,10 +245,10 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
                     className={`p-3 rounded-xl border text-left flex items-start justify-between gap-3 transition cursor-pointer disabled:cursor-default ${cardStyle}`}
                   >
                     <div>
-                      <div className="font-bold text-xs sm:text-sm text-[#F8FAFC]">{opt.title}</div>
-                      <div className="font-mono text-[11px] text-[#22D3EE] mt-0.5">{opt.complexity}</div>
+                      <div className="font-bold text-xs sm:text-sm text-[var(--text-primary)]">{opt.title}</div>
+                      <div className="font-mono text-[11px] text-[#06B6D4] mt-0.5">{opt.complexity}</div>
                       {isEvaluated && (
-                        <p className="text-[11px] text-[#CBD5E1] mt-1 leading-snug">
+                        <p className="text-[11px] text-[var(--text-secondary)] mt-1 leading-snug">
                           {opt.tradeoffSummary}
                         </p>
                       )}
@@ -270,14 +270,14 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
               <span className="text-[11px] font-mono font-bold text-[#F59E0B] uppercase tracking-wider">
                 Step 2: Algorithmic Justification (Why does this choice scale?)
               </span>
-              <div className="p-3.5 rounded-2xl bg-[#172033] border border-[#263449] flex flex-col gap-2.5">
-                <p className="text-xs font-semibold text-[#F8FAFC]">
+              <div className="p-3.5 rounded-2xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] flex flex-col gap-2.5">
+                <p className="text-xs font-semibold text-[var(--text-primary)]">
                   {currentScenario.followUpReasoning.question}
                 </p>
                 <div className="flex flex-col gap-1.5">
                   {currentScenario.followUpReasoning.choices.map((choice, cIdx) => {
                     const isChoiceSelected = selectedReasoning === cIdx;
-                    let cStyle = 'bg-[#080D1A] border-[#263449] text-[#94A3B8] hover:border-[#22D3EE]';
+                    let cStyle = 'bg-[var(--card-bg)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[#6366F1]';
 
                     if (isEvaluated) {
                       if (cIdx === currentScenario.followUpReasoning.correctIndex) {
@@ -286,7 +286,7 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
                         cStyle = 'bg-[#F43F5E]/20 border-2 border-[#F43F5E] text-[#F43F5E]';
                       }
                     } else if (isChoiceSelected) {
-                      cStyle = 'bg-[#2563EB]/20 border-2 border-[#2563EB] text-[#F8FAFC]';
+                      cStyle = 'bg-[#6366F1]/20 border-2 border-[#6366F1] text-[var(--text-primary)]';
                     }
 
                     return (
@@ -307,8 +307,8 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
 
           {/* Post Evaluation Feedback */}
           {isEvaluated && (
-            <div className="p-4 rounded-2xl bg-[#172033] border border-[#2563EB]/40 text-[#CBD5E1] text-xs flex flex-col gap-2 animate-fadeIn">
-              <div className="flex items-center gap-2 font-bold text-sm text-[#F8FAFC]">
+            <div className="p-4 rounded-2xl bg-[var(--card-secondary-bg)] border border-[#6366F1]/40 text-[var(--text-secondary)] text-xs flex flex-col gap-2 animate-fadeIn">
+              <div className="flex items-center gap-2 font-bold text-sm text-[var(--text-primary)]">
                 <Sparkles className="w-4 h-4 text-[#F59E0B]" />
                 <span>Production Architecture Verdict:</span>
               </div>
@@ -326,10 +326,10 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#263449] bg-[#0B1220] flex items-center justify-between">
+        <div className="px-5 py-3 border-t border-[var(--border-subtle)] bg-[var(--card-secondary-bg)] flex items-center justify-between">
           <button
             onClick={onClose}
-            className="px-3.5 py-1.5 rounded-xl bg-[#172033] hover:bg-[#263449] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC] font-semibold text-xs transition cursor-pointer"
+            className="px-3.5 py-1.5 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-semibold text-xs transition cursor-pointer"
           >
             Close Lab
           </button>
@@ -338,14 +338,14 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
             <button
               onClick={handleEvaluate}
               disabled={selectedOption === null || selectedReasoning === null}
-              className="px-5 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] disabled:opacity-50 text-[#F8FAFC] font-bold text-xs sm:text-sm tracking-wide transition shadow-md shadow-[#2563EB]/25 cursor-pointer disabled:cursor-not-allowed"
+              className="px-5 py-2 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] disabled:opacity-50 text-white font-bold text-xs sm:text-sm tracking-wide transition shadow-md shadow-[#6366F1]/25 cursor-pointer disabled:cursor-not-allowed"
             >
               Verify Architectural Decision
             </button>
           ) : (
             <button
               onClick={handleNextScenario}
-              className="px-5 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-[#F8FAFC] font-bold text-xs sm:text-sm transition flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#2563EB]/25"
+              className="px-5 py-2 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] text-white font-bold text-xs sm:text-sm transition flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#6366F1]/25"
             >
               <span>Next Scenario</span>
               <ArrowRight className="w-4 h-4" />

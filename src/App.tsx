@@ -131,7 +131,7 @@ export const App: React.FC = () => {
   }, [displayedPosition]);
 
   return (
-    <div className="min-h-screen lg:h-screen lg:overflow-hidden w-full bg-[#080D1A] text-[#F8FAFC] flex flex-col font-sans select-none antialiased">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden w-full bg-[var(--app-bg)] text-[var(--text-primary)] flex flex-col font-sans select-none antialiased transition-colors duration-200">
       {/* Top Application Header */}
       <Header
         totalXp={gameState.totalScore}
@@ -178,8 +178,8 @@ export const App: React.FC = () => {
               onClick={() => setShowLeftSidebar(prev => !prev)}
               className={`hidden lg:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm shrink-0 active:scale-95 cursor-pointer ${
                 showLeftSidebar 
-                  ? 'bg-[#111827] hover:bg-[#172033] border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC]' 
-                  : 'bg-[#2563EB]/20 hover:bg-[#2563EB]/30 border-[#2563EB]/50 text-[#22D3EE]'
+                  ? 'bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]' 
+                  : 'bg-[var(--color-indigo-light)] hover:bg-[var(--color-indigo-border)] border-[var(--color-indigo)] text-[var(--color-indigo)]'
               }`}
               title={showLeftSidebar ? 'Collapse Rules & Legend Sidebar' : 'Show Rules & Legend Sidebar'}
             >
@@ -204,8 +204,8 @@ export const App: React.FC = () => {
               onClick={() => setShowRightSidebar(prev => !prev)}
               className={`hidden lg:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm shrink-0 active:scale-95 cursor-pointer ${
                 showRightSidebar 
-                  ? 'bg-[#111827] hover:bg-[#172033] border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC]' 
-                  : 'bg-[#2563EB]/20 hover:bg-[#2563EB]/30 border-[#2563EB]/50 text-[#22D3EE]'
+                  ? 'bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]' 
+                  : 'bg-[var(--color-indigo-light)] hover:bg-[var(--color-indigo-border)] border-[var(--color-indigo)] text-[var(--color-indigo)]'
               }`}
               title={showRightSidebar ? 'Collapse Stats Sidebar' : 'Show Stats Sidebar'}
             >

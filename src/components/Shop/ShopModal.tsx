@@ -47,41 +47,41 @@ export const ShopModal: React.FC<ShopModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-2xl max-h-[88vh] bg-[#111827] border border-[#263449] rounded-2xl sm:rounded-3xl shadow-2xl p-5 flex flex-col text-[#F8FAFC]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-2xl max-h-[88vh] bg-[var(--modal-bg)] border border-[var(--border-subtle)] rounded-2xl sm:rounded-3xl shadow-2xl p-5 flex flex-col text-[var(--text-primary)] transition-colors duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-[#263449]">
+        <div className="flex items-center justify-between pb-3.5 border-b border-[var(--border-subtle)]">
           <div className="flex items-center gap-2.5">
-            <span className="p-2 rounded-xl bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40">
+            <span className="p-2 rounded-xl bg-[var(--color-amber-light)] text-[var(--color-amber)] border border-[var(--color-amber-border)]">
               <ShoppingBag className="w-5 h-5" />
             </span>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-[#F8FAFC]">Cosmetics & Themes Shop</h2>
-              <p className="text-xs text-[#94A3B8]">Personalize your game board, dice, and developer avatar</p>
+              <h2 className="text-base sm:text-lg font-bold text-[var(--text-primary)]">Cosmetics & Themes Shop</h2>
+              <p className="text-xs text-[var(--text-secondary)]">Personalize your game board, dice, and developer avatar</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             {/* Coin Balance Badge */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#080D1A] border border-[#F59E0B]/40 text-[#F59E0B] font-bold text-xs shadow-inner">
-              <Coins className="w-4 h-4 text-[#F59E0B] fill-[#F59E0B]/20" />
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--color-amber-border)] text-[var(--color-amber)] font-bold text-xs shadow-inner">
+              <Coins className="w-4 h-4 text-[var(--color-amber)] fill-[var(--color-amber)]/20" />
               <span className="font-mono text-sm">{coinBalance}</span>
             </div>
 
-            <button onClick={onClose} className="p-1 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] cursor-pointer">
+            <button onClick={onClose} className="p-1 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer">
               <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex items-center gap-2 my-3 p-1 rounded-xl bg-[#080D1A] border border-[#263449]">
+        <div className="flex items-center gap-2 my-3 p-1 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)]">
           <button
             onClick={() => setActiveCategory('board_theme')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
               activeCategory === 'board_theme'
-                ? 'bg-[#2563EB] text-[#F8FAFC] shadow-md shadow-[#2563EB]/25'
-                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                ? 'bg-[var(--color-indigo)] text-white shadow-sm'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
           >
             <Palette className="w-3.5 h-3.5" />
@@ -91,8 +91,8 @@ export const ShopModal: React.FC<ShopModalProps> = ({
             onClick={() => setActiveCategory('dice_skin')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
               activeCategory === 'dice_skin'
-                ? 'bg-[#2563EB] text-[#F8FAFC] shadow-md shadow-[#2563EB]/25'
-                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                ? 'bg-[var(--color-indigo)] text-white shadow-sm'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
           >
             <Dices className="w-3.5 h-3.5" />
@@ -102,8 +102,8 @@ export const ShopModal: React.FC<ShopModalProps> = ({
             onClick={() => setActiveCategory('player_marker')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
               activeCategory === 'player_marker'
-                ? 'bg-[#2563EB] text-[#F8FAFC] shadow-md shadow-[#2563EB]/25'
-                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                ? 'bg-[var(--color-indigo)] text-white shadow-sm'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
           >
             <User className="w-3.5 h-3.5" />
@@ -121,18 +121,18 @@ export const ShopModal: React.FC<ShopModalProps> = ({
             return (
               <div
                 key={item.id}
-                className={`p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition ${
+                className={`p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition shadow-sm ${
                   equippedItem
-                    ? 'bg-[#172033] border-2 border-[#2563EB] shadow-md shadow-[#2563EB]/20'
+                    ? 'bg-[var(--card-secondary-bg)] border-2 border-[var(--color-indigo)]'
                     : owned
-                    ? 'bg-[#172033] border-[#263449]'
-                    : 'bg-[#111827] border-[#263449] opacity-90'
+                    ? 'bg-[var(--card-bg)] border-[var(--border-subtle)]'
+                    : 'bg-[var(--card-bg)] border-[var(--border-subtle)] opacity-90'
                 }`}
               >
                 <div className="flex items-start gap-3">
                   {/* Item Color Preview Pill */}
                   <div 
-                    className="w-12 h-12 rounded-xl flex items-center justify-center shadow-inner flex-shrink-0 border border-white/20"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center shadow-inner flex-shrink-0 border border-black/10 dark:border-white/20"
                     style={{ backgroundColor: item.previewBg, color: item.previewAccent }}
                   >
                     <Sparkles className="w-5 h-5" />
@@ -140,28 +140,28 @@ export const ShopModal: React.FC<ShopModalProps> = ({
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-bold text-[#F8FAFC] text-xs truncate">{item.name}</h4>
+                      <h4 className="font-bold text-[var(--text-primary)] text-xs truncate">{item.name}</h4>
                       {equippedItem && (
-                        <span className="px-1.5 py-0.2 rounded bg-[#2563EB] text-[#F8FAFC] text-[9px] font-black uppercase tracking-wider">
+                        <span className="px-1.5 py-0.2 rounded bg-[var(--color-indigo)] text-white text-[9px] font-black uppercase tracking-wider">
                           EQUIPPED
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-[#94A3B8] mt-0.5 line-clamp-2">
+                    <p className="text-[11px] text-[var(--text-secondary)] mt-0.5 line-clamp-2">
                       {item.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-[#263449] pt-2.5">
+                <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-2.5">
                   <div className="flex items-center gap-1">
                     {owned ? (
-                      <span className="text-[11px] font-bold text-[#10B981] flex items-center gap-1">
+                      <span className="text-[11px] font-bold text-[var(--color-emerald)] flex items-center gap-1">
                         <Check className="w-3.5 h-3.5" /> Owned
                       </span>
                     ) : (
-                      <span className="text-xs font-bold text-[#F59E0B] flex items-center gap-1 font-mono">
-                        <Coins className="w-3.5 h-3.5 text-[#F59E0B]" />
+                      <span className="text-xs font-bold text-[var(--color-amber)] flex items-center gap-1 font-mono">
+                        <Coins className="w-3.5 h-3.5 text-[var(--color-amber)]" />
                         {item.cost} Coins
                       </span>
                     )}
@@ -171,10 +171,10 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                     <button
                       onClick={() => onEquipItem(item.type, item.id)}
                       disabled={equippedItem}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer active:scale-95 ${
                         equippedItem
-                          ? 'bg-[#080D1A] border border-[#263449] text-[#94A3B8] cursor-default'
-                          : 'bg-[#2563EB] hover:bg-[#1d4ed8] text-[#F8FAFC] shadow-md'
+                          ? 'bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-muted)] cursor-default'
+                          : 'bg-[var(--color-indigo)] hover:bg-[var(--color-indigo-hover)] text-white shadow-sm'
                       }`}
                     >
                       {equippedItem ? 'Equipped' : 'Equip'}
@@ -183,10 +183,10 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                     <button
                       onClick={() => onPurchaseItem(item)}
                       disabled={!canAfford}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer active:scale-95 ${
                         canAfford
-                          ? 'bg-[#F59E0B] hover:bg-[#d97706] text-[#080D1A] shadow-md shadow-[#F59E0B]/20'
-                          : 'bg-[#080D1A] border border-[#263449] text-[#64748B] cursor-not-allowed'
+                          ? 'bg-[var(--color-amber)] hover:opacity-90 text-white shadow-sm'
+                          : 'bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-muted)] cursor-not-allowed'
                       }`}
                     >
                       {!canAfford && <Lock className="w-3 h-3" />}
@@ -200,11 +200,11 @@ export const ShopModal: React.FC<ShopModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="pt-3 border-t border-[#263449] flex justify-between items-center text-xs text-[#94A3B8]">
+        <div className="pt-3 border-t border-[var(--border-subtle)] flex justify-between items-center text-xs text-[var(--text-secondary)]">
           <span>Earn coins by rolling dice, solving challenges, and climbing ladders!</span>
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[#172033] hover:bg-[#263449] border border-[#263449] text-xs font-semibold text-[#94A3B8] hover:text-[#F8FAFC] transition cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
           >
             Close
           </button>

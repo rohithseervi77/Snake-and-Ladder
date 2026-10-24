@@ -3,9 +3,7 @@ import {
   Sparkles, 
   X, 
   Calendar, 
-  CheckCircle2, 
-  Play, 
-  ArrowUpRight 
+  Play 
 } from 'lucide-react';
 import { RevisionItem } from '../../types/learner';
 
@@ -28,20 +26,20 @@ export const RevisionModal: React.FC<RevisionModalProps> = ({
   const upcomingItems = revisionQueue.filter(item => !dueItems.includes(item));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-xl max-h-[85vh] bg-[#111827] border border-[#263449] rounded-2xl sm:rounded-3xl shadow-2xl p-5 flex flex-col text-[#F8FAFC]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-xl max-h-[85vh] bg-[var(--modal-bg)] border border-[var(--border-subtle)] rounded-2xl sm:rounded-3xl shadow-2xl p-5 flex flex-col text-[var(--text-primary)] transition-colors duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-[#263449]">
+        <div className="flex items-center justify-between pb-3.5 border-b border-[var(--border-subtle)]">
           <div className="flex items-center gap-2.5">
-            <span className="p-2 rounded-xl bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40">
+            <span className="p-2 rounded-xl bg-[var(--color-emerald-light)] text-[var(--color-emerald)] border border-[var(--color-emerald-border)]">
               <Sparkles className="w-5 h-5" />
             </span>
             <div>
-              <h2 className="text-base font-bold text-[#F8FAFC]">Spaced Repetition Review</h2>
-              <p className="text-xs text-[#94A3B8]">SM-2 algorithmic retention scheduler</p>
+              <h2 className="text-base font-bold text-[var(--text-primary)]">Spaced Repetition Review</h2>
+              <p className="text-xs text-[var(--text-secondary)]">SM-2 algorithmic retention scheduler</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-[#94A3B8] hover:text-[#F8FAFC] cursor-pointer">
+          <button onClick={onClose} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -50,11 +48,11 @@ export const RevisionModal: React.FC<RevisionModalProps> = ({
         <div className="py-4 overflow-y-auto flex-1 flex flex-col gap-4 text-xs">
           {/* Due Now */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#10B981] mb-2 flex items-center gap-1.5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-emerald)] mb-2 flex items-center gap-1.5">
               <span>Ready for Review ({dueItems.length})</span>
             </h3>
             {dueItems.length === 0 ? (
-              <div className="p-3 rounded-xl bg-[#172033] border border-[#263449] text-[#94A3B8] text-center">
+              <div className="p-3 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] text-center">
                 All reviewed! No topics currently due for revision.
               </div>
             ) : (
@@ -62,11 +60,11 @@ export const RevisionModal: React.FC<RevisionModalProps> = ({
                 {dueItems.map(item => (
                   <div 
                     key={item.id}
-                    className="p-3 rounded-xl bg-[#172033] border border-[#10B981]/40 flex items-center justify-between"
+                    className="p-3 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--color-emerald-border)] flex items-center justify-between shadow-sm"
                   >
                     <div>
-                      <div className="font-bold text-[#F8FAFC] text-xs">{item.topicName}</div>
-                      <div className="text-[10px] text-[#94A3B8]">
+                      <div className="font-bold text-[var(--text-primary)] text-xs">{item.topicName}</div>
+                      <div className="text-[10px] text-[var(--text-secondary)]">
                         Square {item.squareId} &bull; Repetition #{item.repetitionCount} &bull; Interval {item.intervalDays}d
                       </div>
                     </div>
@@ -75,7 +73,7 @@ export const RevisionModal: React.FC<RevisionModalProps> = ({
                         onClose();
                         onStartRevision(item.squareId);
                       }}
-                      className="px-3 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] text-[#F8FAFC] font-bold text-xs flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-1.5 rounded-lg bg-[var(--color-indigo)] hover:bg-[var(--color-indigo-hover)] text-white font-bold text-xs flex items-center gap-1 cursor-pointer shadow-sm active:scale-95"
                     >
                       <Play className="w-3 h-3 fill-white" />
                       Review Now
@@ -88,12 +86,12 @@ export const RevisionModal: React.FC<RevisionModalProps> = ({
 
           {/* Upcoming Schedule */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#94A3B8] mb-2 flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2 flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
               <span>Upcoming Reviews ({upcomingItems.length})</span>
             </h3>
             {upcomingItems.length === 0 ? (
-              <p className="text-[#64748B] text-center py-2">No scheduled future reviews yet.</p>
+              <p className="text-[var(--text-muted)] text-center py-2">No scheduled future reviews yet.</p>
             ) : (
               <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto">
                 {upcomingItems.map(item => {
@@ -101,10 +99,10 @@ export const RevisionModal: React.FC<RevisionModalProps> = ({
                   return (
                     <div 
                       key={item.id}
-                      className="p-2.5 rounded-lg bg-[#172033] border border-[#263449] flex items-center justify-between"
+                      className="p-2.5 rounded-lg bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] flex items-center justify-between"
                     >
-                      <span className="font-medium text-[#CBD5E1]">{item.topicName}</span>
-                      <span className="text-[10px] text-[#22D3EE] font-mono">in {daysLeft} day(s)</span>
+                      <span className="font-medium text-[var(--text-primary)]">{item.topicName}</span>
+                      <span className="text-[10px] text-[var(--color-cyan)] font-mono">in {daysLeft} day(s)</span>
                     </div>
                   );
                 })}
@@ -114,10 +112,10 @@ export const RevisionModal: React.FC<RevisionModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="pt-3 border-t border-[#263449] flex justify-end">
+        <div className="pt-3 border-t border-[var(--border-subtle)] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[#172033] hover:bg-[#263449] border border-[#263449] text-xs font-semibold text-[#94A3B8] hover:text-[#F8FAFC] transition cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
           >
             Close
           </button>

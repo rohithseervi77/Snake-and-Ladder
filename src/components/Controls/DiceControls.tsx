@@ -125,13 +125,13 @@ export const DiceControls: React.FC<DiceControlsProps> = ({
 
   return (
     <div 
-      className="w-full max-w-5xl mx-auto px-4 py-2 bg-[#111827] border border-[#263449] rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-xl backdrop-blur-md shrink-0"
+      className="w-full max-w-5xl mx-auto px-4 py-2 bg-[var(--header-bg)] border border-[var(--border-subtle)] rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-md backdrop-blur-md shrink-0 transition-colors duration-200"
     >
-      {/* 3D Dice Button (Primary Action: Electric Blue) */}
+      {/* 3D Dice Button (Primary Action: Indigo -> Violet Gradient CTA) */}
       <button
         onClick={onRollDice}
         disabled={isRolling || isMoving || isAutoplayRunning}
-        className="flex items-center gap-3 min-h-[48px] px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#3B82F6] border border-[#2563EB] text-[#F8FAFC] shadow-lg shadow-[#2563EB]/25 transition-all transform active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+        className="flex items-center gap-3 min-h-[48px] px-4 py-2 rounded-xl bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] hover:from-[#4F46E5] hover:to-[#7C3AED] border border-[#6366F1] text-white shadow-lg shadow-[#6366F1]/25 transition-all transform active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
         aria-label="Roll the Dice"
       >
         {/* Animated 3D Die Cube */}
@@ -144,37 +144,37 @@ export const DiceControls: React.FC<DiceControlsProps> = ({
         </div>
 
         <div className="text-left">
-          <div className="text-sm font-black tracking-wide leading-tight">
+          <div className="text-sm font-black tracking-wide leading-tight text-white">
             {isRolling ? 'Rolling...' : isMoving ? 'Moving...' : 'Roll Dice'}
           </div>
-          <div className="text-[10px] text-[#22D3EE] font-medium leading-none mt-0.5">
+          <div className="text-[10px] text-white/90 font-medium leading-none mt-0.5">
             {isAutoplayRunning ? 'Autoplay Active' : `Rolled ${lastDiceRoll} • Click to Move`}
           </div>
         </div>
       </button>
 
       {/* Center Position Badge */}
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-[#080D1A] border border-[#263449] rounded-xl text-[#CBD5E1] text-xs shrink-0 shadow-inner">
-        <Compass className="w-4 h-4 text-[#22D3EE]" />
-        <span className="text-xs font-semibold text-[#94A3B8] hidden sm:inline">Position:</span>
-        <span className="text-xs font-black text-[#22D3EE] bg-[#22D3EE]/15 border border-[#22D3EE]/40 px-2 py-0.5 rounded-lg font-mono">
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-secondary)] text-xs shrink-0 shadow-inner">
+        <Compass className="w-4 h-4 text-[var(--color-indigo)]" />
+        <span className="text-xs font-semibold text-[var(--text-secondary)] hidden sm:inline">Position:</span>
+        <span className="text-xs font-black text-[var(--color-indigo)] bg-[var(--color-indigo-light)] border border-[var(--color-indigo-border)] px-2 py-0.5 rounded-lg font-mono">
           Tile {currentPosition} / 100
         </span>
       </div>
 
-      {/* Progress Bar (Cyber Cyan) */}
+      {/* Progress Bar (Teal / Cyan Progress Accent) */}
       <div className="hidden md:flex items-center gap-2.5 flex-1 max-w-[200px]">
         <div className="flex-1">
           <div className="flex justify-between items-center text-[10px] mb-1">
-            <span className="text-[#94A3B8] font-semibold flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-[#22D3EE]" />
+            <span className="text-[var(--text-secondary)] font-semibold flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-[var(--color-teal)]" />
               Journey Progress
             </span>
-            <span className="font-mono font-bold text-[#22D3EE] text-[10px]">{progressPercent}%</span>
+            <span className="font-mono font-bold text-[var(--color-teal)] text-[10px]">{progressPercent}%</span>
           </div>
-          <div className="w-full h-2 bg-[#080D1A] rounded-full overflow-hidden border border-[#263449]">
+          <div className="w-full h-2 bg-[var(--card-secondary-bg)] rounded-full overflow-hidden border border-[var(--border-subtle)]">
             <div 
-              className="h-full bg-gradient-to-r from-[#22D3EE] to-[#2563EB] rounded-full transition-all duration-300"
+              className="h-full bg-gradient-to-r from-[var(--color-cyan)] to-[var(--color-teal)] rounded-full transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -182,14 +182,14 @@ export const DiceControls: React.FC<DiceControlsProps> = ({
       </div>
 
       {/* Integrated Autoplay Section */}
-      <div className="flex items-center gap-2 shrink-0 pl-2 border-l border-[#263449]">
+      <div className="flex items-center gap-2 shrink-0 pl-2 border-l border-[var(--border-subtle)]">
         {!isAutoplayRunning ? (
           <button
             onClick={onStartAutoplay}
-            className="flex items-center gap-1.5 min-h-[44px] px-3.5 py-1.5 rounded-xl bg-[#2563EB]/25 hover:bg-[#2563EB]/40 border border-[#2563EB]/60 text-[#22D3EE] font-bold text-xs transition shadow-md cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 min-h-[44px] px-3.5 py-1.5 rounded-xl bg-[var(--color-teal-light)] hover:bg-[var(--color-teal-border)] border border-[var(--color-teal)] text-[var(--color-teal)] font-bold text-xs transition shadow-sm cursor-pointer active:scale-95"
             title="Start automated demonstration on the real game board"
           >
-            <Bot className="w-4 h-4 text-[#22D3EE]" />
+            <Bot className="w-4 h-4 text-[var(--color-teal)]" />
             <span>Autoplay</span>
           </button>
         ) : (
@@ -197,37 +197,37 @@ export const DiceControls: React.FC<DiceControlsProps> = ({
             {isAutoplayPaused ? (
               <button
                 onClick={onResumeAutoplay}
-                className="flex items-center gap-1.5 min-h-[44px] px-3 py-1.5 rounded-xl bg-[#10B981] hover:bg-[#059669] text-[#F8FAFC] font-bold text-xs transition cursor-pointer shadow active:scale-95"
+                className="flex items-center gap-1.5 min-h-[44px] px-3 py-1.5 rounded-xl bg-[var(--color-emerald)] hover:opacity-90 text-white font-bold text-xs transition cursor-pointer shadow active:scale-95"
               >
-                <Play className="w-3 h-3 fill-[#F8FAFC]" /> Resume
+                <Play className="w-3 h-3 fill-white" /> Resume
               </button>
             ) : (
               <button
                 onClick={onPauseAutoplay}
-                className="flex items-center gap-1.5 min-h-[44px] px-3 py-1.5 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-[#080D1A] font-bold text-xs transition cursor-pointer shadow active:scale-95"
+                className="flex items-center gap-1.5 min-h-[44px] px-3 py-1.5 rounded-xl bg-[var(--color-amber)] hover:opacity-90 text-white font-bold text-xs transition cursor-pointer shadow active:scale-95"
               >
-                <Pause className="w-3 h-3 fill-[#080D1A]" /> Pause
+                <Pause className="w-3 h-3 fill-white" /> Pause
               </button>
             )}
 
             <button
               onClick={onStopAutoplay}
-              className="flex items-center gap-1.5 min-h-[44px] px-3 py-1.5 rounded-xl bg-[#F43F5E] hover:bg-[#E11D48] text-[#F8FAFC] font-bold text-xs transition cursor-pointer shadow active:scale-95"
+              className="flex items-center gap-1.5 min-h-[44px] px-3 py-1.5 rounded-xl bg-[var(--color-rose)] hover:opacity-90 text-white font-bold text-xs transition cursor-pointer shadow active:scale-95"
             >
-              <Square className="w-3 h-3 fill-[#F8FAFC]" /> Stop
+              <Square className="w-3 h-3 fill-white" /> Stop
             </button>
 
             {/* Speed Buttons */}
             {onSetAutoplaySpeed && (
-              <div className="hidden sm:flex items-center gap-1 ml-1 bg-[#080D1A] p-1 rounded-xl border border-[#263449]">
+              <div className="hidden sm:flex items-center gap-1 ml-1 bg-[var(--card-secondary-bg)] p-1 rounded-xl border border-[var(--border-subtle)]">
                 {([1, 2, 4] as AutoplaySpeed[]).map((spd) => (
                   <button
                     key={spd}
                     onClick={() => onSetAutoplaySpeed(spd)}
                     className={`px-2 py-1 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
                       autoplaySpeed === spd
-                        ? 'bg-[#2563EB] text-[#F8FAFC] shadow-sm'
-                        : 'bg-[#111827] text-[#94A3B8] hover:text-[#F8FAFC]'
+                        ? 'bg-[var(--color-indigo)] text-white shadow-sm'
+                        : 'bg-[var(--card-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                     }`}
                   >
                     {spd}x

@@ -12,12 +12,10 @@ import {
   FolderTree, 
   Network, 
   Clock, 
-  Sparkles,
-  Lock,
-  Compass,
-  ArrowUpRight,
-  ArrowDownRight,
-  Star
+  Sparkles, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  Star 
 } from 'lucide-react';
 import { SquareMetadata } from '../../types/curriculum';
 import { SNAKES_AND_LADDERS } from '../../data/snakesAndLadders';
@@ -38,8 +36,7 @@ interface BoardCellProps {
  * instead of arbitrary or awkward character slicing.
  */
 function formatTopicName(title: string): string {
-  let clean = title.replace(/\s*\([^)]*\)/g, '').trim();
-  return clean;
+  return title.replace(/\s*\([^)]*\)/g, '').trim();
 }
 
 export const BoardCell: React.FC<BoardCellProps> = ({
@@ -56,53 +53,51 @@ export const BoardCell: React.FC<BoardCellProps> = ({
   const ladderDestination = SNAKES_AND_LADDERS.find(item => item.type === 'ladder' && item.to === square.id);
   const snakeDestination = SNAKES_AND_LADDERS.find(item => item.type === 'snake' && item.to === square.id);
 
-  // Card theme styling strictly based on the Coolors-style semantic palette:
-  // All normal tiles share background #111827 (Deep Slate), text #F8FAFC, border #263449.
-  // Subtle semantic accents communicate tile type without creating rainbow visual noise.
+  // Card theme styling strictly based on the Light/Dark semantic palette
   const getCardClasses = () => {
     // 1. Current Player Tile
     if (isCurrent) {
-      return 'bg-[#111827] border-[#2563EB] text-[#F8FAFC] shadow-[0_0_20px_rgba(37,99,235,0.4)] ring-2 ring-[#2563EB]/80 z-20 scale-[1.02]';
+      return 'bg-[var(--card-bg)] border-[var(--color-indigo)] text-[var(--text-primary)] shadow-[0_0_20px_rgba(99,102,241,0.35)] ring-2 ring-[var(--color-indigo)]/70 z-20 scale-[1.02]';
     }
     // 2. Boss / Tile 100
     if (square.id === 100) {
-      return 'bg-[#111827] border-[#8B5CF6] text-[#F8FAFC] shadow-[0_0_16px_rgba(139,92,246,0.35)] hover:border-[#8B5CF6]';
+      return 'bg-[var(--card-bg)] border-[var(--color-violet)] text-[var(--text-primary)] shadow-[0_0_16px_rgba(139,92,246,0.3)] hover:border-[var(--color-violet)]';
     }
     // 3. Snake Tile (Danger / Mistake)
     if (snake) {
-      return 'bg-[#111827] border-[#F43F5E]/80 text-[#F8FAFC] hover:border-[#F43F5E] shadow-sm shadow-[#F43F5E]/15';
+      return 'bg-[var(--card-bg)] border-[var(--color-rose)] text-[var(--text-primary)] hover:border-[var(--color-rose)] shadow-sm';
     }
     // 4. Ladder Tile (Optimization / Progress)
     if (ladder) {
-      return 'bg-[#111827] border-[#F59E0B]/80 text-[#F8FAFC] hover:border-[#F59E0B] shadow-sm shadow-[#F59E0B]/15';
+      return 'bg-[var(--card-bg)] border-[var(--color-amber)] text-[var(--text-primary)] hover:border-[var(--color-amber)] shadow-sm';
     }
     // 5. Checkpoint Tile (Reward / Milestone)
     if (square.isCheckpoint) {
-      return 'bg-[#111827] border-[#F59E0B]/70 text-[#F8FAFC] hover:border-[#F59E0B] shadow-sm shadow-[#F59E0B]/15';
+      return 'bg-[var(--card-bg)] border-[var(--color-amber)] text-[var(--text-primary)] hover:border-[var(--color-amber)] shadow-sm';
     }
     // 6. Mastered Tile (Emerald)
     if ((masteryScore ?? 0) >= 80) {
-      return 'bg-[#111827] border-[#10B981]/80 text-[#F8FAFC] hover:border-[#10B981] shadow-sm shadow-[#10B981]/15';
+      return 'bg-[var(--card-bg)] border-[var(--color-emerald)] text-[var(--text-primary)] hover:border-[var(--color-emerald)] shadow-sm';
     }
     // 7. Completed Tile (Cyan)
     if (isCompleted) {
-      return 'bg-[#111827] border-[#22D3EE]/70 text-[#F8FAFC] hover:border-[#22D3EE] shadow-sm shadow-[#22D3EE]/15';
+      return 'bg-[var(--card-bg)] border-[var(--color-cyan)] text-[var(--text-primary)] hover:border-[var(--color-cyan)] shadow-sm';
     }
-    // 8. Normal Knowledge Tile (Deep Slate surface with subtle border #263449)
-    return 'bg-[#111827] border-[#263449] text-[#F8FAFC] hover:border-[#22D3EE]/60';
+    // 8. Normal Knowledge Tile (Clean neutral surface with subtle border)
+    return 'bg-[var(--card-bg)] border-[var(--border-subtle)] text-[var(--text-primary)] hover:border-[var(--color-indigo)]/60 shadow-sm';
   };
 
   const getStageIcon = () => {
     switch (square.stage) {
-      case 'foundations': return <Code className="w-3.5 h-3.5 text-[#10B981] shrink-0" />;
-      case 'arrays_strings': return <Layers className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />;
-      case 'linear_structures': return <GitBranch className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />;
-      case 'search_sort': return <Search className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />;
-      case 'trees_heaps': return <FolderTree className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />;
-      case 'hashing_recursion': return <Hash className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />;
-      case 'graphs': return <Network className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />;
-      case 'greedy_dp': return <Clock className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />;
-      default: return <Sparkles className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />;
+      case 'foundations': return <Code className="w-3.5 h-3.5 text-[var(--color-emerald)] shrink-0" />;
+      case 'arrays_strings': return <Layers className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
+      case 'linear_structures': return <GitBranch className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
+      case 'search_sort': return <Search className="w-3.5 h-3.5 text-[var(--color-indigo)] shrink-0" />;
+      case 'trees_heaps': return <FolderTree className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
+      case 'hashing_recursion': return <Hash className="w-3.5 h-3.5 text-[var(--color-amber)] shrink-0" />;
+      case 'graphs': return <Network className="w-3.5 h-3.5 text-[var(--color-violet)] shrink-0" />;
+      case 'greedy_dp': return <Clock className="w-3.5 h-3.5 text-[var(--color-violet)] shrink-0" />;
+      default: return <Sparkles className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
     }
   };
 
@@ -129,18 +124,18 @@ export const BoardCell: React.FC<BoardCellProps> = ({
         minHeight: 'var(--tile-height, 115px)'
       }}
       className={`relative z-10 rounded-2xl border-2 p-2 sm:p-2.5 flex flex-col justify-between transition-all duration-200 cursor-pointer select-none group text-left ${getCardClasses()} ${
-        !isCurrent ? 'hover:-translate-y-0.5 hover:shadow-lg' : ''
+        !isCurrent ? 'hover:-translate-y-0.5 hover:shadow-md' : ''
       }`}
     >
       {/* 1. TOP ROW: Level Number and Status/Badge */}
-      <div className="flex items-center justify-between w-full border-b border-[#263449] pb-1">
+      <div className="flex items-center justify-between w-full border-b border-[var(--border-subtle)] pb-1">
         <div className="flex items-center gap-1.5">
           <span className={`font-mono font-black text-lg sm:text-xl tracking-tight leading-none ${
             isCurrent 
-              ? 'text-[#22D3EE]' 
+              ? 'text-[var(--color-indigo)]' 
               : square.id === 100 
-                ? 'text-[#8B5CF6]' 
-                : 'text-[#F8FAFC]'
+                ? 'text-[var(--color-violet)]' 
+                : 'text-[var(--text-primary)]'
           }`}>
             {formattedNumber}
           </span>
@@ -150,86 +145,86 @@ export const BoardCell: React.FC<BoardCellProps> = ({
         {/* Status Indicator / Mastered Tile Evolution */}
         <div className="flex items-center gap-1">
           {isCurrent ? (
-            <span className="px-1.5 py-0.5 rounded-full bg-[#2563EB]/25 border border-[#2563EB] text-[#22D3EE] font-black text-[9.5px] uppercase tracking-wide flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse" />
+            <span className="px-1.5 py-0.5 rounded-full bg-[var(--color-indigo-light)] border border-[var(--color-indigo)] text-[var(--color-indigo)] font-black text-[9.5px] uppercase tracking-wide flex items-center gap-1 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-indigo)] animate-pulse" />
               You
             </span>
           ) : (masteryScore ?? 0) >= 80 ? (
-            <span className="px-1.5 py-0.5 rounded-full bg-[#10B981]/15 border border-[#10B981]/70 text-[#10B981] font-bold text-[9.5px] uppercase tracking-wide flex items-center gap-0.5" title={`Mastered (${masteryScore}%)`}>
-              <Star className="w-2.5 h-2.5 fill-[#10B981] text-[#10B981]" />
+            <span className="px-1.5 py-0.5 rounded-full bg-[var(--color-emerald-light)] border border-[var(--color-emerald-border)] text-[var(--color-emerald)] font-bold text-[9.5px] uppercase tracking-wide flex items-center gap-0.5 shadow-sm" title={`Mastered (${masteryScore}%)`}>
+              <Star className="w-2.5 h-2.5 fill-[var(--color-emerald)] text-[var(--color-emerald)]" />
               ★ Master
             </span>
           ) : (masteryScore ?? 0) >= 55 ? (
-            <span className="px-1.5 py-0.5 rounded-full bg-[#22D3EE]/15 border border-[#22D3EE]/60 text-[#22D3EE] font-bold text-[9.5px] flex items-center gap-0.5" title={`Strong (${masteryScore}%)`}>
-              <Sparkles className="w-2.5 h-2.5 text-[#22D3EE]" />
+            <span className="px-1.5 py-0.5 rounded-full bg-[var(--color-cyan-light)] border border-[var(--color-cyan-border)] text-[var(--color-cyan)] font-bold text-[9.5px] flex items-center gap-0.5 shadow-sm" title={`Strong (${masteryScore}%)`}>
+              <Sparkles className="w-2.5 h-2.5 text-[var(--color-cyan)]" />
               ◉ Strong
             </span>
           ) : isCompleted ? (
-            <span className="px-1.5 py-0.5 rounded-full bg-[#10B981]/15 border border-[#10B981]/60 text-[#10B981] font-bold text-[9.5px] flex items-center gap-1" title="Completed">
-              <CheckCircle2 className="w-2.5 h-2.5 text-[#10B981]" />
+            <span className="px-1.5 py-0.5 rounded-full bg-[var(--color-cyan-light)] border border-[var(--color-cyan-border)] text-[var(--color-cyan)] font-bold text-[9.5px] flex items-center gap-1 shadow-sm" title="Completed">
+              <CheckCircle2 className="w-2.5 h-2.5 text-[var(--color-cyan)]" />
               ✓ Done
             </span>
           ) : (
-            <span className="text-[9.5px] font-mono font-medium text-[#64748B]" title="Unseen">
+            <span className="text-[9.5px] font-mono font-medium text-[var(--text-muted)]" title="Unseen">
               ○ {square.difficulty.slice(0, 3).toUpperCase()}
             </span>
           )}
         </div>
       </div>
 
-      {/* 2. MIDDLE ROW: Topic Name (14-16px Bold) and Short Description (11-12px) */}
+      {/* 2. MIDDLE ROW: Topic Name and Short Description */}
       <div className="flex-1 flex flex-col justify-center py-1">
-        <h4 className="font-extrabold text-[13px] sm:text-[14px] md:text-[15px] text-[#F8FAFC] leading-tight tracking-tight line-clamp-2 break-words group-hover:text-[#22D3EE] transition-colors">
+        <h4 className="font-extrabold text-[13px] sm:text-[14px] md:text-[15px] text-[var(--text-primary)] leading-tight tracking-tight line-clamp-2 break-words group-hover:text-[var(--color-indigo)] transition-colors">
           {topicName}
         </h4>
-        <p className="text-[10.5px] sm:text-[11.5px] text-[#94A3B8] leading-tight line-clamp-1 mt-0.5 font-medium">
+        <p className="text-[10.5px] sm:text-[11.5px] text-[var(--text-secondary)] leading-tight line-clamp-1 mt-0.5 font-medium">
           {square.subtopic || square.summary || square.topic}
         </p>
       </div>
 
       {/* 3. BOTTOM ROW: Type Badge ([CONCEPT], [LADDER], [SNAKE], [BOSS], [FINAL]) */}
-      <div className="flex items-center justify-between w-full pt-1 border-t border-[#263449]">
+      <div className="flex items-center justify-between w-full pt-1 border-t border-[var(--border-subtle)]">
         {square.id === 100 ? (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#8B5CF6]/25 border border-[#8B5CF6]/70 text-[#8B5CF6] font-black text-[10px] uppercase tracking-wider">
-            <Trophy className="w-3 h-3 text-[#8B5CF6]" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--color-violet-light)] border border-[var(--color-violet-border)] text-[var(--color-violet)] font-black text-[10px] uppercase tracking-wider shadow-sm">
+            <Trophy className="w-3 h-3 text-[var(--color-violet)]" />
             FINAL TITAN
           </span>
         ) : square.id === 1 ? (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#2563EB]/20 border border-[#2563EB]/60 text-[#22D3EE] font-bold text-[10px] uppercase tracking-wider">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--color-indigo-light)] border border-[var(--color-indigo-border)] text-[var(--color-indigo)] font-bold text-[10px] uppercase tracking-wider shadow-sm">
             START
           </span>
         ) : ladder ? (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F59E0B]/20 border border-[#F59E0B]/60 text-[#F59E0B] font-bold text-[10px] uppercase tracking-wide">
-            <Zap className="w-3 h-3 text-[#F59E0B]" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--color-amber-light)] border border-[var(--color-amber-border)] text-[var(--color-amber)] font-bold text-[10px] uppercase tracking-wide shadow-sm">
+            <Zap className="w-3 h-3 text-[var(--color-amber)]" />
             <span>LADDER &rarr; {ladder.to}</span>
           </span>
         ) : snake ? (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F43F5E]/20 border border-[#F43F5E]/60 text-[#F43F5E] font-bold text-[10px] uppercase tracking-wide">
-            <AlertTriangle className="w-3 h-3 text-[#F43F5E]" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--color-rose-light)] border border-[var(--color-rose-border)] text-[var(--color-rose)] font-bold text-[10px] uppercase tracking-wide shadow-sm">
+            <AlertTriangle className="w-3 h-3 text-[var(--color-rose)]" />
             <span>SNAKE &darr; {snake.to}</span>
           </span>
         ) : ladderDestination ? (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#F59E0B]/15 border border-[#F59E0B]/30 text-[#F59E0B] font-medium text-[9.5px]">
-            <ArrowUpRight className="w-2.5 h-2.5 text-[#F59E0B]" />
-            Exit (From {ladderDestination.from})
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[var(--color-amber-light)] border border-[var(--color-amber-border)] text-[var(--color-amber)] font-medium text-[9.5px]">
+            <ArrowUpRight className="w-2.5 h-2.5 text-[var(--color-amber)]" />
+            Exit ({ladderDestination.from})
           </span>
         ) : snakeDestination ? (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#F43F5E]/15 border border-[#F43F5E]/30 text-[#F43F5E] font-medium text-[9.5px]">
-            <ArrowDownRight className="w-2.5 h-2.5 text-[#F43F5E]" />
-            Drop (From {snakeDestination.from})
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[var(--color-rose-light)] border border-[var(--color-rose-border)] text-[var(--color-rose)] font-medium text-[9.5px]">
+            <ArrowDownRight className="w-2.5 h-2.5 text-[var(--color-rose)]" />
+            Drop ({snakeDestination.from})
           </span>
         ) : square.isCheckpoint ? (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#F59E0B]/20 border border-[#F59E0B]/50 text-[#F59E0B] font-bold text-[10px] uppercase">
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[var(--color-amber-light)] border border-[var(--color-amber-border)] text-[var(--color-amber)] font-bold text-[10px] uppercase shadow-sm">
             CHECKPOINT
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#172033] border border-[#263449] text-[#94A3B8] text-[10px] font-semibold uppercase tracking-wider">
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] text-[10px] font-semibold uppercase tracking-wider">
             {square.stageName.split(' ')[0]}
           </span>
         )}
 
         {/* Small Detail Indicator */}
-        <span className="text-[10px] text-[#64748B] font-mono group-hover:text-[#22D3EE] transition-colors">
+        <span className="text-[10px] text-[var(--text-muted)] font-mono group-hover:text-[var(--color-indigo)] transition-colors">
           Info &rarr;
         </span>
       </div>
