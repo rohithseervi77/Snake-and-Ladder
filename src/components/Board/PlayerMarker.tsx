@@ -23,27 +23,27 @@ export const PlayerMarker: React.FC<PlayerMarkerProps> = ({ equippedMarker = 'ma
   const getMarkerBg = () => {
     switch (equippedMarker) {
       case 'marker-cyber-glider':
-        return 'from-blue-600 to-indigo-500 border-cyan-300';
+        return 'from-[#2563EB] to-[#22D3EE] border-[#22D3EE]';
       case 'marker-terminal-bot':
-        return 'from-purple-600 to-fuchsia-500 border-pink-300';
+        return 'from-[#8B5CF6] to-[#2563EB] border-[#8B5CF6]';
       case 'marker-grandmaster-crown':
-        return 'from-amber-400 to-yellow-300 border-white';
+        return 'from-[#F59E0B] to-[#FCD34D] border-[#F59E0B]';
       case 'marker-ninja-coder':
       default:
-        return 'from-emerald-500 to-teal-400 border-white';
+        return 'from-[#2563EB] to-[#22D3EE] border-[#22D3EE]';
     }
   };
 
   return (
     <div 
       className="relative flex items-center justify-center filter drop-shadow-lg"
-      aria-label="Player Avatar Location"
+      aria-label="Player Avatar Location: YOU ARE HERE"
     >
       {/* Outer pulsating beacon */}
-      <div className="absolute w-10 h-10 rounded-full bg-cyan-400/40 animate-ping" />
+      <div className="absolute w-9 h-9 rounded-full bg-[#22D3EE]/30 animate-ping pointer-events-none" />
       
       {/* Inner Avatar Token */}
-      <div className={`relative w-8 h-8 rounded-full bg-gradient-to-tr ${getMarkerBg()} border-2 shadow-2xl flex items-center justify-center font-black ring-2 ring-cyan-400/80`}>
+      <div className={`relative w-8 h-8 rounded-full bg-gradient-to-tr ${getMarkerBg()} border-2 shadow-2xl flex items-center justify-center font-black ring-2 ring-[#2563EB]`}>
         {getMarkerIcon()}
       </div>
     </div>

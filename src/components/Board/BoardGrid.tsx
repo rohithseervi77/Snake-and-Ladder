@@ -47,14 +47,14 @@ export const BoardGrid: React.FC<BoardGridProps> = ({
   const getThemeClass = () => {
     switch (boardTheme) {
       case 'theme-cyberpunk-indigo':
-        return 'bg-[#0f0926] border-indigo-700/60 shadow-indigo-950/70';
+        return 'bg-[#111827] border-[#8B5CF6]/60 shadow-[0_0_30px_rgba(139,92,246,0.15)]';
       case 'theme-emerald-matrix':
-        return 'bg-[#04140f] border-emerald-700/60 shadow-emerald-950/70';
+        return 'bg-[#111827] border-[#10B981]/60 shadow-[0_0_30px_rgba(16,185,129,0.15)]';
       case 'theme-solar-amber':
-        return 'bg-[#140c03] border-amber-700/60 shadow-amber-950/70';
+        return 'bg-[#111827] border-[#F59E0B]/60 shadow-[0_0_30px_rgba(245,158,11,0.15)]';
       case 'theme-obsidian-navy':
       default:
-        return 'bg-[#070c18] border-slate-800 shadow-slate-950/70';
+        return 'bg-[#111827] border-[#263449] shadow-2xl';
     }
   };
 

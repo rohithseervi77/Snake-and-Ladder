@@ -131,7 +131,7 @@ export const App: React.FC = () => {
   }, [displayedPosition]);
 
   return (
-    <div className="min-h-screen lg:h-screen lg:overflow-hidden w-full bg-[#080d1a] text-slate-100 flex flex-col font-sans select-none antialiased">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden w-full bg-[#080D1A] text-[#F8FAFC] flex flex-col font-sans select-none antialiased">
       {/* Top Application Header */}
       <Header
         totalXp={gameState.totalScore}
@@ -176,10 +176,10 @@ export const App: React.FC = () => {
           <div className="w-full flex items-center gap-2">
             <button
               onClick={() => setShowLeftSidebar(prev => !prev)}
-              className={`hidden lg:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm shrink-0 active:scale-95 ${
+              className={`hidden lg:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm shrink-0 active:scale-95 cursor-pointer ${
                 showLeftSidebar 
-                  ? 'bg-slate-800/90 hover:bg-slate-700 border-slate-700 text-slate-300' 
-                  : 'bg-cyan-600/30 hover:bg-cyan-600/40 border-cyan-500/50 text-cyan-200'
+                  ? 'bg-[#111827] hover:bg-[#172033] border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC]' 
+                  : 'bg-[#2563EB]/20 hover:bg-[#2563EB]/30 border-[#2563EB]/50 text-[#22D3EE]'
               }`}
               title={showLeftSidebar ? 'Collapse Rules & Legend Sidebar' : 'Show Rules & Legend Sidebar'}
             >
@@ -202,10 +202,10 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setShowRightSidebar(prev => !prev)}
-              className={`hidden lg:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm shrink-0 active:scale-95 ${
+              className={`hidden lg:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm shrink-0 active:scale-95 cursor-pointer ${
                 showRightSidebar 
-                  ? 'bg-slate-800/90 hover:bg-slate-700 border-slate-700 text-slate-300' 
-                  : 'bg-cyan-600/30 hover:bg-cyan-600/40 border-cyan-500/50 text-cyan-200'
+                  ? 'bg-[#111827] hover:bg-[#172033] border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC]' 
+                  : 'bg-[#2563EB]/20 hover:bg-[#2563EB]/30 border-[#2563EB]/50 text-[#22D3EE]'
               }`}
               title={showRightSidebar ? 'Collapse Stats Sidebar' : 'Show Stats Sidebar'}
             >

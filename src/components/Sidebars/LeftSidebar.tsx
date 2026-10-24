@@ -11,23 +11,23 @@ import {
 
 export const LeftSidebar: React.FC = () => {
   return (
-    <aside className="w-full flex flex-col gap-2.5 text-slate-300">
+    <aside className="w-full flex flex-col gap-2.5 text-[#94A3B8]">
       {/* Card 1: How It Works */}
-      <div className="bg-[#10192e] border border-[#1e2d4d] rounded-xl p-3 shadow-md">
-        <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-2 flex items-center gap-1.5">
-          <HelpCircle className="w-3.5 h-3.5 text-blue-400" />
+      <div className="bg-[#111827] border border-[#263449] rounded-xl p-3 shadow-md">
+        <h2 className="text-xs font-bold text-[#F8FAFC] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <HelpCircle className="w-3.5 h-3.5 text-[#2563EB]" />
           How It Works
         </h2>
         
         <div className="flex flex-col gap-2">
           {/* Step 1 */}
           <div className="flex items-start gap-2">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-600/30 text-blue-400 font-bold text-[10px] flex items-center justify-center border border-blue-500/40">
+            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#22D3EE] font-bold text-[10px] flex items-center justify-center border border-[#2563EB]/50">
               1
             </span>
             <div>
-              <p className="text-[11px] font-semibold text-white leading-tight">Roll the dice</p>
-              <p className="text-[10px] text-slate-400 leading-tight">
+              <p className="text-[11px] font-semibold text-[#F8FAFC] leading-tight">Roll the dice</p>
+              <p className="text-[10px] text-[#94A3B8] leading-tight">
                 Move forward on 100-square serpentine board.
               </p>
             </div>
@@ -35,12 +35,12 @@ export const LeftSidebar: React.FC = () => {
 
           {/* Step 2 */}
           <div className="flex items-start gap-2">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-600/30 text-emerald-400 font-bold text-[10px] flex items-center justify-center border border-emerald-500/40">
+            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#22D3EE]/20 text-[#22D3EE] font-bold text-[10px] flex items-center justify-center border border-[#22D3EE]/50">
               2
             </span>
             <div>
-              <p className="text-[11px] font-semibold text-white leading-tight">Pass the checkpoint</p>
-              <p className="text-[10px] text-slate-400 leading-tight">
+              <p className="text-[11px] font-semibold text-[#F8FAFC] leading-tight">Pass the checkpoint</p>
+              <p className="text-[10px] text-[#94A3B8] leading-tight">
                 Solve concepts, dry-run code, or analyze complexity.
               </p>
             </div>
@@ -48,12 +48,12 @@ export const LeftSidebar: React.FC = () => {
 
           {/* Step 3 */}
           <div className="flex items-start gap-2">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-amber-600/30 text-amber-400 font-bold text-[10px] flex items-center justify-center border border-amber-500/40">
+            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#F59E0B]/20 text-[#F59E0B] font-bold text-[10px] flex items-center justify-center border border-[#F59E0B]/50">
               3
             </span>
             <div>
-              <p className="text-[11px] font-semibold text-white leading-tight">Climb the ladder</p>
-              <p className="text-[10px] text-slate-400 leading-tight">
+              <p className="text-[11px] font-semibold text-[#F8FAFC] leading-tight">Climb the ladder</p>
+              <p className="text-[10px] text-[#94A3B8] leading-tight">
                 Refactor brute-force solutions into optimal algorithms.
               </p>
             </div>
@@ -61,12 +61,12 @@ export const LeftSidebar: React.FC = () => {
 
           {/* Step 4 */}
           <div className="flex items-start gap-2">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-rose-600/30 text-rose-400 font-bold text-[10px] flex items-center justify-center border border-rose-500/40">
+            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#F43F5E]/20 text-[#F43F5E] font-bold text-[10px] flex items-center justify-center border border-[#F43F5E]/50">
               4
             </span>
             <div>
-              <p className="text-[11px] font-semibold text-white leading-tight">Avoid the snake</p>
-              <p className="text-[10px] text-slate-400 leading-tight">
+              <p className="text-[11px] font-semibold text-[#F8FAFC] leading-tight">Avoid the snake</p>
+              <p className="text-[10px] text-[#94A3B8] leading-tight">
                 Fix runtime bugs or handle edge cases &mdash; or slide down!
               </p>
             </div>
@@ -74,12 +74,12 @@ export const LeftSidebar: React.FC = () => {
 
           {/* Step 5 */}
           <div className="flex items-start gap-2">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-purple-600/30 text-purple-400 font-bold text-[10px] flex items-center justify-center border border-purple-500/40">
+            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#8B5CF6]/20 text-[#8B5CF6] font-bold text-[10px] flex items-center justify-center border border-[#8B5CF6]/50">
               5
             </span>
             <div>
-              <p className="text-[11px] font-semibold text-white leading-tight">Reach 100</p>
-              <p className="text-[10px] text-slate-400 leading-tight">
+              <p className="text-[11px] font-semibold text-[#F8FAFC] leading-tight">Reach 100</p>
+              <p className="text-[10px] text-[#94A3B8] leading-tight">
                 Conquer 100 DSA squares to master tech interviews.
               </p>
             </div>
@@ -88,53 +88,53 @@ export const LeftSidebar: React.FC = () => {
       </div>
 
       {/* Card 2: Legend */}
-      <div className="bg-[#10192e] border border-[#1e2d4d] rounded-xl p-3 shadow-md">
-        <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-2 flex items-center gap-1.5">
-          <Layers className="w-3.5 h-3.5 text-indigo-400" />
+      <div className="bg-[#111827] border border-[#263449] rounded-xl p-3 shadow-md">
+        <h2 className="text-xs font-bold text-[#F8FAFC] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <Layers className="w-3.5 h-3.5 text-[#22D3EE]" />
           Legend
         </h2>
 
         <div className="grid grid-cols-1 gap-1.5 text-[11px]">
           <div className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400 text-[9px] font-bold">
+            <span className="w-4 h-4 rounded bg-[#10B981]/20 border border-[#10B981]/50 flex items-center justify-center text-[#10B981] text-[9px] font-bold">
               ✓
             </span>
-            <span className="text-slate-300">Concept Square</span>
+            <span className="text-[#CBD5E1]">Concept Square</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-400 font-bold">
+            <span className="w-4 h-4 rounded bg-[#F59E0B]/20 border border-[#F59E0B]/50 flex items-center justify-center text-[#F59E0B] font-bold">
               <Zap className="w-3 h-3" />
             </span>
-            <span className="text-slate-300">Optimization Ladder</span>
+            <span className="text-[#CBD5E1]">Optimization Ladder</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded bg-rose-500/20 border border-rose-500/50 flex items-center justify-center text-rose-400 font-bold">
+            <span className="w-4 h-4 rounded bg-[#F43F5E]/20 border border-[#F43F5E]/50 flex items-center justify-center text-[#F43F5E] font-bold">
               <AlertTriangle className="w-3 h-3" />
             </span>
-            <span className="text-slate-300">Intelligent Snake</span>
+            <span className="text-[#CBD5E1]">Intelligent Snake</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded bg-blue-500/20 border border-blue-500/50 flex items-center justify-center text-blue-400 font-bold">
+            <span className="w-4 h-4 rounded bg-[#2563EB]/20 border border-[#2563EB]/50 flex items-center justify-center text-[#22D3EE] font-bold">
               <Dices className="w-3 h-3" />
             </span>
-            <span className="text-slate-300">Dice Movement</span>
+            <span className="text-[#CBD5E1]">Dice Movement</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded bg-yellow-500/20 border border-yellow-500/50 flex items-center justify-center text-yellow-400 font-bold">
+            <span className="w-4 h-4 rounded bg-[#2563EB]/20 border border-[#2563EB]/60 flex items-center justify-center text-[#22D3EE] font-bold">
               <Sparkles className="w-3 h-3" />
             </span>
-            <span className="text-slate-300">Current Position</span>
+            <span className="text-[#CBD5E1]">Current Position</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded bg-indigo-500/20 border border-indigo-500/50 flex items-center justify-center text-indigo-400 font-bold">
+            <span className="w-4 h-4 rounded bg-[#8B5CF6]/20 border border-[#8B5CF6]/50 flex items-center justify-center text-[#8B5CF6] font-bold">
               <Flag className="w-3 h-3" />
             </span>
-            <span className="text-slate-300">Start / Finish</span>
+            <span className="text-[#CBD5E1]">Start / Finish</span>
           </div>
         </div>
       </div>

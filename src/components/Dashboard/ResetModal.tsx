@@ -15,22 +15,22 @@ export const ResetModal: React.FC<ResetModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-md bg-[#0f172a] border border-rose-800/50 rounded-2xl shadow-2xl p-5 text-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/85 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-md bg-[#111827] border border-[#263449] rounded-2xl shadow-2xl p-5 text-[#F8FAFC]">
         <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-2.5 text-rose-400 font-bold text-base">
-            <span className="p-2 rounded-xl bg-rose-950/60 border border-rose-700/50">
-              <AlertTriangle className="w-5 h-5 text-rose-400" />
+          <div className="flex items-center gap-2.5 text-[#F43F5E] font-bold text-base">
+            <span className="p-2 rounded-xl bg-[#F43F5E]/20 border border-[#F43F5E]/40">
+              <AlertTriangle className="w-5 h-5 text-[#F43F5E]" />
             </span>
             <span>Reset Game Progress?</span>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white cursor-pointer">
+          <button onClick={onClose} className="text-[#94A3B8] hover:text-[#F8FAFC] cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <p className="text-xs text-slate-300 mb-4 leading-relaxed">
-          This will reset your position back to <strong>Square 1</strong>, clear all completed squares, 
+        <p className="text-xs text-[#94A3B8] mb-4 leading-relaxed">
+          This will reset your position back to <strong className="text-[#F8FAFC]">Square 1</strong>, clear all completed squares, 
           reset your score and badges, and re-initialize your adaptive learner model. 
           This action cannot be undone.
         </p>
@@ -38,13 +38,13 @@ export const ResetModal: React.FC<ResetModalProps> = ({
         <div className="flex items-center justify-end gap-2.5">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[#1e293b] hover:bg-[#334155] text-xs font-semibold text-slate-300 transition cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-[#172033] hover:bg-[#263449] border border-[#263449] text-xs font-semibold text-[#94A3B8] hover:text-[#F8FAFC] transition cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirmReset}
-            className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white shadow-lg shadow-rose-600/30 transition flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-[#F43F5E] hover:bg-[#e11d48] text-xs font-bold text-[#F8FAFC] shadow-lg shadow-[#F43F5E]/25 transition flex items-center gap-1.5 cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Confirm Reset

@@ -1,14 +1,45 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: #080D1A;
+  --color-board-bg: #0B1220;
+  --color-surface: #111827;
+  --color-surface-elevated: #172033;
+  --color-border-subtle: #263449;
+  --color-primary-brand: #2563EB;
+  --color-secondary-cyan: #22D3EE;
+  --color-success-emerald: #10B981;
+  --color-reward-amber: #F59E0B;
+  --color-danger-rose: #F43F5E;
+  --color-special-violet: #8B5CF6;
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+}
+
 :root {
   color-scheme: dark;
+  --color-bg: #080D1A;
+  --color-board-bg: #0B1220;
+  --color-surface: #111827;
+  --color-surface-elevated: #172033;
+  --color-border: #263449;
+  --color-primary: #2563EB;
+  --color-secondary: #22D3EE;
+  --color-success: #10B981;
+  --color-reward: #F59E0B;
+  --color-danger: #F43F5E;
+  --color-special: #8B5CF6;
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #080d1a;
-  color: #f1f5f9;
+  background-color: #080D1A;
+  color: #F8FAFC;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
   user-select: none;
@@ -21,45 +52,51 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #090f1d;
+  background: #080D1A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #263449;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #3B82F6;
 }
 
 /* Dedicated, high-visibility board viewport scrollbars */
 .board-scroll-viewport {
   scrollbar-width: auto;
-  scrollbar-color: #38bdf8 #060d1f;
+  scrollbar-color: #22D3EE #0B1220;
   -webkit-overflow-scrolling: touch;
 }
 
 .board-scroll-viewport::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 .board-scroll-viewport::-webkit-scrollbar-track {
-  background: #060d1f;
-  border-left: 1px solid #1e293b;
-  border-top: 1px solid #1e293b;
+  background: #0B1220;
+  border-left: 1px solid #263449;
+  border-top: 1px solid #263449;
   border-radius: 8px;
 }
 
 .board-scroll-viewport::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #38bdf8, #2563eb);
+  background: linear-gradient(180deg, #22D3EE, #2563EB);
   border-radius: 9999px;
-  border: 2px solid #060d1f;
+  border: 2px solid #0B1220;
 }
 
 .board-scroll-viewport::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #67e8f9, #3b82f6);
+  background: #22D3EE;
+}
+
+/* Focus outline for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #22D3EE;
+  outline-offset: 2px;
 }
 
 /* Focus Pulse Animation for Active / Jumped Tile */

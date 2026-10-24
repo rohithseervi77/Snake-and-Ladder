@@ -159,24 +159,24 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#080D1A]/85 backdrop-blur-md animate-fadeIn">
       <div 
-        className="relative w-full max-w-3xl max-h-[92vh] bg-[#0c1527] border-2 border-[#243556] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-slate-200 flex flex-col"
+        className="relative w-full max-w-3xl max-h-[92vh] bg-[#111827] border border-[#263449] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-[#F8FAFC] flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-labelledby="decision-lab-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#1e2d4d] bg-[#091020]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#263449] bg-[#0B1220]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#F59E0B]/20 border border-[#F59E0B]/40 flex items-center justify-center text-[#F59E0B] shrink-0">
               <Cpu className="w-5 h-5 animate-pulse" />
             </div>
             <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400 font-mono">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#F59E0B] font-mono">
                 Production-Scale Architecture Lab
               </span>
-              <h2 id="decision-lab-title" className="text-base sm:text-lg font-black text-white leading-tight">
+              <h2 id="decision-lab-title" className="text-base sm:text-lg font-black text-[#F8FAFC] leading-tight">
                 Algorithm Decision Lab
               </h2>
             </div>
@@ -184,7 +184,7 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-[#141e33] hover:bg-[#1e2d4d] text-slate-400 hover:text-white transition cursor-pointer"
+            className="p-1.5 rounded-lg bg-[#172033] hover:bg-[#263449] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC] transition cursor-pointer"
             aria-label="Close Decision Lab"
           >
             <X className="w-5 h-5" />
@@ -194,47 +194,47 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
         {/* Modal Body */}
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 flex flex-col gap-4 text-xs sm:text-sm">
           {/* Scenario Overview Banner */}
-          <div className="p-4 rounded-2xl bg-[#091122] border border-[#1b2b48] flex flex-col gap-2">
+          <div className="p-4 rounded-2xl bg-[#172033] border border-[#263449] flex flex-col gap-2">
             <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
-              <span className="px-2 py-0.5 rounded bg-amber-950/60 border border-amber-600/40 text-amber-300 font-bold">
+              <span className="px-2 py-0.5 rounded bg-[#080D1A] border border-[#F59E0B]/40 text-[#F59E0B] font-bold">
                 Scale: {currentScenario.scaleMetric}
               </span>
-              <span className="text-slate-400">
+              <span className="text-[#94A3B8]">
                 Scenario {scenarioIndex + 1} of {SCENARIOS.length}
               </span>
             </div>
 
-            <h3 className="text-sm sm:text-base font-bold text-white leading-snug">
+            <h3 className="text-sm sm:text-base font-bold text-[#F8FAFC] leading-snug">
               {currentScenario.title}
             </h3>
 
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-[#CBD5E1] leading-relaxed">
               {currentScenario.scenarioText}
             </p>
 
-            <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-amber-300 font-mono">
-              <strong>Constraint:</strong> {currentScenario.constraint}
+            <div className="p-2.5 rounded-xl bg-[#080D1A] border border-[#263449] text-[11px] text-[#22D3EE] font-mono">
+              <strong className="text-[#F8FAFC]">Constraint:</strong> {currentScenario.constraint}
             </div>
           </div>
 
           {/* Step 1: Choose Algorithm */}
           <div className="flex flex-col gap-2">
-            <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-bold text-[#94A3B8] uppercase tracking-wider">
               Step 1: Choose Production-Scale Algorithm Strategy
             </span>
             <div className="flex flex-col gap-2">
               {currentScenario.options.map((opt, idx) => {
                 const isSelected = selectedOption === idx;
-                let cardStyle = 'bg-[#091020] border-[#1b2b48] text-slate-300 hover:border-slate-500';
+                let cardStyle = 'bg-[#172033] border-[#263449] text-[#94A3B8] hover:border-[#22D3EE]';
 
                 if (isEvaluated) {
                   if (opt.isOptimal) {
-                    cardStyle = 'bg-emerald-950/40 border-emerald-500 text-emerald-200';
+                    cardStyle = 'bg-[#10B981]/20 border-2 border-[#10B981] text-[#10B981]';
                   } else if (isSelected && !opt.isOptimal) {
-                    cardStyle = 'bg-rose-950/40 border-rose-500 text-rose-200';
+                    cardStyle = 'bg-[#F43F5E]/20 border-2 border-[#F43F5E] text-[#F43F5E]';
                   }
                 } else if (isSelected) {
-                  cardStyle = 'bg-amber-950/30 border-amber-500 text-white shadow-md shadow-amber-950/40';
+                  cardStyle = 'bg-[#2563EB]/20 border-2 border-[#2563EB] text-[#F8FAFC] shadow-md shadow-[#2563EB]/25';
                 }
 
                 return (
@@ -245,16 +245,16 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
                     className={`p-3 rounded-xl border text-left flex items-start justify-between gap-3 transition cursor-pointer disabled:cursor-default ${cardStyle}`}
                   >
                     <div>
-                      <div className="font-bold text-xs sm:text-sm text-white">{opt.title}</div>
-                      <div className="font-mono text-[11px] text-amber-400/90 mt-0.5">{opt.complexity}</div>
+                      <div className="font-bold text-xs sm:text-sm text-[#F8FAFC]">{opt.title}</div>
+                      <div className="font-mono text-[11px] text-[#22D3EE] mt-0.5">{opt.complexity}</div>
                       {isEvaluated && (
-                        <p className="text-[11px] text-slate-300 mt-1 leading-snug">
+                        <p className="text-[11px] text-[#CBD5E1] mt-1 leading-snug">
                           {opt.tradeoffSummary}
                         </p>
                       )}
                     </div>
                     {isEvaluated && opt.isOptimal && (
-                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px] shrink-0 border border-emerald-500/40">
+                      <span className="px-2 py-0.5 rounded bg-[#10B981]/20 text-[#10B981] font-bold text-[10px] shrink-0 border border-[#10B981]/40">
                         Optimal Choice
                       </span>
                     )}
@@ -267,26 +267,26 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
           {/* Step 2: Reason Justification */}
           {selectedOption !== null && (
             <div className="flex flex-col gap-2 animate-fadeIn">
-              <span className="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-wider">
+              <span className="text-[11px] font-mono font-bold text-[#F59E0B] uppercase tracking-wider">
                 Step 2: Algorithmic Justification (Why does this choice scale?)
               </span>
-              <div className="p-3.5 rounded-2xl bg-[#091122] border border-[#1b2b48] flex flex-col gap-2.5">
-                <p className="text-xs font-semibold text-white">
+              <div className="p-3.5 rounded-2xl bg-[#172033] border border-[#263449] flex flex-col gap-2.5">
+                <p className="text-xs font-semibold text-[#F8FAFC]">
                   {currentScenario.followUpReasoning.question}
                 </p>
                 <div className="flex flex-col gap-1.5">
                   {currentScenario.followUpReasoning.choices.map((choice, cIdx) => {
                     const isChoiceSelected = selectedReasoning === cIdx;
-                    let cStyle = 'bg-[#0b1428] border-slate-800 text-slate-300 hover:border-slate-600';
+                    let cStyle = 'bg-[#080D1A] border-[#263449] text-[#94A3B8] hover:border-[#22D3EE]';
 
                     if (isEvaluated) {
                       if (cIdx === currentScenario.followUpReasoning.correctIndex) {
-                        cStyle = 'bg-emerald-950/50 border-emerald-500 text-emerald-200 font-semibold';
+                        cStyle = 'bg-[#10B981]/20 border-2 border-[#10B981] text-[#10B981] font-semibold';
                       } else if (isChoiceSelected) {
-                        cStyle = 'bg-rose-950/50 border-rose-500 text-rose-200';
+                        cStyle = 'bg-[#F43F5E]/20 border-2 border-[#F43F5E] text-[#F43F5E]';
                       }
                     } else if (isChoiceSelected) {
-                      cStyle = 'bg-blue-600/30 border-blue-500 text-white';
+                      cStyle = 'bg-[#2563EB]/20 border-2 border-[#2563EB] text-[#F8FAFC]';
                     }
 
                     return (
@@ -307,16 +307,16 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
 
           {/* Post Evaluation Feedback */}
           {isEvaluated && (
-            <div className="p-4 rounded-2xl bg-indigo-950/30 border border-indigo-700/50 text-indigo-200 text-xs flex flex-col gap-2 animate-fadeIn">
-              <div className="flex items-center gap-2 font-bold text-sm text-white">
-                <Sparkles className="w-4 h-4 text-amber-400" />
+            <div className="p-4 rounded-2xl bg-[#172033] border border-[#2563EB]/40 text-[#CBD5E1] text-xs flex flex-col gap-2 animate-fadeIn">
+              <div className="flex items-center gap-2 font-bold text-sm text-[#F8FAFC]">
+                <Sparkles className="w-4 h-4 text-[#F59E0B]" />
                 <span>Production Architecture Verdict:</span>
               </div>
               <p className="leading-relaxed">
                 {currentScenario.followUpReasoning.explanation}
               </p>
               {hasClaimed && (
-                <div className="flex items-center gap-1.5 font-bold text-amber-300 text-xs">
+                <div className="flex items-center gap-1.5 font-bold text-[#F59E0B] text-xs">
                   <Award className="w-4 h-4" />
                   <span>Awarded +75 XP and +25 Coins for flawless architectural reasoning!</span>
                 </div>
@@ -326,10 +326,10 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#1e2d4d] bg-[#091020] flex items-center justify-between">
+        <div className="px-5 py-3 border-t border-[#263449] bg-[#0B1220] flex items-center justify-between">
           <button
             onClick={onClose}
-            className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition cursor-pointer"
+            className="px-3.5 py-1.5 rounded-xl bg-[#172033] hover:bg-[#263449] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC] font-semibold text-xs transition cursor-pointer"
           >
             Close Lab
           </button>
@@ -338,14 +338,14 @@ export const DecisionLabModal: React.FC<DecisionLabModalProps> = ({
             <button
               onClick={handleEvaluate}
               disabled={selectedOption === null || selectedReasoning === null}
-              className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-black text-xs sm:text-sm tracking-wide transition shadow-md shadow-amber-500/20 cursor-pointer disabled:cursor-not-allowed"
+              className="px-5 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] disabled:opacity-50 text-[#F8FAFC] font-bold text-xs sm:text-sm tracking-wide transition shadow-md shadow-[#2563EB]/25 cursor-pointer disabled:cursor-not-allowed"
             >
               Verify Architectural Decision
             </button>
           ) : (
             <button
               onClick={handleNextScenario}
-              className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm transition flex items-center gap-1.5 cursor-pointer shadow-md shadow-indigo-600/30"
+              className="px-5 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-[#F8FAFC] font-bold text-xs sm:text-sm transition flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#2563EB]/25"
             >
               <span>Next Scenario</span>
               <ArrowRight className="w-4 h-4" />

@@ -132,24 +132,24 @@ export const WhatIfSimulatorModal: React.FC<WhatIfSimulatorModalProps> = ({
   const activeAction = selectedActionIndex !== null ? currentScenario.actions[selectedActionIndex] : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#080D1A]/85 backdrop-blur-md animate-fadeIn">
       <div 
-        className="relative w-full max-w-3xl max-h-[92vh] bg-[#0c1527] border-2 border-[#243556] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-slate-200 flex flex-col"
+        className="relative w-full max-w-3xl max-h-[92vh] bg-[#111827] border border-[#263449] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-[#F8FAFC] flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-labelledby="what-if-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#1e2d4d] bg-[#091020]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#263449] bg-[#0B1220]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#2563EB]/20 border border-[#2563EB]/40 flex items-center justify-center text-[#22D3EE] shrink-0">
               <Sparkles className="w-5 h-5 animate-pulse" />
             </div>
             <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-purple-400 font-mono">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#22D3EE] font-mono">
                 Interactive DSA Sandbox
               </span>
-              <h2 id="what-if-title" className="text-base sm:text-lg font-black text-white leading-tight">
+              <h2 id="what-if-title" className="text-base sm:text-lg font-black text-[#F8FAFC] leading-tight">
                 "What If?" Structural Simulator
               </h2>
             </div>
@@ -157,7 +157,7 @@ export const WhatIfSimulatorModal: React.FC<WhatIfSimulatorModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-[#141e33] hover:bg-[#1e2d4d] text-slate-400 hover:text-white transition cursor-pointer"
+            className="p-1.5 rounded-lg bg-[#172033] hover:bg-[#263449] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC] transition cursor-pointer"
             aria-label="Close What-If Simulator"
           >
             <X className="w-5 h-5" />
@@ -167,7 +167,7 @@ export const WhatIfSimulatorModal: React.FC<WhatIfSimulatorModalProps> = ({
         {/* Modal Body */}
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 flex flex-col gap-4 text-xs sm:text-sm">
           {/* Scenario Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-800">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-[#263449]">
             {SCENARIOS.map((sc, idx) => (
               <button
                 key={sc.id}
@@ -177,8 +177,8 @@ export const WhatIfSimulatorModal: React.FC<WhatIfSimulatorModalProps> = ({
                 }}
                 className={`px-3 py-1.5 rounded-xl font-bold text-xs whitespace-nowrap transition cursor-pointer ${
                   selectedScenarioIndex === idx
-                    ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
-                    : 'bg-slate-900 text-slate-400 hover:text-white'
+                    ? 'bg-[#2563EB] text-[#F8FAFC] shadow-md shadow-[#2563EB]/25'
+                    : 'bg-[#080D1A] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC]'
                 }`}
               >
                 {sc.title}
@@ -187,24 +187,24 @@ export const WhatIfSimulatorModal: React.FC<WhatIfSimulatorModalProps> = ({
           </div>
 
           {/* Scenario Prompt */}
-          <div className="p-4 rounded-2xl bg-[#091122] border border-[#1b2b48] flex flex-col gap-2">
-            <div className="flex items-center justify-between text-[11px] font-mono text-purple-400">
+          <div className="p-4 rounded-2xl bg-[#172033] border border-[#263449] flex flex-col gap-2">
+            <div className="flex items-center justify-between text-[11px] font-mono text-[#22D3EE]">
               <span>Domain: {currentScenario.topic}</span>
-              <span className="px-2 py-0.5 rounded bg-purple-950 border border-purple-800/60 text-purple-300">
+              <span className="px-2 py-0.5 rounded bg-[#080D1A] border border-[#263449] text-[#22D3EE]">
                 Sandbox Simulation
               </span>
             </div>
-            <h3 className="text-sm sm:text-base font-bold text-white">
+            <h3 className="text-sm sm:text-base font-bold text-[#F8FAFC]">
               {currentScenario.question}
             </h3>
-            <p className="text-[11px] text-slate-400 bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80 font-mono">
-              <strong>Initial State: </strong> {currentScenario.initialStateDescription}
+            <p className="text-[11px] text-[#94A3B8] bg-[#080D1A] p-2.5 rounded-xl border border-[#263449] font-mono">
+              <strong className="text-[#F8FAFC]">Initial State: </strong> {currentScenario.initialStateDescription}
             </p>
           </div>
 
           {/* Interactive Strategy Selector */}
           <div className="flex flex-col gap-2">
-            <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-bold text-[#94A3B8] uppercase tracking-wider">
               Choose an Architectural Action to Simulate:
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -214,12 +214,12 @@ export const WhatIfSimulatorModal: React.FC<WhatIfSimulatorModalProps> = ({
                   onClick={() => setSelectedActionIndex(idx)}
                   className={`p-3 rounded-xl border text-left flex items-start gap-2.5 transition cursor-pointer ${
                     selectedActionIndex === idx
-                      ? 'bg-purple-950/40 border-purple-400 text-white shadow-lg shadow-purple-950/50 scale-[1.01]'
-                      : 'bg-[#091020] border-[#1e2d4d] text-slate-300 hover:border-slate-500'
+                      ? 'bg-[#2563EB]/20 border-2 border-[#2563EB] text-[#F8FAFC] shadow-lg shadow-[#2563EB]/25 scale-[1.01]'
+                      : 'bg-[#172033] border-[#263449] text-[#94A3B8] hover:border-[#22D3EE]'
                   }`}
                 >
                   <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black shrink-0 ${
-                    selectedActionIndex === idx ? 'bg-purple-500 text-slate-950' : 'bg-slate-800 text-slate-400'
+                    selectedActionIndex === idx ? 'bg-[#2563EB] text-[#F8FAFC]' : 'bg-[#080D1A] border border-[#263449] text-[#94A3B8]'
                   }`}>
                     {idx + 1}
                   </span>
@@ -233,45 +233,45 @@ export const WhatIfSimulatorModal: React.FC<WhatIfSimulatorModalProps> = ({
           {activeAction ? (
             <div className={`p-4 rounded-2xl border flex flex-col gap-2.5 animate-fadeIn ${
               activeAction.isOptimal 
-                ? 'bg-emerald-950/20 border-emerald-600/50 text-emerald-200' 
-                : 'bg-rose-950/20 border-rose-600/50 text-rose-200'
+                ? 'bg-[#10B981]/15 border-[#10B981]/40 text-[#F8FAFC]' 
+                : 'bg-[#F43F5E]/15 border-[#F43F5E]/40 text-[#F8FAFC]'
             }`}>
               <div className="flex items-center justify-between font-bold text-xs sm:text-sm">
                 <span>{activeAction.resultTitle}</span>
-                <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold ${
-                  activeAction.isOptimal ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${
+                  activeAction.isOptimal ? 'bg-[#10B981]/20 text-[#10B981] border-[#10B981]/40' : 'bg-[#F43F5E]/20 text-[#F43F5E] border-[#F43F5E]/40'
                 }`}>
                   {activeAction.isOptimal ? 'Invariant Preserved' : 'Violation / Inefficient'}
                 </span>
               </div>
 
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-[#CBD5E1] leading-relaxed">
                 {activeAction.resultDescription}
               </p>
 
               {/* ASCII Visual Structure */}
-              <pre className="p-3 rounded-xl bg-black/60 font-mono text-[11px] text-cyan-300 overflow-x-auto border border-slate-800/80">
+              <pre className="p-3 rounded-xl bg-[#080D1A] font-mono text-[11px] text-[#22D3EE] overflow-x-auto border border-[#263449]">
                 <code>{activeAction.asciiDiagram}</code>
               </pre>
 
-              <div className="pt-2 border-t border-slate-800/60 text-[11px] text-slate-400">
-                <strong className="text-slate-200">Algorithmic Insight: </strong>
+              <div className="pt-2 border-t border-[#263449] text-[11px] text-[#94A3B8]">
+                <strong className="text-[#F8FAFC]">Algorithmic Insight: </strong>
                 {activeAction.takeaway}
               </div>
             </div>
           ) : (
-            <div className="p-6 rounded-2xl bg-[#091020]/60 border border-dashed border-slate-800 text-center text-slate-400 text-xs">
+            <div className="p-6 rounded-2xl bg-[#080D1A] border border-dashed border-[#263449] text-center text-[#94A3B8] text-xs">
               Select one of the strategies above to trigger the live structural simulation.
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#1e2d4d] bg-[#091020] flex items-center justify-between text-xs text-slate-400">
+        <div className="px-5 py-3 border-t border-[#263449] bg-[#0B1220] flex items-center justify-between text-xs text-[#94A3B8]">
           <span>Experiment freely with different invariants to observe algorithmic outcomes.</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition cursor-pointer"
+            className="px-4 py-1.5 rounded-xl bg-[#172033] hover:bg-[#263449] border border-[#263449] text-[#94A3B8] hover:text-[#F8FAFC] font-bold text-xs transition cursor-pointer"
           >
             Close Sandbox
           </button>

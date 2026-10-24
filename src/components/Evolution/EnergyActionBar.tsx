@@ -56,22 +56,22 @@ export const EnergyActionBar: React.FC<EnergyActionBarProps> = ({
   const getRouteBadgeStyle = (type: RouteType) => {
     switch (type) {
       case 'risk':
-        return 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+        return 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/40';
       case 'challenge':
-        return 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40';
+        return 'bg-[#2563EB]/15 text-[#22D3EE] border-[#2563EB]/40';
       case 'knowledge':
       default:
-        return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+        return 'bg-[#22D3EE]/15 text-[#22D3EE] border-[#22D3EE]/40';
     }
   };
 
   return (
     <div 
-      className="w-full max-w-5xl mx-auto bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-1.5 shadow-md flex items-center justify-between gap-2 overflow-x-auto shrink-0"
+      className="w-full max-w-5xl mx-auto bg-[#111827] border border-[#263449] rounded-xl px-3 py-1.5 shadow-md flex items-center justify-between gap-2 overflow-x-auto shrink-0"
     >
       {/* Left: Turn, Route, Energy & Buffs */}
       <div className="flex items-center gap-2 shrink-0">
-        <span className="text-[11px] font-mono text-slate-400 font-semibold hidden sm:inline">
+        <span className="text-[11px] font-mono text-[#94A3B8] font-semibold hidden sm:inline">
           T{turn}
         </span>
 
@@ -100,18 +100,18 @@ export const EnergyActionBar: React.FC<EnergyActionBarProps> = ({
 
         {/* Energy Meter */}
         <div 
-          className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-[11px] font-bold"
+          className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#080D1A] border border-[#F59E0B]/40 text-[#F59E0B] font-mono text-[11px] font-bold"
           title={`Algorithm Energy: ${energy} of ${MAX_ENERGY}`}
         >
-          <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400 animate-pulse" />
+          <Zap className="w-3.5 h-3.5 text-[#F59E0B] fill-[#F59E0B] animate-pulse" />
           <span>{energy}</span>
-          <span className="text-[9px] text-amber-400/80">/ {MAX_ENERGY}</span>
+          <span className="text-[9px] text-[#F59E0B]/80">/ {MAX_ENERGY}</span>
         </div>
 
         {/* Active Buffs */}
         {hasShield && (
           <span 
-            className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 animate-pulse"
+            className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-[#2563EB]/15 text-[#22D3EE] border border-[#2563EB]/50"
             title="Invariant Shield absorbs next penalty or snake drop"
           >
             <Shield className="w-2.5 h-2.5" /> Shield
@@ -119,7 +119,7 @@ export const EnergyActionBar: React.FC<EnergyActionBarProps> = ({
         )}
         {hasLadderBoost && (
           <span 
-            className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 animate-pulse"
+            className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/50"
             title="Optimization Overdrive grants +2 bonus tiles on next ladder"
           >
             <Sparkles className="w-2.5 h-2.5" /> +2 Boost
@@ -145,13 +145,13 @@ export const EnergyActionBar: React.FC<EnergyActionBarProps> = ({
               title={`${ability.name} (${ability.cost} ⚡): ${ability.description}`}
               className={`px-1.5 sm:px-2 py-1 rounded-md text-[10.5px] font-medium flex items-center gap-1 transition-all border shrink-0 ${
                 isDisabled
-                  ? 'bg-slate-800/40 border-slate-800 text-slate-500 cursor-not-allowed opacity-50'
-                  : 'bg-slate-800/90 border-slate-700 text-slate-200 hover:bg-indigo-950 hover:border-indigo-500/50 hover:text-white shadow-sm'
+                  ? 'bg-[#080D1A] border-[#263449]/50 text-[#64748B] cursor-not-allowed opacity-50'
+                  : 'bg-[#172033] border-[#263449] text-[#F8FAFC] hover:border-[#22D3EE]/60 hover:text-[#22D3EE] shadow-sm'
               }`}
             >
-              <Icon className="w-3 h-3 text-amber-400 shrink-0" />
+              <Icon className="w-3 h-3 text-[#F59E0B] shrink-0" />
               <span className="hidden md:inline">{ability.name.split(' ')[0]}</span>
-              <span className="text-[9px] font-mono text-amber-300/90 font-bold">
+              <span className="text-[9px] font-mono text-[#F59E0B] font-bold">
                 {ability.cost}⚡
               </span>
             </button>
@@ -164,7 +164,7 @@ export const EnergyActionBar: React.FC<EnergyActionBarProps> = ({
         <button
           onClick={onOpenBugBot}
           title="Duel BugBot Rival"
-          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-cyan-950/50 hover:bg-cyan-900/70 border border-cyan-700/50 text-cyan-300 text-[10px] font-bold transition shrink-0"
+          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#172033] hover:bg-[#1E293B] border border-[#22D3EE]/50 text-[#22D3EE] text-[10px] font-bold transition shrink-0 cursor-pointer"
         >
           <Bot className="w-3 h-3" />
           <span className="hidden sm:inline">Rival Duel</span>

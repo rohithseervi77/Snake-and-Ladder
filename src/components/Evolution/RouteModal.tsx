@@ -26,59 +26,52 @@ export const RouteModal: React.FC<RouteModalProps> = ({
       case 'knowledge':
         return {
           icon: ShieldCheck,
-          badgeBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
-          borderHover: 'hover:border-emerald-500/60',
-          gradient: 'from-emerald-950/40 via-slate-900/90 to-slate-950/90',
+          badgeBg: 'bg-[#10B981]/20 text-[#10B981] border-[#10B981]/40',
+          borderHover: 'hover:border-[#10B981]',
         };
       case 'challenge':
         return {
           icon: Compass,
-          badgeBg: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40',
-          borderHover: 'hover:border-indigo-500/60',
-          gradient: 'from-indigo-950/40 via-slate-900/90 to-slate-950/90',
+          badgeBg: 'bg-[#2563EB]/20 text-[#22D3EE] border-[#2563EB]/40',
+          borderHover: 'hover:border-[#2563EB]',
         };
       case 'risk':
         return {
           icon: Zap,
-          badgeBg: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
-          borderHover: 'hover:border-amber-500/60',
-          gradient: 'from-amber-950/40 via-slate-900/90 to-slate-950/90',
+          badgeBg: 'bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/40',
+          borderHover: 'hover:border-[#F59E0B]',
         };
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-4xl bg-slate-900/95 border border-indigo-500/30 rounded-2xl p-6 shadow-2xl text-slate-100 overflow-hidden max-h-[90vh] flex flex-col">
-        {/* Background glow */}
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/85 backdrop-blur-md animate-fade-in">
+      <div className="relative w-full max-w-4xl bg-[#111827] border border-[#263449] rounded-2xl p-6 shadow-2xl text-[#F8FAFC] overflow-hidden max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+        <div className="flex items-center justify-between border-b border-[#263449] pb-4 mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
+            <div className="w-10 h-10 rounded-xl bg-[#2563EB]/20 border border-[#2563EB]/40 flex items-center justify-center text-[#22D3EE]">
               <Compass className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs uppercase font-mono tracking-wider text-indigo-400">Decision Crossroads</span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono">
+                <span className="text-xs uppercase font-mono tracking-wider text-[#22D3EE]">Decision Crossroads</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-[#080D1A] border border-[#263449] text-[#94A3B8] font-mono">
                   Tile {tile}
                 </span>
               </div>
-              <h2 className="text-xl font-bold text-white tracking-tight">Choose Your Algorithmic Path</h2>
+              <h2 className="text-xl font-bold text-[#F8FAFC] tracking-tight">Choose Your Algorithmic Path</h2>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/80 transition-colors"
+            className="p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] rounded-lg hover:bg-[#172033] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <p className="text-sm text-slate-300 mb-6">
+        <p className="text-sm text-[#94A3B8] mb-6">
           Decision tiles test your strategic foresight. Select the path that best matches your mastery and appetite for risk.
           Unlocked routes depend on demonstrated topic mastery and algorithmic energy.
         </p>
@@ -93,12 +86,12 @@ export const RouteModal: React.FC<RouteModalProps> = ({
             return (
               <div
                 key={opt.id}
-                className={`relative flex flex-col justify-between rounded-xl border p-5 transition-all duration-200 bg-gradient-to-b ${badge.gradient} ${
+                className={`relative flex flex-col justify-between rounded-xl border p-5 transition-all duration-200 bg-[#172033] ${
                   opt.isUnlocked
                     ? `${badge.borderHover} cursor-pointer ${
-                        isSelected ? 'ring-2 ring-indigo-400 border-indigo-400' : 'border-slate-800'
+                        isSelected ? 'ring-2 ring-[#2563EB] border-[#2563EB]' : 'border-[#263449]'
                       }`
-                    : 'opacity-60 border-slate-800/80 cursor-not-allowed'
+                    : 'opacity-60 border-[#263449] cursor-not-allowed'
                 }`}
                 onClick={() => {
                   if (opt.isUnlocked) {
@@ -115,35 +108,35 @@ export const RouteModal: React.FC<RouteModalProps> = ({
                       {opt.title}
                     </span>
                     {!opt.isUnlocked && (
-                      <span className="inline-flex items-center gap-1 text-xs text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+                      <span className="inline-flex items-center gap-1 text-xs text-[#F43F5E] bg-[#F43F5E]/10 px-2 py-0.5 rounded-full border border-[#F43F5E]/20">
                         <Lock className="w-3 h-3" /> Locked
                       </span>
                     )}
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed mb-4">{opt.description}</p>
+                  <p className="text-xs text-[#94A3B8] leading-relaxed mb-4">{opt.description}</p>
 
-                  <div className="space-y-2 text-xs border-t border-slate-800/80 pt-3 mb-4">
+                  <div className="space-y-2 text-xs border-t border-[#263449] pt-3 mb-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Difficulty:</span>
-                      <span className="font-semibold text-slate-200 uppercase text-[10px] tracking-wide">
+                      <span className="text-[#64748B]">Difficulty:</span>
+                      <span className="font-semibold text-[#F8FAFC] uppercase text-[10px] tracking-wide">
                         {opt.difficulty}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Reward:</span>
-                      <span className="text-emerald-400 font-medium">{opt.movementReward}</span>
+                      <span className="text-[#64748B]">Reward:</span>
+                      <span className="text-[#10B981] font-medium">{opt.movementReward}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Risk / Penalty:</span>
-                      <span className="text-rose-400 font-medium">{opt.possiblePenalty}</span>
+                      <span className="text-[#64748B]">Risk / Penalty:</span>
+                      <span className="text-[#F43F5E] font-medium">{opt.possiblePenalty}</span>
                     </div>
                   </div>
                 </div>
 
                 <div>
                   {!opt.isUnlocked && opt.lockedReason && (
-                    <div className="mb-3 p-2 rounded-lg bg-rose-950/40 border border-rose-800/40 text-[11px] text-rose-300">
+                    <div className="mb-3 p-2 rounded-lg bg-[#F43F5E]/10 border border-[#F43F5E]/30 text-[11px] text-[#F43F5E]">
                       <strong>Requirements:</strong> {opt.lockedReason}
                     </div>
                   )}
@@ -157,12 +150,12 @@ export const RouteModal: React.FC<RouteModalProps> = ({
                         onClose();
                       }
                     }}
-                    className={`w-full py-2.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-colors ${
+                    className={`w-full py-2.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer ${
                       opt.isUnlocked
                         ? isSelected
-                          ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30'
-                          : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
-                        : 'bg-slate-800/50 text-slate-500 border border-slate-800 cursor-not-allowed'
+                          ? 'bg-[#2563EB] hover:bg-[#1d4ed8] text-[#F8FAFC] shadow-lg shadow-[#2563EB]/25'
+                          : 'bg-[#080D1A] hover:bg-[#111827] text-[#F8FAFC] border border-[#263449]'
+                        : 'bg-[#080D1A] text-[#64748B] border border-[#263449] cursor-not-allowed'
                     }`}
                   >
                     {opt.isUnlocked ? (
