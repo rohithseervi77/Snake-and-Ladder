@@ -32,6 +32,7 @@ export interface PersistentGameState {
   topicMasteryMap: Record<string, TopicMasteryScore>;
   energy: number;
   activeShield: boolean;
+  activeSecondChance: boolean;
   activeLadderBoost: boolean;
   misconceptions: MisconceptionRecord[];
   futureEchoes: FutureEchoChallenge[];
@@ -40,6 +41,9 @@ export interface PersistentGameState {
   completedMutations: string[];
   currentRouteType: RouteType;
   activeRouteTile: number | null;
+  questionsAttempted: number;
+  questionsCorrect: number;
+  energyUsed: number;
 }
 
 const STORAGE_KEY_V3 = 'code_and_ladders_save_v3';
@@ -96,6 +100,7 @@ export function getInitialGameState(): PersistentGameState {
     topicMasteryMap: createInitialMasteryMap(),
     energy: STARTING_ENERGY,
     activeShield: false,
+    activeSecondChance: false,
     activeLadderBoost: false,
     misconceptions: [],
     futureEchoes: [],
@@ -104,6 +109,9 @@ export function getInitialGameState(): PersistentGameState {
     completedMutations: [],
     currentRouteType: 'knowledge',
     activeRouteTile: null,
+    questionsAttempted: 0,
+    questionsCorrect: 0,
+    energyUsed: 0
   };
 }
 
@@ -150,6 +158,7 @@ export function loadGameState(): PersistentGameState {
           : initial.topicMasteryMap,
         energy: typeof parsed.energy === 'number' ? parsed.energy : initial.energy,
         activeShield: Boolean(parsed.activeShield),
+        activeSecondChance: Boolean(parsed.activeSecondChance),
         activeLadderBoost: Boolean(parsed.activeLadderBoost),
         misconceptions: Array.isArray(parsed.misconceptions) ? parsed.misconceptions : [],
         futureEchoes: Array.isArray(parsed.futureEchoes) ? parsed.futureEchoes : [],
@@ -158,6 +167,9 @@ export function loadGameState(): PersistentGameState {
         completedMutations: Array.isArray(parsed.completedMutations) ? parsed.completedMutations : [],
         currentRouteType: parsed.currentRouteType || 'knowledge',
         activeRouteTile: parsed.activeRouteTile || null,
+        questionsAttempted: typeof parsed.questionsAttempted === 'number' ? parsed.questionsAttempted : 0,
+        questionsCorrect: typeof parsed.questionsCorrect === 'number' ? parsed.questionsCorrect : 0,
+        energyUsed: typeof parsed.energyUsed === 'number' ? parsed.energyUsed : 0,
       };
     }
   } catch (err) {

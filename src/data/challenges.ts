@@ -1,6 +1,7 @@
 import { Challenge } from '../types/challenge';
+import { ALL_CURRICULUM_CHALLENGES } from './challenges/index';
 
-export const CHALLENGES: Challenge[] = [
+export const BASE_CHALLENGES: Challenge[] = [
   // --- SQUARE 1: Arrays (Manipulation) ---
   {
     id: 'c-1-mcq',
@@ -840,6 +841,12 @@ function processBatch() {
   }
 ];
 
+// Combine all 100 curriculum challenges with base challenges
+export const CHALLENGES: Challenge[] = [
+  ...ALL_CURRICULUM_CHALLENGES,
+  ...BASE_CHALLENGES.filter(bc => !ALL_CURRICULUM_CHALLENGES.some(ac => ac.id === bc.id))
+];
+
 // Helper to retrieve challenge by ID
 export const CHALLENGE_MAP = new Map<string, Challenge>();
 CHALLENGES.forEach(c => CHALLENGE_MAP.set(c.id, c));
@@ -862,11 +869,20 @@ export class ChallengeRegistry {
     this.squareAttemptHistory.set(squareId, existing);
   }
 
-  public getChallengeForSquare(squareId: number, allowRevision: boolean = true): Challenge {
-    // 1. Direct specific challenge for square
-    const candidates = CHALLENGES.filter(c => c.squareId === squareId);
+  public getChallengeForSquare(squareId: number, allowRevision: boolean = true, difficultyMode: string = 'intermediate'): Challenge {
+    // 1. Direct specific challenges for square
+    let candidates = CHALLENGES.filter(c => c.squareId === squareId);
     
     if (candidates.length > 0) {
+      // If difficulty mode specified, prefer matching difficulty
+      if (difficultyMode === 'beginner') {
+        const easyMed = candidates.filter(c => c.difficulty === 'easy' || c.difficulty === 'medium');
+        if (easyMed.length > 0) candidates = easyMed;
+      } else if (difficultyMode === 'interview_ready') {
+        const hardExp = candidates.filter(c => c.difficulty === 'hard' || c.difficulty === 'expert');
+        if (hardExp.length > 0) candidates = hardExp;
+      }
+
       // Find unattempted
       const unattempted = candidates.filter(c => !this.attemptedIds.has(c.id));
       if (unattempted.length > 0) {
@@ -877,7 +893,7 @@ export class ChallengeRegistry {
       }
     }
 
-    // 2. Synthesize fallback tailored challenge for this square's topic
+    // 2. Synthesize fallback tailored challenge for this square's topic if ever needed
     return this.synthesizeSquareChallenge(squareId);
   }
 

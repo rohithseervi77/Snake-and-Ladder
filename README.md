@@ -7,76 +7,91 @@
 
 ## 🌟 Overview & Vision
 
-**Code & Ladders** reimagines the classic 100-square board game into a modern, production-quality educational gaming experience. Rather than dry algorithmic flashcards, players roll the dice, traverse through 10 curated curriculum stages, encounter **Optimization Ladders** that test algorithmic efficiency leaps (e.g. $O(N^2) \to O(N)$), and navigate **Debugging Snakes** that simulate real-world edge cases and runtime pitfalls (off-by-one errors, recursion stack overflows, pointer severing, and operator precedence traps).
+**Code & Ladders** transforms the classic 100-square board game into a modern, academically rigorous educational gaming platform. Rather than dry algorithmic flashcards, players roll the dice, traverse 10 curated curriculum stages, encounter **Optimization Ladders** that test algorithmic efficiency leaps (e.g. $O(N^2) \to O(N)$), navigate **Intelligent Snakes** that test edge-case diagnosis, cast **Algorithm Energy Abilities**, and battle **Regional Bosses** culminating at Tile 100.
 
 ---
 
 ## 🚀 Key Features
 
-### 1. 💯 100-Square Data-Driven Curriculum
-- Exactly 100 uniquely numbered squares with structured metadata, difficulty ratings, checkpoint criteria, and prerequisite chains.
-- Spans 10 distinct DSA stages:
-  1. **Squares 1–10**: Programming Foundations (Variables, Conditionals, Loops, Functions, I/O)
-  2. **Squares 11–20**: Arrays & Strings (Traversal, Two-Pointers, Sliding Window)
-  3. **Squares 21–30**: Lists, Stacks & Queues (Pointers, LIFO/FIFO, Ring Buffers, Expression Evaluation)
-  4. **Squares 31–40**: Searching & Sorting (Binary Search, Merge Sort, Quick Sort, Big-O Analysis)
-  5. **Squares 41–50**: Trees & Heaps (Hierarchical Traversals, Heaps, BST Invariants)
-  6. **Squares 51–60**: Hashing, Recursion & Backtracking (Hash Maps, Combinatorial Trees)
-  7. **Squares 61–70**: Graph Algorithms (BFS/DFS, Topological Sort, Dijkstra, Prim/Kruskal)
-  8. **Squares 71–80**: Greedy Algorithms & Dynamic Programming (Optimal Substructure, Memoization, Grid DP)
-  9. **Squares 81–90**: Advanced DSA (Disjoint-Set Union, Segment Trees, AVL Trees, Bitmask DP)
-  10. **Squares 91–100**: Interview Mastery & Grandmaster Corridor (System Design, KMP, Knapsack, Finish)
+### 1. 💯 100-Square Fully Authored Curriculum
+- Exactly 100 uniquely authored questions across all 100 squares (no generic fallback templates).
+- Every single challenge contains:
+  - 3-Tier Progressive Hints (Tier 1: Concept, Tier 2: Algorithmic Pattern, Tier 3: Concrete Code Anchor)
+  - Clear, academic explanation of correctness
+  - 🎯 **Core Learning Objective**
+  - ⚠️ **Common Trap / Pitfall**
+- Spans 10 distinct curriculum stages:
+  1. **Squares 1–10**: Foundations & Array Contiguous Memory Invariants
+  2. **Squares 11–20**: Two-Pointers, Sliding Window, Prefix Sums, Kadane's Algorithm
+  3. **Squares 21–30**: Linear Structures, Fast/Slow Pointer Cycle Detection, Monotonic Stacks
+  4. **Squares 31–40**: Searching & Sorting (Binary Search Invariants, MergeSort, QuickSort, Quickselect)
+  5. **Squares 41–50**: Trees & BST Invariants, Lowest Common Ancestor, AVL Balance Factors
+  6. **Squares 51–60**: Binary Heaps, Dual-Heap Median Finder, Combinatorial Backtracking
+  7. **Squares 61–70**: Graph Algorithms (BFS Shortest Path, Kahn's In-Degree, Dijkstra, DSU Kruskal)
+  8. **Squares 71–80**: Greedy Choice Property, 0/1 Knapsack, Longest Common Subsequence
+  9. **Squares 81–90**: Bitwise XOR Invariants, Brian Kernighan, Grid DP, Interval DP
+  10. **Squares 91–100**: Trie, Monotonic Deque, Segment Trees, Tarjan's Bridges, Final Titan Boss
 
-### 2. 🪜 Algorithmic Optimization Ladders
-Ladders are not arbitrary shortcuts—they reward genuine algorithmic optimization:
-- **Square 10 → 28**: Modular Abstraction & Class Encapsulation Leap
-- **Square 36 → 46**: Divide-and-Conquer Breakthrough ($O(N^2)$ Bubble Sort $\to$ $O(N \log N)$ Merge Sort)
-- **Square 54 → 67**: Optimal Substructure Acceleration (Greedy Intervals $\to$ Memoized String DP)
-- **Square 71 → 88**: State-Space Minimax Alpha-Beta Pruning Leap
-- **Square 82 → 92**: Near-Linear Connectivity Leap (Union-Find with Path Compression & Rank)
+### 2. 🛡️ Anti-Exploit Consequence Integrity
+- **No Penalty Bypass**: Closing the modal via the `X` button, Escape key, or background click never evades consequences.
+- If a mistake is submitted, closing applies the calculated backward movement and economy penalty.
+- Unsubmitted attempts require an explicit concession confirmation that applies the standard mistake penalty.
 
-### 3. 🐍 Debugging Snakes & Edge-Case Traps
-Snakes simulate treacherous edge-case failures and runtime bugs:
-- **Square 14 → 7**: Variable Scope Shadowing Trap (accidental global counter mutation)
-- **Square 19 → 11**: Bitwise Operator Precedence Pitfall (`num & 1 === 0` evaluation bug)
-- **Square 50 → 42**: Off-by-One Array Boundary Violation (`arr[arr.length]` out-of-bounds crash)
-- **Square 63 → 57**: Severed Pointer Chain in Linked List In-Place Reversal
-- **Square 96 → 85**: Degenerate Skewed Tree Call Stack Overflow ($100,000$ recursion depth)
+### 3. ⚡ 6 Functional Energy Abilities
+Cast abilities powered by algorithmic energy earned through correct solutions:
+- **🛡️ Invariant Shield (25⚡)**: Completely absorbs the next backward slide or snake trap.
+- **⚡ Second Chance (30⚡)**: Grants 1 instant free retry on an incorrect attempt before any penalty applies.
+- **🔍 Debug Scan (20⚡)**: Eliminates 1 incorrect distractor choice in the current challenge.
+- **💡 Progressive Hints (Free / 10⚡ / 15⚡)**: Unlocks 3 tiers of progressive concept and code clues.
+- **🪜 Optimization Overdrive (15⚡)**: Supercharges the next ladder climbed with $+2$ bonus tiles.
+- **🎲 Quantum Reroll (15⚡)**: Rerolls the dice when hazardous traps lurk ahead.
 
-### 4. 🧠 Adaptive Learning Engine
-- Transparent, deterministic learner model tracking attempts, accuracy, streaks, and subskills (`conceptual`, `tracing`, `implementation`, `complexity`, `optimization`, `debugging`).
-- Generates **explainable recommendations** with concrete evidence:
-  > *"Recommended because your recent accuracy in debugging is 0% across 2 attempts. Review loop boundary invariants on Square 14."*
+### 4. 🕹️ Formal Game State Machine & Event Queue
+- A deterministic finite state machine (`GamePhase`: `IDLE`, `ROLLING`, `MOVING`, `LANDING`, `CHALLENGE`, `EVALUATING`, `EVENT`, `REWARD`, `VICTORY`, `GAME_OVER`).
+- Eliminates race conditions and double-rolling by guarding actions strictly in valid phases.
+- **Sequential Event Queue**: Prevents overlapping modals when landing on multi-event tiles (e.g. Decision Crossroads + Square Challenge, Board Mutation + Challenge).
 
-### 5. 🔁 SuperMemo-2 (SM-2) Spaced Repetition
-- Calculates spaced review intervals based on learner retrieval quality ($q \in [0, 5]$).
-- Interleaves previously mastered topics to combat the forgetting curve.
+### 5. 👑 Tile 100 Grandmaster Boss & Victory Transition
+- Tile 100 features a climactic boss encounter against the **Dynamic Programming Overlord**.
+- Defeating the final boss triggers an immediate victory transition with particle celebrations and a complete post-game analysis.
 
-### 6. 🤖 Live-Board Autoplay Demonstration Mode
-- Demonstrates the **actual 100-square board** live (player marker moves square by square, animated dice roll, opens challenge previews, triggers snakes/ladders).
-- Supports 3 speeds: **1x**, **2x**, **4x**.
-- Controls: **Start**, **Pause**, **Resume**, **Stop**.
-- **Mastery Integrity**: Autoplay awards **0 XP** and does **not** grant fake exam mastery.
+### 6. 📊 Post-Game Analysis & Learning Dashboard
+- Detailed statistical breakdown:
+  - Final XP & Coin Balance
+  - Accuracy Rate & Total Questions Solved vs Failed
+  - Longest Correct Streak & Turns Completed
+  - Ladders Climbed vs Traps Encountered
+  - Algorithm Energy Cast
+- **Cognitive Mastery Analysis**:
+  - Highlights Top 2 Demonstrated Strengths
+  - Recommends Top 2 Topics to Practice for interview readiness
 
-### 7. 🔊 Web Audio API Synthesizer
-- Built-in zero-dependency sound engine synthesizing rolls, step clicks, ladder fanfares, snake slides, and level-up chimes using Web Audio API oscillators.
-- Fully controllable volume slider and mute toggle.
+### 7. 🪜 Algorithmic Optimization Ladders
+- Compare brute-force solutions ($O(N^2)$) against optimal formulations ($O(N)$) side-by-side with complete code traces.
+- Choose between Safe routes and Expert routes for higher rewards.
 
-### 8. 📱 Responsive Indie Gaming Interface
-- Mobile drawer / bottom sheet for small viewports ($320\text{px} - 768\text{px}$).
-- Serpentine 10x10 grid with clean pastel palette and dynamic SVG vector paths.
-- Accessible focus indicators, keyboard navigation, and reduced-motion toggle.
+### 8. 🐍 Intelligent Debugging Snakes
+- Diagnose real-world bugs (off-by-one errors, severed pointers, operator precedence).
+- Choose between accepting the slide, Concept Recovery ($+1$ tile), or Debugging Recovery ($+3$ tiles).
+
+### 9. 🤖 Live-Board Autoplay Demonstration Mode
+- Demonstrates actual board traversal with real step animations and questions.
+- Supports 3 speeds: 1x, 2x, 4x.
+- Automatically pauses safely upon victory.
+
+### 10. 🔊 Web Audio API Synthesizer
+- Built-in zero-dependency procedural audio engine synthesizing rolls, step clicks, ladder fanfares, and level-up chimes.
 
 ---
 
 ## 🛠️ Tech Stack & Architecture
 
 - **Runtime & Language**: Node.js v24+, TypeScript 5+, React 19
-- **Build Tool**: Vite 8 (builds in $< 500\text{ms}$)
-- **Styling**: Tailwind CSS v4 with custom dark indie-game palette
+- **Build Tool**: Vite 8
+- **Styling**: Tailwind CSS v4 with custom dark aesthetic
 - **Icons**: Lucide React
 - **Celebrations**: Canvas-Confetti
-- **Testing**: Vitest runner (19 automated unit & integration tests)
+- **Testing**: Vitest (94 automated unit & integration tests)
 
 ---
 
@@ -89,7 +104,7 @@ Snakes simulate treacherous edge-case failures and runtime bugs:
 ### Installation
 ```bash
 # Clone the repository
-git clone <YOUR_REPO_URL>
+git clone https://github.com/rohithseervi77/Snake-and-Ladder.git
 cd "Snake and ladder"
 
 # Install dependencies
@@ -98,41 +113,33 @@ npm install
 
 ### Development
 ```bash
-# Start local development server with Hot Module Replacement
+# Start local development server
 npm run dev
 ```
-Open your browser at `http://localhost:5173`.
+Open `http://localhost:5173`.
 
 ### Automated Testing
 ```bash
-# Run Vitest test suite
+# Run Vitest test suite (94 tests)
 npm test
 ```
 
 ### Production Build
 ```bash
-# Typecheck and compile optimized production bundle
+# Typecheck and compile optimized bundle
 npm run build
-
-# Preview production build locally
-npm run preview
 ```
 
 ---
 
-## 🧪 Automated Test Verification
+## 🧪 Test Verification
 
-The suite covers:
-- **Game Logic**: Dice boundaries ($1 \dots 6$), serpentine coordinate inversion, step-by-step paths, mandatory checkpoint stops, bounce-back boundaries, and win conditions.
-- **Curriculum Completeness**: All 100 squares validated, 10 stages verified, challenge IDs unique, and anti-repetition registry checked.
-- **Adaptive Engine**: Bayesian-style learner profile updates, explainable recommendation generation, SM-2 interval expansion, and failure resets.
-
----
-
-## 🔒 Security & Persistence
-- Single-device persistence is stored safely via `localStorage`.
-- No sensitive credentials, tokens, or external API secrets are required or stored.
-- A safe **Reset Game** modal prevents accidental loss of progress.
+94 unit and integration tests across 7 suites verify:
+- **Curriculum Completeness**: 100 uniquely authored challenges, 3-tier hints, learning objectives, and common mistake tags.
+- **Anti-Exploit Security**: Penalty enforcement on modal closes and concessions.
+- **Energy Abilities**: Invariant Shield deflection, Second Chance retries, Debug Scan option elimination.
+- **State Machine**: Phase transition validation and prevention of double-rolling.
+- **Post-Game Dashboard**: Accuracy calculation and topic recommendations.
 
 ---
 

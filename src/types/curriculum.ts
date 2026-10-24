@@ -1,6 +1,6 @@
 import { StageId, SquareType } from './game';
 
-export type DifficultyLevel = 'easy' | 'medium' | 'hard';
+export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'expert';
 
 export type SquareColorCategory = 
   | 'emerald' // Programming Foundations & Basic Arrays

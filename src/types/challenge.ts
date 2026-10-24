@@ -4,10 +4,13 @@ export type ChallengeType =
   | 'conceptual_mcq'
   | 'output_prediction'
   | 'dry_run_trace'
+  | 'code_trace'
   | 'find_bug'
+  | 'bug_hunt'
   | 'identify_edge_case'
   | 'time_complexity'
   | 'space_complexity'
+  | 'complexity_choice'
   | 'complete_code'
   | 'select_data_structure'
   | 'optimize_algorithm'
@@ -17,6 +20,7 @@ export type ChallengeType =
 export type SkillCategory = 
   | 'conceptual'
   | 'tracing'
+  | 'dry_run'
   | 'implementation'
   | 'complexity'
   | 'optimization'
@@ -92,6 +96,8 @@ export interface Challenge {
   
   hints: string[];
   explanation: string;
+  learningObjective?: string;
+  commonMistake?: string;
   tags: string[];
 }
 

@@ -17,7 +17,7 @@ import { SQUARE_MAP, CURRICULUM_100 } from '../data/curriculum100';
 import { Challenge, ChallengeAttemptResult } from '../types/challenge';
 import { recordChallengeAttempt } from '../engine/adaptiveEngine';
 import { scheduleTopicRevision } from '../engine/spacedRevision';
-import { AutoplaySpeed } from '../types/game';
+import { AutoplaySpeed, GamePhase } from '../types/game';
 import { 
   calculateLevelInfo, 
   calculateCorrectMovement, 
@@ -53,9 +53,11 @@ import { createMisconceptionRecord, generateEchoChallenge } from '../engine/futu
 export function useGameState() {
   const [gameState, setGameState] = useState<PersistentGameState>(() => loadGameState());
   const [displayedPosition, setDisplayedPosition] = useState<number>(() => gameState.currentPosition);
+  const [gamePhase, setGamePhase] = useState<GamePhase>('IDLE');
   const [isRolling, setIsRolling] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   const [lastDiceRoll, setLastDiceRoll] = useState<number>(3);
+  const eventQueueRef = useRef<Array<() => void>>([]);
   
   // Standard Modals
   const [activeChallenge, setActiveChallenge] = useState<Challenge | null>(null);
@@ -224,12 +226,48 @@ export function useGameState() {
   }, [gameState.futureEchoes, showNotification]);
 
   /**
+   * Sequential Event Queue Processor to prevent overlapping modals
+   */
+  const processNextEvent = useCallback(() => {
+    if (eventQueueRef.current.length > 0) {
+      const nextEvent = eventQueueRef.current.shift();
+      if (nextEvent) {
+        nextEvent();
+      }
+    } else {
+      if (gameState.currentPosition >= 100) {
+        if (gameState.defeatedBosses.includes(100)) {
+          sound.playStageComplete();
+          confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
+          setIsVictoryModalOpen(true);
+          setGamePhase('VICTORY');
+        } else {
+          const finalBoss = BOSS_BATTLES.find(b => b.tileNumber === 100);
+          if (finalBoss) {
+            setActiveBossBattle(finalBoss);
+            setIsBossModalOpen(true);
+            setGamePhase('EVENT');
+          } else {
+            sound.playStageComplete();
+            confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
+            setIsVictoryModalOpen(true);
+            setGamePhase('VICTORY');
+          }
+        }
+      } else {
+        setGamePhase('IDLE');
+      }
+    }
+  }, [gameState.currentPosition, gameState.defeatedBosses]);
+
+  /**
    * Main player dice roll handler
    */
   const handleRollDice = useCallback(() => {
-    if (isRolling || isMoving || isAutoplayRunning || isChallengeOpen) return;
+    if (gamePhase !== 'IDLE' || isRolling || isMoving || isAutoplayRunning) return;
 
     setIsRolling(true);
+    setGamePhase('ROLLING');
     sound.playDiceRoll();
 
     const rollValue = rollDice();
@@ -237,32 +275,44 @@ export function useGameState() {
 
     setTimeout(() => {
       setIsRolling(false);
+      setGamePhase('MOVING');
+      setIsMoving(true);
+
       const passedSet = new Set(gameState.passedCheckpoints);
       const plan = computeMovementPlan(gameState.currentPosition, rollValue, passedSet);
-
       const landingTile = plan.targetSquareBeforeTransitions;
 
       // Execute primary dice roll movement
       animateStepPath(gameState.currentPosition, landingTile, () => {
+        setIsMoving(false);
+        setGamePhase('LANDING');
         const newTurns = gameState.turnsCompleted + 1;
 
+        setGameState(prev => ({
+          ...prev,
+          currentPosition: landingTile,
+          turnsCompleted: newTurns,
+          completedSquares: Array.from(new Set([...prev.completedSquares, landingTile]))
+        }));
+
+        // Build sequential event queue for this landing tile
+        const events: Array<() => void> = [];
+
         // 1. Check for Regional Boss Encounter
-        const isBoss = checkBossBattle(landingTile);
-        if (isBoss) {
-          setGameState(prev => ({
-            ...prev,
-            currentPosition: landingTile,
-            turnsCompleted: newTurns,
-            completedSquares: Array.from(new Set([...prev.completedSquares, landingTile]))
-          }));
-          return;
+        const boss = BOSS_BATTLES.find(b => b.tileNumber === landingTile);
+        const hasBoss = boss && !gameState.defeatedBosses.includes(landingTile);
+        if (hasBoss) {
+          events.push(() => {
+            setActiveBossBattle(boss);
+            setIsBossModalOpen(true);
+            setGamePhase('EVENT');
+          });
         }
 
         // 2. Check for Intelligent Snake
         const intelligentSnake = INTELLIGENT_SNAKE_MAP.get(landingTile);
         if (intelligentSnake) {
           if (gameState.activeShield) {
-            // Invariant Shield deflects automatically
             sound.playSuccess();
             showNotification({
               type: 'bonus',
@@ -272,96 +322,111 @@ export function useGameState() {
             setGameState(prev => ({
               ...prev,
               activeShield: false,
-              currentPosition: landingTile,
-              turnsCompleted: newTurns,
-              snakesEncountered: prev.snakesEncountered + 1,
-              completedSquares: Array.from(new Set([...prev.completedSquares, landingTile]))
+              snakesEncountered: prev.snakesEncountered + 1
             }));
-            return;
+          } else {
+            events.push(() => {
+              setActiveIntelligentSnake(intelligentSnake);
+              setIsSnakeRecoveryModalOpen(true);
+              setGameState(prev => ({
+                ...prev,
+                snakesEncountered: prev.snakesEncountered + 1
+              }));
+              setGamePhase('EVENT');
+            });
           }
-
-          setActiveIntelligentSnake(intelligentSnake);
-          setIsSnakeRecoveryModalOpen(true);
-          setGameState(prev => ({
-            ...prev,
-            turnsCompleted: newTurns,
-            snakesEncountered: prev.snakesEncountered + 1
-          }));
-          return;
         }
 
         // 3. Check for Optimization Ladder
         const optimizationLadder = OPTIMIZATION_LADDER_MAP.get(landingTile);
         if (optimizationLadder) {
-          setActiveOptimizationLadder(optimizationLadder);
-          setIsLadderChoiceModalOpen(true);
-          setGameState(prev => ({
-            ...prev,
-            turnsCompleted: newTurns,
-            laddersClimbed: prev.laddersClimbed + 1
-          }));
-          return;
+          events.push(() => {
+            setActiveOptimizationLadder(optimizationLadder);
+            setIsLadderChoiceModalOpen(true);
+            setGameState(prev => ({
+              ...prev,
+              laddersClimbed: prev.laddersClimbed + 1
+            }));
+            setGamePhase('EVENT');
+          });
         }
 
         // 4. Check for Decision Crossroads Tile (15, 30, 60, 75)
         if (DECISION_TILE_MAP.has(landingTile) && gameState.activeRouteTile !== landingTile) {
-          triggerDecisionCrossroads(landingTile);
+          events.push(() => {
+            triggerDecisionCrossroads(landingTile);
+            setGamePhase('EVENT');
+          });
         }
 
         // 5. Check for Turn-based Board Mutation
-        const isMutation = checkBoardMutation(newTurns);
-        if (isMutation) {
-          setGameState(prev => ({
-            ...prev,
-            currentPosition: landingTile,
-            turnsCompleted: newTurns,
-            completedSquares: Array.from(new Set([...prev.completedSquares, landingTile]))
-          }));
-          return;
+        const mutation = BOARD_MUTATIONS.find(m => m.triggerTurn === newTurns);
+        if (mutation && !gameState.completedMutations.includes(mutation.id)) {
+          events.push(() => {
+            setActiveMutation(mutation);
+            setIsMutationModalOpen(true);
+            setGamePhase('EVENT');
+          });
         }
 
         // 6. Check for Future Echo or Standard Challenge
-        const echoChallenge = checkFutureEcho(landingTile);
-        const targetSquare = SQUARE_MAP.get(landingTile) || CURRICULUM_100[0];
-        const challenge = echoChallenge || challengeRegistryRef.current.getChallengeForSquare(targetSquare.id);
+        if (landingTile < 100 && gameState.settings.autoOpenChallenge && !hasBoss) {
+          const echoChallenge = checkFutureEcho(landingTile);
+          const challenge = echoChallenge || challengeRegistryRef.current.getChallengeForSquare(
+            landingTile, 
+            true, 
+            gameState.settings.difficulty
+          );
 
-        const isWin = landingTile >= 100;
-        if (isWin) {
-          sound.playStageComplete();
-          confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
-          setIsVictoryModalOpen(true);
+          events.push(() => {
+            setActiveChallenge(challenge);
+            setIsChallengeOpen(true);
+            setGamePhase('CHALLENGE');
+          });
         }
 
-        setGameState(prev => ({
-          ...prev,
-          currentPosition: landingTile,
-          turnsCompleted: newTurns,
-          completedSquares: Array.from(new Set([...prev.completedSquares, landingTile]))
-        }));
-
-        if (gameState.settings.autoOpenChallenge && !isWin) {
-          setActiveChallenge(challenge);
-          setIsChallengeOpen(true);
+        // 7. Victory / Final Boss Event
+        if (landingTile >= 100) {
+          events.push(() => {
+            if (gameState.defeatedBosses.includes(100)) {
+              sound.playStageComplete();
+              confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
+              setIsVictoryModalOpen(true);
+              setGamePhase('VICTORY');
+            } else {
+              const finalBoss = BOSS_BATTLES.find(b => b.tileNumber === 100);
+              if (finalBoss) {
+                setActiveBossBattle(finalBoss);
+                setIsBossModalOpen(true);
+                setGamePhase('EVENT');
+              }
+            }
+          });
         }
+
+        eventQueueRef.current = events;
+        processNextEvent();
       }, false);
     }, 550);
   }, [
+    gamePhase,
     isRolling, 
     isMoving, 
     isAutoplayRunning, 
-    isChallengeOpen, 
     gameState.currentPosition, 
     gameState.passedCheckpoints, 
     gameState.activeShield,
     gameState.turnsCompleted,
     gameState.activeRouteTile,
     gameState.settings.autoOpenChallenge, 
+    gameState.settings.difficulty,
+    gameState.defeatedBosses,
+    gameState.completedMutations,
     animateStepPath, 
-    checkBossBattle,
-    checkBoardMutation,
     checkFutureEcho,
     triggerDecisionCrossroads,
-    showNotification
+    showNotification,
+    processNextEvent
   ]);
 
   /**
@@ -380,6 +445,8 @@ export function useGameState() {
       }
 
       sound.playSuccess();
+      const abilityCost = abilityId === 'shield' ? 25 : abilityId === 'second_chance' ? 30 : abilityId === 'debug_scan' ? 20 : abilityId === 'ladder_boost' ? 15 : abilityId === 'reroll' ? 15 : 10;
+      const newEnergyUsed = (prev.energyUsed || 0) + abilityCost;
 
       if (abilityId === 'shield') {
         showNotification({
@@ -390,7 +457,22 @@ export function useGameState() {
         return {
           ...prev,
           energy: newEnergy,
+          energyUsed: newEnergyUsed,
           activeShield: true
+        };
+      }
+
+      if (abilityId === 'second_chance') {
+        showNotification({
+          type: 'bonus',
+          title: 'SECOND CHANCE PRIMED!',
+          subtitle: 'The next incorrect challenge will grant a free retry without penalty.'
+        });
+        return {
+          ...prev,
+          energy: newEnergy,
+          energyUsed: newEnergyUsed,
+          activeSecondChance: true
         };
       }
 
@@ -403,11 +485,13 @@ export function useGameState() {
         return {
           ...prev,
           energy: newEnergy,
+          energyUsed: newEnergyUsed,
           activeLadderBoost: true
         };
       }
 
       if (abilityId === 'reroll') {
+        if (gamePhase !== 'IDLE') return prev;
         showNotification({
           type: 'bonus',
           title: 'QUANTUM REROLL!',
@@ -416,16 +500,44 @@ export function useGameState() {
         setTimeout(() => handleRollDice(), 100);
         return {
           ...prev,
-          energy: newEnergy
+          energy: newEnergy,
+          energyUsed: newEnergyUsed
+        };
+      }
+
+      if (abilityId === 'debug_scan') {
+        showNotification({
+          type: 'bonus',
+          title: 'DEBUG SCAN ACTIVE!',
+          subtitle: 'Eliminated one incorrect answer choice from the challenge.'
+        });
+        return {
+          ...prev,
+          energy: newEnergy,
+          energyUsed: newEnergyUsed
+        };
+      }
+
+      if (abilityId === 'hint') {
+        showNotification({
+          type: 'bonus',
+          title: 'HINT TIER UNLOCKED!',
+          subtitle: 'Deeper algorithmic reasoning and code anchor revealed.'
+        });
+        return {
+          ...prev,
+          energy: newEnergy,
+          energyUsed: newEnergyUsed
         };
       }
 
       return {
         ...prev,
-        energy: newEnergy
+        energy: newEnergy,
+        energyUsed: newEnergyUsed
       };
     });
-  }, [showNotification, handleRollDice]);
+  }, [gamePhase, showNotification, handleRollDice]);
 
   /**
    * Route selection handler
@@ -444,7 +556,9 @@ export function useGameState() {
       title: `${routeType.toUpperCase()} ROUTE ENGAGED!`,
       subtitle: `Your path is now calibrated for ${routeType} challenges!`
     });
-  }, [currentDecisionTile, showNotification]);
+
+    setTimeout(() => processNextEvent(), 300);
+  }, [currentDecisionTile, showNotification, processNextEvent]);
 
   /**
    * Snake Recovery choice handler
@@ -480,8 +594,9 @@ export function useGameState() {
         currentPosition: finalPos,
         completedSquares: Array.from(new Set([...prev.completedSquares, finalPos]))
       }));
+      setTimeout(() => processNextEvent(), 200);
     });
-  }, [activeIntelligentSnake, animateStepPath, showNotification]);
+  }, [activeIntelligentSnake, animateStepPath, showNotification, processNextEvent]);
 
   /**
    * Ladder Choice handler (Safe vs Expert)
@@ -515,8 +630,9 @@ export function useGameState() {
         energy: addEnergy(prev.energy, option === 'expert' ? 3 : 1),
         completedSquares: Array.from(new Set([...prev.completedSquares, targetTile]))
       }));
+      setTimeout(() => processNextEvent(), 200);
     });
-  }, [activeOptimizationLadder, gameState.activeLadderBoost, animateStepPath, showNotification]);
+  }, [activeOptimizationLadder, gameState.activeLadderBoost, animateStepPath, showNotification, processNextEvent]);
 
   /**
    * Boss Battle Victory
@@ -541,7 +657,18 @@ export function useGameState() {
 
     setIsBossModalOpen(false);
     setActiveBossBattle(null);
-  }, [showNotification]);
+
+    if (tileNumber >= 100) {
+      setTimeout(() => {
+        sound.playStageComplete();
+        confetti({ particleCount: 120, spread: 120, origin: { y: 0.5 } });
+        setIsVictoryModalOpen(true);
+        setGamePhase('VICTORY');
+      }, 400);
+    } else {
+      setTimeout(() => processNextEvent(), 300);
+    }
+  }, [showNotification, processNextEvent]);
 
   /**
    * BugBot Rival Victory
@@ -565,7 +692,8 @@ export function useGameState() {
 
     setIsBugBotModalOpen(false);
     setActiveBugBotScenario(null);
-  }, [showNotification]);
+    setTimeout(() => processNextEvent(), 300);
+  }, [showNotification, processNextEvent]);
 
   /**
    * Board Mutation Resolution
@@ -612,8 +740,9 @@ export function useGameState() {
         currentPosition: targetPos,
         completedSquares: Array.from(new Set([...prev.completedSquares, targetPos]))
       }));
+      setTimeout(() => processNextEvent(), 200);
     });
-  }, [activeMutation, gameState.currentPosition, animateStepPath, showNotification]);
+  }, [activeMutation, gameState.currentPosition, animateStepPath, showNotification, processNextEvent]);
 
   /**
    * Start challenge on current or selected square
@@ -836,10 +965,13 @@ export function useGameState() {
           coins: newCoins,
           energy: newEnergy,
           activeShield: !result.isCorrect && prev.activeShield ? false : prev.activeShield,
+          activeSecondChance: !result.isCorrect && prev.activeSecondChance ? false : prev.activeSecondChance,
           streak: newStreak,
           longestStreak: newLongest,
           recoveryStreak: newRecoveryStreak,
           consecutiveIncorrect: newConsecutiveIncorrect,
+          questionsAttempted: (prev.questionsAttempted || 0) + 1,
+          questionsCorrect: (prev.questionsCorrect || 0) + (result.isCorrect ? 1 : 0),
           topicMasteryMap: newMasteryMap,
           misconceptions: newMisconceptions,
           futureEchoes: newEchoes,
@@ -848,19 +980,20 @@ export function useGameState() {
           recentActivities: activities.slice(0, 30)
         };
       });
+
+      setTimeout(() => processNextEvent(), 200);
     }, isDemo);
 
-    if (result.isCorrect) {
-      setIsChallengeOpen(false);
-      setActiveChallenge(null);
-    }
+    setIsChallengeOpen(false);
+    setActiveChallenge(null);
   }, [
     gameState.consecutiveIncorrect, 
     gameState.currentPosition, 
     gameState.currentRouteType,
     gameState.activeShield,
     animateStepPath, 
-    showNotification
+    showNotification,
+    processNextEvent
   ]);
 
   /**
@@ -1038,6 +1171,7 @@ export function useGameState() {
   return {
     gameState,
     displayedPosition,
+    gamePhase,
     isRolling,
     isMoving,
     lastDiceRoll,

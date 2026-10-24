@@ -229,8 +229,12 @@ export const App: React.FC = () => {
           challenge={activeChallenge}
           isOpen={isChallengeOpen}
           consecutiveIncorrect={gameState.consecutiveIncorrect}
+          energy={gameState.energy}
+          activeShield={gameState.activeShield}
+          activeSecondChance={gameState.activeSecondChance}
           onClose={() => setIsChallengeOpen(false)}
           onSubmit={(res, isFirst, isRecovery) => handleCompleteChallenge(res, isFirst, isRecovery, isAutoplayRunning)}
+          onUseAbility={handleUseAbility}
         />
       )}
 
@@ -349,7 +353,15 @@ export const App: React.FC = () => {
         onClose={() => setIsVictoryModalOpen(false)}
         onPlayAgain={handleResetGame}
         totalScore={gameState.totalScore}
+        coins={gameState.coins}
         laddersClimbed={gameState.laddersClimbed}
+        snakesEncountered={gameState.snakesEncountered}
+        turnsCompleted={gameState.turnsCompleted}
+        questionsAttempted={gameState.questionsAttempted}
+        questionsCorrect={gameState.questionsCorrect}
+        longestStreak={gameState.longestStreak}
+        energyUsed={gameState.energyUsed}
+        topicMasteryMap={gameState.topicMasteryMap}
       />
     </div>
   );

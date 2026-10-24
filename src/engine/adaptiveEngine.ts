@@ -5,6 +5,7 @@ import { CURRICULUM_100, SQUARE_MAP } from '../data/curriculum100';
 const DEFAULT_SKILLS: Record<SkillCategory, SkillMasteryRecord> = {
   conceptual: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
   tracing: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
+  dry_run: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
   implementation: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
   complexity: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
   optimization: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },

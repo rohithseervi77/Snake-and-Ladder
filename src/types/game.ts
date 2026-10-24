@@ -41,6 +41,18 @@ export interface AutoplayConfig {
   mode: 'demonstration' | 'fast_forward';
 }
 
+export type GamePhase = 
+  | 'IDLE' 
+  | 'ROLLING' 
+  | 'MOVING' 
+  | 'LANDING' 
+  | 'CHALLENGE' 
+  | 'EVALUATING' 
+  | 'EVENT' 
+  | 'REWARD' 
+  | 'VICTORY' 
+  | 'GAME_OVER';
+
 export interface GameSettings {
   soundEnabled: boolean;
   soundVolume: number; // 0 to 1
