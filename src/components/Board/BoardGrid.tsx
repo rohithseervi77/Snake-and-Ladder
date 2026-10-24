@@ -51,9 +51,15 @@ export const BoardGrid: React.FC<BoardGridProps> = ({
   };
 
   return (
-    <div className={`relative w-full max-w-[850px] aspect-square mx-auto p-1.5 sm:p-2.5 rounded-2xl sm:rounded-3xl border shadow-2xl overflow-hidden flex flex-col justify-center transition-colors duration-500 ${getThemeClass()}`}>
+    <div 
+      className={`relative w-full aspect-square mx-auto p-1 sm:p-1.5 md:p-2 rounded-xl sm:rounded-2xl border shadow-2xl overflow-hidden flex flex-col justify-center transition-colors duration-500 shrink-0 ${getThemeClass()}`}
+      style={{
+        maxWidth: 'min(100%, calc(100vh - 200px), 680px)',
+        maxHeight: 'calc(100vh - 200px)',
+      }}
+    >
       {/* 10x10 Grid */}
-      <div className="relative w-full h-full grid grid-cols-10 grid-rows-10 gap-1 sm:gap-1.5">
+      <div className="relative w-full h-full grid grid-cols-10 grid-rows-10 gap-0.5 sm:gap-1">
         {orderedSquares.map(square => (
           <BoardCell
             key={`cell-${square.id}`}

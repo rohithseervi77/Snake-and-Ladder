@@ -27,7 +27,6 @@ import { BossBattleModal } from './components/Evolution/BossBattleModal';
 import { BugBotModal } from './components/Evolution/BugBotModal';
 import { MutationModal } from './components/Evolution/MutationModal';
 import { MasteryModal } from './components/Evolution/MasteryModal';
-import { Compass, Shield, Zap, Sparkles } from 'lucide-react';
 
 export const App: React.FC = () => {
   const {
@@ -113,7 +112,7 @@ export const App: React.FC = () => {
   }, [displayedPosition]);
 
   return (
-    <div className="min-h-screen w-full bg-[#080d1a] text-slate-100 flex flex-col font-sans select-none antialiased">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden w-full bg-[#080d1a] text-slate-100 flex flex-col font-sans select-none antialiased">
       {/* Top Application Header */}
       <Header
         totalXp={gameState.totalScore}
@@ -139,60 +138,26 @@ export const App: React.FC = () => {
       />
 
       {/* Main Game Dashboard */}
-      <main className="flex-1 w-full max-w-[1720px] mx-auto p-2 sm:p-4 md:p-6 flex flex-col lg:flex-row gap-4 items-start justify-center">
+      <main className="flex-1 w-full max-w-[1800px] mx-auto px-2 sm:px-3 py-1 sm:py-2 flex flex-col lg:flex-row gap-2.5 xl:gap-3.5 items-center lg:items-start justify-center overflow-hidden">
         {/* Left Sidebar: Rules & Legend */}
-        <div className="hidden lg:block flex-shrink-0">
+        <div className="hidden lg:flex flex-col flex-shrink-0 w-60 xl:w-64 max-h-[calc(100vh-68px)] overflow-y-auto pr-1 scrollbar-thin">
           <LeftSidebar />
         </div>
 
         {/* Center Board & Controls */}
-        <section className="flex-1 w-full flex flex-col items-center justify-center gap-3">
-          {/* Active Strategic Route & Turn Banner */}
-          <div className="w-full flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-xs">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-400 font-mono">Turn {gameState.turnsCompleted + 1}</span>
-              <span className="text-slate-600">&bull;</span>
-              <div className="flex items-center gap-1.5 font-medium">
-                <Compass className="w-3.5 h-3.5 text-indigo-400" />
-                <span className="text-slate-400">Current Route:</span>
-                <span className={`capitalize font-bold px-2 py-0.5 rounded-full border ${
-                  gameState.currentRouteType === 'risk'
-                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                    : gameState.currentRouteType === 'challenge'
-                    ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40'
-                    : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                }`}>
-                  {gameState.currentRouteType} Route
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => triggerDecisionCrossroads(15)}
-                className="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-700/50 text-indigo-300 transition"
-              >
-                Inspect Crossroads
-              </button>
-              <button
-                onClick={() => triggerBugBotDuel()}
-                className="text-[11px] px-2.5 py-1 rounded-lg bg-cyan-950/60 hover:bg-cyan-900/80 border border-cyan-700/50 text-cyan-300 transition"
-              >
-                Rival Duel 🤖
-              </button>
-            </div>
-          </div>
-
-          {/* Algorithm Energy & Tactical Abilities Bar */}
-          <div className="w-full">
-            <EnergyActionBar
-              energy={gameState.energy}
-              hasShield={gameState.activeShield}
-              hasLadderBoost={gameState.activeLadderBoost}
-              canReroll={!isRolling && !isMoving && !isAutoplayRunning}
-              onUseAbility={handleUseAbility}
-            />
-          </div>
+        <section className="flex-1 w-full flex flex-col items-center justify-center gap-1.5 h-full max-h-[calc(100vh-68px)] overflow-hidden">
+          {/* Unified Strategic Command Bar */}
+          <EnergyActionBar
+            energy={gameState.energy}
+            hasShield={gameState.activeShield}
+            hasLadderBoost={gameState.activeLadderBoost}
+            canReroll={!isRolling && !isMoving && !isAutoplayRunning}
+            turn={gameState.turnsCompleted + 1}
+            currentRouteType={gameState.currentRouteType}
+            onOpenCrossroads={() => triggerDecisionCrossroads(15)}
+            onOpenBugBot={() => triggerBugBotDuel()}
+            onUseAbility={handleUseAbility}
+          />
 
           {/* 1-100 Serpentine Board with SVG Snakes & Ladders */}
           <BoardGrid
@@ -228,7 +193,7 @@ export const App: React.FC = () => {
         </section>
 
         {/* Right Sidebar: Focus & Progression */}
-        <div className="hidden lg:block flex-shrink-0">
+        <div className="hidden lg:flex flex-col flex-shrink-0 w-64 xl:w-72 max-h-[calc(100vh-68px)] overflow-y-auto pr-1 scrollbar-thin">
           <RightSidebar
             currentSquare={currentSquare}
             completedCount={gameState.completedSquares.length}
