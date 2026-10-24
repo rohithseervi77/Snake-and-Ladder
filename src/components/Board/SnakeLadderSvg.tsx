@@ -5,7 +5,7 @@ import { getSquarePercentCoords } from '../../engine/gameEngine';
 export const SnakeLadderSvg: React.FC = () => {
   return (
     <svg 
-      className="absolute inset-0 w-full h-full pointer-events-none z-10"
+      className="absolute inset-0 w-full h-full pointer-events-none z-0"
       viewBox="0 0 1000 1000"
       preserveAspectRatio="none"
     >

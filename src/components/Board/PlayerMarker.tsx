@@ -9,14 +9,14 @@ export const PlayerMarker: React.FC<PlayerMarkerProps> = ({ equippedMarker = 'ma
   const getMarkerIcon = () => {
     switch (equippedMarker) {
       case 'marker-cyber-glider':
-        return <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />;
+        return <Navigation className="w-4 h-4 text-white" />;
       case 'marker-terminal-bot':
-        return <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />;
+        return <Bot className="w-4 h-4 text-white" />;
       case 'marker-grandmaster-crown':
-        return <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950" />;
+        return <Crown className="w-4 h-4 text-slate-950" />;
       case 'marker-ninja-coder':
       default:
-        return <UserCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950" />;
+        return <UserCheck className="w-4 h-4 text-slate-950" />;
     }
   };
 
@@ -30,20 +30,20 @@ export const PlayerMarker: React.FC<PlayerMarkerProps> = ({ equippedMarker = 'ma
         return 'from-amber-400 to-yellow-300 border-white';
       case 'marker-ninja-coder':
       default:
-        return 'from-emerald-600 to-teal-400 border-white';
+        return 'from-emerald-500 to-teal-400 border-white';
     }
   };
 
   return (
     <div 
-      className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center animate-pulse"
-      aria-label="Player current location"
+      className="relative flex items-center justify-center filter drop-shadow-lg"
+      aria-label="Player Avatar Location"
     >
-      {/* Outer glow ring */}
-      <div className="absolute w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-500/25 blur-sm" />
+      {/* Outer pulsating beacon */}
+      <div className="absolute w-10 h-10 rounded-full bg-cyan-400/40 animate-ping" />
       
       {/* Inner Avatar Token */}
-      <div className={`relative w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr ${getMarkerBg()} border-2 shadow-lg flex items-center justify-center font-black`}>
+      <div className={`relative w-8 h-8 rounded-full bg-gradient-to-tr ${getMarkerBg()} border-2 shadow-2xl flex items-center justify-center font-black ring-2 ring-cyan-400/80`}>
         {getMarkerIcon()}
       </div>
     </div>
