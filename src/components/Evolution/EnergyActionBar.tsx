@@ -67,8 +67,8 @@ export const EnergyActionBar: React.FC<EnergyActionBarProps> = ({
 
   return (
     <div 
-      className="w-full mx-auto bg-slate-900/90 border border-slate-800 rounded-xl px-2.5 py-1.5 shadow-md flex items-center justify-between gap-2 overflow-x-auto"
-      style={{ maxWidth: 'min(100%, calc(100vh - 200px), 680px)' }}
+      className="w-full mx-auto bg-slate-900/90 border border-slate-800 rounded-xl px-2.5 py-1 shadow-md flex items-center justify-between gap-2 overflow-x-auto shrink-0"
+      style={{ maxWidth: 'min(100%, calc(100vh - 128px), 840px)' }}
     >
       {/* Left: Turn, Route, Energy & Buffs */}
       <div className="flex items-center gap-2 shrink-0">

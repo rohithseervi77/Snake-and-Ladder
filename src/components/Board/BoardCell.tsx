@@ -64,21 +64,21 @@ export const BoardCell: React.FC<BoardCellProps> = ({
   };
 
   const renderIcon = () => {
-    if (square.id === 100) return <Trophy className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-400" />;
-    if (square.type === 'ladder_start') return <Zap className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-400" />;
-    if (square.type === 'snake_head') return <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-rose-400" />;
-    if (square.isCheckpoint) return <CheckCircle2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-300" />;
+    if (square.id === 100) return <Trophy className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />;
+    if (square.type === 'ladder_start') return <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />;
+    if (square.type === 'snake_head') return <AlertTriangle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-400" />;
+    if (square.isCheckpoint) return <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300" />;
 
     switch (square.stage) {
-      case 'foundations': return <Code className="w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-80" />;
-      case 'arrays_strings': return <Layers className="w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-80" />;
-      case 'linear_structures': return <GitBranch className="w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-80" />;
-      case 'search_sort': return <Search className="w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-80" />;
-      case 'trees_heaps': return <FolderTree className="w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-80" />;
-      case 'hashing_recursion': return <Hash className="w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-80" />;
-      case 'graphs': return <Network className="w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-80" />;
-      case 'greedy_dp': return <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-80" />;
-      default: return <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-80" />;
+      case 'foundations': return <Code className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80" />;
+      case 'arrays_strings': return <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80" />;
+      case 'linear_structures': return <GitBranch className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80" />;
+      case 'search_sort': return <Search className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80" />;
+      case 'trees_heaps': return <FolderTree className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80" />;
+      case 'hashing_recursion': return <Hash className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80" />;
+      case 'graphs': return <Network className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80" />;
+      case 'greedy_dp': return <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80" />;
+      default: return <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80" />;
     }
   };
 
@@ -94,13 +94,13 @@ export const BoardCell: React.FC<BoardCellProps> = ({
         }
       }}
       aria-label={`Square ${square.id}: ${square.title}. ${square.type !== 'normal' ? square.type : ''}`}
-      className={`relative w-full h-full min-h-0 rounded-md sm:rounded-lg border p-0.5 sm:p-1 flex flex-col justify-between transition-all duration-200 cursor-pointer overflow-hidden select-none ${getStyleClasses()} ${
+      className={`relative w-full h-full min-h-0 rounded-md sm:rounded-lg border p-1 sm:p-1.5 flex flex-col justify-between transition-all duration-200 cursor-pointer overflow-hidden select-none ${getStyleClasses()} ${
         isCurrent ? 'ring-2 ring-emerald-400 shadow-md shadow-emerald-500/30 z-20 scale-[1.02]' : 'z-0'
       }`}
     >
       {/* Top Header: Number and Mini Badge */}
       <div className="flex items-center justify-between w-full leading-none">
-        <span className={`text-[8.5px] sm:text-[10px] md:text-[11px] font-black tracking-tight ${square.id === 100 ? 'text-amber-300' : 'text-white'}`}>
+        <span className={`text-[9.5px] sm:text-[11px] md:text-[12px] font-black tracking-tight ${square.id === 100 ? 'text-amber-300' : 'text-white'}`}>
           {square.id}
         </span>
         <div className="flex items-center gap-0.5">
@@ -113,19 +113,19 @@ export const BoardCell: React.FC<BoardCellProps> = ({
 
       {/* Middle: Topic Title */}
       <div className="flex-1 flex flex-col justify-center my-0.5 leading-tight overflow-hidden">
-        <p className="text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-bold text-slate-100 line-clamp-1 sm:line-clamp-2">
+        <p className="text-[8px] sm:text-[9.5px] md:text-[10.5px] font-bold text-slate-100 line-clamp-2">
           {square.title}
         </p>
       </div>
 
       {/* Bottom: Sub-badge or indicator */}
-      <div className="flex items-center justify-between text-[6.5px] sm:text-[7.5px] md:text-[8px] text-slate-400 leading-none">
+      <div className="flex items-center justify-between text-[7px] sm:text-[8px] md:text-[8.5px] text-slate-400 leading-none">
         {square.id === 1 ? (
-          <span className="px-0.5 py-0.2 rounded bg-emerald-500/30 text-emerald-300 font-black uppercase text-[7px]">
+          <span className="px-0.5 py-0.2 rounded bg-emerald-500/30 text-emerald-300 font-black uppercase text-[7.5px]">
             START
           </span>
         ) : square.id === 100 ? (
-          <span className="px-0.5 py-0.2 rounded bg-amber-500 text-black font-black uppercase text-[7px]">
+          <span className="px-0.5 py-0.2 rounded bg-amber-500 text-black font-black uppercase text-[7.5px]">
             FINISH
           </span>
         ) : square.type === 'ladder_start' ? (

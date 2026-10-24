@@ -7,7 +7,6 @@ import { RightSidebar } from './components/Sidebars/RightSidebar';
 import { MobileDrawer } from './components/Sidebars/MobileDrawer';
 import { BoardGrid } from './components/Board/BoardGrid';
 import { DiceControls } from './components/Controls/DiceControls';
-import { AutoplayBar } from './components/Controls/AutoplayBar';
 import { ChallengeModal } from './components/Challenges/ChallengeModal';
 import { ResetModal } from './components/Dashboard/ResetModal';
 import { RevisionModal } from './components/Dashboard/RevisionModal';
@@ -168,7 +167,7 @@ export const App: React.FC = () => {
             onSelectSquare={(sq) => handleOpenSquareChallenge(sq.id)}
           />
 
-          {/* Dice & Movement Controls */}
+          {/* Unified Dice & Autoplay Movement Controller */}
           <DiceControls
             currentPosition={displayedPosition}
             lastDiceRoll={lastDiceRoll}
@@ -176,19 +175,14 @@ export const App: React.FC = () => {
             isRolling={isRolling}
             isMoving={isMoving}
             isAutoplayRunning={isAutoplayRunning}
+            isAutoplayPaused={isAutoplayPaused}
+            autoplaySpeed={autoplaySpeed}
             onRollDice={handleRollDice}
-          />
-
-          {/* Real Board Autoplay Controller */}
-          <AutoplayBar
-            isRunning={isAutoplayRunning}
-            isPaused={isAutoplayPaused}
-            speed={autoplaySpeed}
-            onStart={startAutoplay}
-            onPause={pauseAutoplay}
-            onResume={resumeAutoplay}
-            onStop={stopAutoplay}
-            onSetSpeed={setAutoplaySpeed}
+            onStartAutoplay={startAutoplay}
+            onPauseAutoplay={pauseAutoplay}
+            onResumeAutoplay={resumeAutoplay}
+            onStopAutoplay={stopAutoplay}
+            onSetAutoplaySpeed={setAutoplaySpeed}
           />
         </section>
 

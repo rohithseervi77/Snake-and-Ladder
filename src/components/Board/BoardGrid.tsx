@@ -52,10 +52,12 @@ export const BoardGrid: React.FC<BoardGridProps> = ({
 
   return (
     <div 
-      className={`relative w-full aspect-square mx-auto p-1 sm:p-1.5 md:p-2 rounded-xl sm:rounded-2xl border shadow-2xl overflow-hidden flex flex-col justify-center transition-colors duration-500 shrink-0 ${getThemeClass()}`}
+      className={`relative w-full aspect-square mx-auto p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border shadow-2xl overflow-hidden flex flex-col justify-center transition-colors duration-500 shrink-0 ${getThemeClass()}`}
       style={{
-        maxWidth: 'min(100%, calc(100vh - 200px), 680px)',
-        maxHeight: 'calc(100vh - 200px)',
+        width: 'min(100%, calc(100vh - 128px), 840px)',
+        height: 'min(100%, calc(100vh - 128px), 840px)',
+        maxWidth: 'min(100%, calc(100vh - 128px), 840px)',
+        maxHeight: 'calc(100vh - 128px)',
       }}
     >
       {/* 10x10 Grid */}

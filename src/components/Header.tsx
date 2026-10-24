@@ -55,20 +55,20 @@ export const Header: React.FC<HeaderProps> = ({
   const levelInfo = calculateLevelInfo(totalXp);
 
   return (
-    <header className="w-full bg-[#0d1527] border-b border-[#1e293b] px-3 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-slate-200 sticky top-0 z-40 backdrop-blur-md">
+    <header className="w-full bg-[#0d1527] border-b border-[#1e293b] px-3 sm:px-4 py-1 sm:py-1.5 flex flex-wrap items-center justify-between gap-2.5 text-slate-200 sticky top-0 z-40 backdrop-blur-md shrink-0">
       {/* Left: Brand & Tagline */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-md shadow-blue-500/20 text-white font-bold">
-          <Code2 className="w-5 h-5 sm:w-6 sm:h-6" />
+      <div className="flex items-center gap-2.5">
+        <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 shadow-sm shadow-blue-500/20 text-white font-bold">
+          <Code2 className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-base sm:text-lg font-black tracking-tight text-white m-0">Code & Ladders</h1>
-            <span className="hidden sm:inline-block px-1.5 py-0.2 text-[9px] uppercase font-bold tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md">
+          <div className="flex items-center gap-1.5">
+            <h1 className="text-sm sm:text-base font-black tracking-tight text-white m-0">Code & Ladders</h1>
+            <span className="hidden sm:inline-block px-1.5 py-0.2 text-[8.5px] uppercase font-bold tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md">
               DSA Adventure
             </span>
           </div>
-          <p className="text-[10px] sm:text-xs text-slate-400 font-medium m-0">
+          <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium m-0 hidden md:block">
             Learn Data Structures &bull; Roll &bull; Solve &bull; Level Up
           </p>
         </div>
