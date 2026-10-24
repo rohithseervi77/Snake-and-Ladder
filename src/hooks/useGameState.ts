@@ -28,6 +28,28 @@ import { evaluateAchievements } from '../engine/achievementEngine';
 import { CosmeticItem, CosmeticType, MovementNotification } from '../types/rewards';
 import { SNAKE_MAP, LADDER_MAP } from '../data/snakesAndLadders';
 
+// Evolution Imports
+import { 
+  RouteType, 
+  RouteOption, 
+  IntelligentSnake, 
+  SnakeRecoveryChoice, 
+  OptimizationLadderChoice, 
+  BossBattle, 
+  BugBotScenario, 
+  BoardMutationEvent, 
+  EnergyAbility 
+} from '../types/evolution';
+import { INTELLIGENT_SNAKE_MAP } from '../data/intelligentSnakes';
+import { OPTIMIZATION_LADDER_MAP } from '../data/optimizationLadders';
+import { DECISION_TILE_MAP, evaluateRouteAvailability } from '../data/routeSelection';
+import { BOSS_BATTLES } from '../data/bossBattles';
+import { BOARD_MUTATIONS } from '../data/boardMutations';
+import { BUGBOT_SCENARIOS } from '../data/bugBotScenarios';
+import { updateTopicMastery } from '../engine/masteryEngine';
+import { addEnergy, consumeEnergy } from '../engine/energyEngine';
+import { createMisconceptionRecord, generateEchoChallenge } from '../engine/futureEchoEngine';
+
 export function useGameState() {
   const [gameState, setGameState] = useState<PersistentGameState>(() => loadGameState());
   const [displayedPosition, setDisplayedPosition] = useState<number>(() => gameState.currentPosition);
@@ -35,7 +57,7 @@ export function useGameState() {
   const [isMoving, setIsMoving] = useState(false);
   const [lastDiceRoll, setLastDiceRoll] = useState<number>(3);
   
-  // Modals
+  // Standard Modals
   const [activeChallenge, setActiveChallenge] = useState<Challenge | null>(null);
   const [isChallengeOpen, setIsChallengeOpen] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
@@ -45,6 +67,28 @@ export function useGameState() {
   const [isVictoryModalOpen, setIsVictoryModalOpen] = useState(false);
   const [isShopModalOpen, setIsShopModalOpen] = useState(false);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
+
+  // Evolution Modals & State
+  const [isRouteModalOpen, setIsRouteModalOpen] = useState(false);
+  const [currentDecisionTile, setCurrentDecisionTile] = useState<number>(15);
+  const [availableRouteOptions, setAvailableRouteOptions] = useState<RouteOption[]>([]);
+
+  const [activeIntelligentSnake, setActiveIntelligentSnake] = useState<IntelligentSnake | null>(null);
+  const [isSnakeRecoveryModalOpen, setIsSnakeRecoveryModalOpen] = useState(false);
+
+  const [activeOptimizationLadder, setActiveOptimizationLadder] = useState<OptimizationLadderChoice | null>(null);
+  const [isLadderChoiceModalOpen, setIsLadderChoiceModalOpen] = useState(false);
+
+  const [activeBossBattle, setActiveBossBattle] = useState<BossBattle | null>(null);
+  const [isBossModalOpen, setIsBossModalOpen] = useState(false);
+
+  const [activeBugBotScenario, setActiveBugBotScenario] = useState<BugBotScenario | null>(null);
+  const [isBugBotModalOpen, setIsBugBotModalOpen] = useState(false);
+
+  const [activeMutation, setActiveMutation] = useState<BoardMutationEvent | null>(null);
+  const [isMutationModalOpen, setIsMutationModalOpen] = useState(false);
+
+  const [isMasteryModalOpen, setIsMasteryModalOpen] = useState(false);
 
   // Floating notifications / toasts
   const [currentNotification, setCurrentNotification] = useState<MovementNotification | null>(null);
@@ -122,6 +166,64 @@ export function useGameState() {
   }, [autoplaySpeed]);
 
   /**
+   * Evaluates decision tile crossroads
+   */
+  const triggerDecisionCrossroads = useCallback((tile: number) => {
+    const config = DECISION_TILE_MAP.get(tile);
+    if (!config) return;
+
+    const evaluated = evaluateRouteAvailability(config, gameState.topicMasteryMap, gameState.energy);
+    const optionsArray: RouteOption[] = [evaluated.knowledge, evaluated.challenge, evaluated.risk];
+
+    setCurrentDecisionTile(tile);
+    setAvailableRouteOptions(optionsArray);
+    setIsRouteModalOpen(true);
+  }, [gameState.topicMasteryMap, gameState.energy]);
+
+  /**
+   * Checks and triggers Regional Boss Battle
+   */
+  const checkBossBattle = useCallback((tile: number): boolean => {
+    const boss = BOSS_BATTLES.find(b => b.tileNumber === tile);
+    if (boss && !gameState.defeatedBosses.includes(tile)) {
+      setActiveBossBattle(boss);
+      setIsBossModalOpen(true);
+      return true;
+    }
+    return false;
+  }, [gameState.defeatedBosses]);
+
+  /**
+   * Checks and triggers Board Mutation every 5 turns
+   */
+  const checkBoardMutation = useCallback((turnCount: number): boolean => {
+    const mutation = BOARD_MUTATIONS.find(m => m.triggerTurn === turnCount);
+    if (mutation && !gameState.completedMutations.includes(mutation.id)) {
+      setActiveMutation(mutation);
+      setIsMutationModalOpen(true);
+      return true;
+    }
+    return false;
+  }, [gameState.completedMutations]);
+
+  /**
+   * Checks Future Echo return challenge
+   */
+  const checkFutureEcho = useCallback((tile: number): Challenge | null => {
+    const echoIndex = gameState.futureEchoes.findIndex(e => e.active && e.scheduledTile === tile);
+    if (echoIndex !== -1) {
+      const echo = gameState.futureEchoes[echoIndex];
+      showNotification({
+        type: 'recovery',
+        title: 'FUTURE ECHO RETURNS!',
+        subtitle: `A past misconception in ${echo.originalTopic} resurfaces for mastery redemption!`
+      });
+      return echo.challenge;
+    }
+    return null;
+  }, [gameState.futureEchoes, showNotification]);
+
+  /**
    * Main player dice roll handler
    */
   const handleRollDice = useCallback(() => {
@@ -138,40 +240,92 @@ export function useGameState() {
       const passedSet = new Set(gameState.passedCheckpoints);
       const plan = computeMovementPlan(gameState.currentPosition, rollValue, passedSet);
 
+      const landingTile = plan.targetSquareBeforeTransitions;
+
       // Execute primary dice roll movement
-      animateStepPath(gameState.currentPosition, plan.targetSquareBeforeTransitions, () => {
-        // Resolve snake or ladder on landing tile
-        let finalPos = plan.targetSquareBeforeTransitions;
-        const ladder = LADDER_MAP.get(finalPos);
-        const snake = SNAKE_MAP.get(finalPos);
+      animateStepPath(gameState.currentPosition, landingTile, () => {
+        const newTurns = gameState.turnsCompleted + 1;
 
-        let laddersClimbed = gameState.laddersClimbed;
-        let snakesEncountered = gameState.snakesEncountered;
-
-        if (ladder) {
-          laddersClimbed += 1;
-          sound.playLadderClimb();
-          confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
-          showNotification({
-            type: 'ladder',
-            title: 'Ladder Leaped!',
-            subtitle: `${ladder.title}: ${ladder.description}`
-          });
-          finalPos = ladder.to;
-          setDisplayedPosition(ladder.to);
-        } else if (snake) {
-          snakesEncountered += 1;
-          sound.playSnakeDrop();
-          showNotification({
-            type: 'snake',
-            title: 'Snake Encountered!',
-            subtitle: `${snake.title}: ${snake.description}`
-          });
-          finalPos = snake.to;
-          setDisplayedPosition(snake.to);
+        // 1. Check for Regional Boss Encounter
+        const isBoss = checkBossBattle(landingTile);
+        if (isBoss) {
+          setGameState(prev => ({
+            ...prev,
+            currentPosition: landingTile,
+            turnsCompleted: newTurns,
+            completedSquares: Array.from(new Set([...prev.completedSquares, landingTile]))
+          }));
+          return;
         }
 
-        const isWin = finalPos >= 100;
+        // 2. Check for Intelligent Snake
+        const intelligentSnake = INTELLIGENT_SNAKE_MAP.get(landingTile);
+        if (intelligentSnake) {
+          if (gameState.activeShield) {
+            // Invariant Shield deflects automatically
+            sound.playSuccess();
+            showNotification({
+              type: 'bonus',
+              title: 'INVARIANT SHIELD DEFLECTED TRAP!',
+              subtitle: `Absorbed ${intelligentSnake.name}! You remain safely at Tile ${landingTile}.`
+            });
+            setGameState(prev => ({
+              ...prev,
+              activeShield: false,
+              currentPosition: landingTile,
+              turnsCompleted: newTurns,
+              snakesEncountered: prev.snakesEncountered + 1,
+              completedSquares: Array.from(new Set([...prev.completedSquares, landingTile]))
+            }));
+            return;
+          }
+
+          setActiveIntelligentSnake(intelligentSnake);
+          setIsSnakeRecoveryModalOpen(true);
+          setGameState(prev => ({
+            ...prev,
+            turnsCompleted: newTurns,
+            snakesEncountered: prev.snakesEncountered + 1
+          }));
+          return;
+        }
+
+        // 3. Check for Optimization Ladder
+        const optimizationLadder = OPTIMIZATION_LADDER_MAP.get(landingTile);
+        if (optimizationLadder) {
+          setActiveOptimizationLadder(optimizationLadder);
+          setIsLadderChoiceModalOpen(true);
+          setGameState(prev => ({
+            ...prev,
+            turnsCompleted: newTurns,
+            laddersClimbed: prev.laddersClimbed + 1
+          }));
+          return;
+        }
+
+        // 4. Check for Decision Crossroads Tile (15, 30, 60, 75)
+        if (DECISION_TILE_MAP.has(landingTile) && gameState.activeRouteTile !== landingTile) {
+          triggerDecisionCrossroads(landingTile);
+        }
+
+        // 5. Check for Turn-based Board Mutation
+        const isMutation = checkBoardMutation(newTurns);
+        if (isMutation) {
+          setGameState(prev => ({
+            ...prev,
+            currentPosition: landingTile,
+            turnsCompleted: newTurns,
+            completedSquares: Array.from(new Set([...prev.completedSquares, landingTile]))
+          }));
+          return;
+        }
+
+        // 6. Check for Future Echo or Standard Challenge
+        const echoChallenge = checkFutureEcho(landingTile);
+        const targetSquare = SQUARE_MAP.get(landingTile) || CURRICULUM_100[0];
+        const challenge = echoChallenge || challengeRegistryRef.current.getChallengeForSquare(targetSquare.id);
+
+        const isWin = landingTile >= 100;
         if (isWin) {
           sound.playStageComplete();
           confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
@@ -180,15 +334,10 @@ export function useGameState() {
 
         setGameState(prev => ({
           ...prev,
-          currentPosition: finalPos,
-          completedSquares: Array.from(new Set([...prev.completedSquares, finalPos])),
-          laddersClimbed,
-          snakesEncountered
+          currentPosition: landingTile,
+          turnsCompleted: newTurns,
+          completedSquares: Array.from(new Set([...prev.completedSquares, landingTile]))
         }));
-
-        // Open challenge on landing tile
-        const targetSquare = SQUARE_MAP.get(finalPos) || CURRICULUM_100[0];
-        const challenge = challengeRegistryRef.current.getChallengeForSquare(targetSquare.id);
 
         if (gameState.settings.autoOpenChallenge && !isWin) {
           setActiveChallenge(challenge);
@@ -203,12 +352,268 @@ export function useGameState() {
     isChallengeOpen, 
     gameState.currentPosition, 
     gameState.passedCheckpoints, 
-    gameState.laddersClimbed, 
-    gameState.snakesEncountered, 
+    gameState.activeShield,
+    gameState.turnsCompleted,
+    gameState.activeRouteTile,
     gameState.settings.autoOpenChallenge, 
     animateStepPath, 
+    checkBossBattle,
+    checkBoardMutation,
+    checkFutureEcho,
+    triggerDecisionCrossroads,
     showNotification
   ]);
+
+  /**
+   * Ability trigger handler
+   */
+  const handleUseAbility = useCallback((abilityId: EnergyAbility['id']) => {
+    setGameState(prev => {
+      const newEnergy = consumeEnergy(prev.energy, abilityId);
+      if (newEnergy === null) {
+        showNotification({
+          type: 'penalty',
+          title: 'INSUFFICIENT ENERGY!',
+          subtitle: `You need more algorithm energy to cast this ability.`
+        });
+        return prev;
+      }
+
+      sound.playSuccess();
+
+      if (abilityId === 'shield') {
+        showNotification({
+          type: 'bonus',
+          title: 'INVARIANT SHIELD ACTIVATED!',
+          subtitle: 'The next snake trap or incorrect penalty will be completely absorbed.'
+        });
+        return {
+          ...prev,
+          energy: newEnergy,
+          activeShield: true
+        };
+      }
+
+      if (abilityId === 'ladder_boost') {
+        showNotification({
+          type: 'bonus',
+          title: 'OPTIMIZATION OVERDRIVE!',
+          subtitle: 'The next ladder climbed will grant +2 bonus tiles!'
+        });
+        return {
+          ...prev,
+          energy: newEnergy,
+          activeLadderBoost: true
+        };
+      }
+
+      if (abilityId === 'reroll') {
+        showNotification({
+          type: 'bonus',
+          title: 'QUANTUM REROLL!',
+          subtitle: 'Rerolling dice to navigate alternate board timeline.'
+        });
+        setTimeout(() => handleRollDice(), 100);
+        return {
+          ...prev,
+          energy: newEnergy
+        };
+      }
+
+      return {
+        ...prev,
+        energy: newEnergy
+      };
+    });
+  }, [showNotification, handleRollDice]);
+
+  /**
+   * Route selection handler
+   */
+  const handleSelectRoute = useCallback((routeType: RouteType) => {
+    setGameState(prev => ({
+      ...prev,
+      currentRouteType: routeType,
+      activeRouteTile: currentDecisionTile
+    }));
+    setIsRouteModalOpen(false);
+
+    sound.playSuccess();
+    showNotification({
+      type: 'bonus',
+      title: `${routeType.toUpperCase()} ROUTE ENGAGED!`,
+      subtitle: `Your path is now calibrated for ${routeType} challenges!`
+    });
+  }, [currentDecisionTile, showNotification]);
+
+  /**
+   * Snake Recovery choice handler
+   */
+  const handleSelectSnakeChoice = useCallback((choice: SnakeRecoveryChoice) => {
+    if (!activeIntelligentSnake) return;
+
+    const snake = activeIntelligentSnake;
+    const finalPos = Math.max(1, snake.to + choice.recoveryDelta);
+
+    setIsSnakeRecoveryModalOpen(false);
+    setActiveIntelligentSnake(null);
+
+    if (choice.recoveryDelta > 0) {
+      sound.playSuccess();
+      showNotification({
+        type: 'recovery',
+        title: 'TRAP MITIGATED!',
+        subtitle: `Demonstrated ${snake.misconceptionType} insight! Landed at Tile ${finalPos} (+${choice.recoveryDelta} tiles saved).`
+      });
+    } else {
+      sound.playSnakeDrop();
+      showNotification({
+        type: 'snake',
+        title: 'SNAKE SLIDE ACCEPTED',
+        subtitle: `Slid down to Tile ${finalPos}. Analyze the code snippet for future avoidance.`
+      });
+    }
+
+    animateStepPath(snake.from, finalPos, () => {
+      setGameState(prev => ({
+        ...prev,
+        currentPosition: finalPos,
+        completedSquares: Array.from(new Set([...prev.completedSquares, finalPos]))
+      }));
+    });
+  }, [activeIntelligentSnake, animateStepPath, showNotification]);
+
+  /**
+   * Ladder Choice handler (Safe vs Expert)
+   */
+  const handleSelectLadderOption = useCallback((option: 'safe' | 'expert') => {
+    if (!activeOptimizationLadder) return;
+
+    const ladder = activeOptimizationLadder;
+    const boostBonus = gameState.activeLadderBoost ? 2 : 0;
+    const targetTile = option === 'safe'
+      ? Math.min(100, ladder.safeOption.destinationTile + boostBonus)
+      : Math.min(100, ladder.expertOption.destinationTile + boostBonus);
+
+    setIsLadderChoiceModalOpen(false);
+    setActiveOptimizationLadder(null);
+
+    sound.playLadderClimb();
+    confetti({ particleCount: 45, spread: 70, origin: { y: 0.7 } });
+
+    showNotification({
+      type: 'ladder',
+      title: option === 'expert' ? 'EXPERT LADDER ASCENDED!' : 'SAFE LADDER CLIMBED!',
+      subtitle: `Ascended to Tile ${targetTile}! (+${targetTile - ladder.from} tiles gained)`
+    });
+
+    animateStepPath(ladder.from, targetTile, () => {
+      setGameState(prev => ({
+        ...prev,
+        currentPosition: targetTile,
+        activeLadderBoost: false,
+        energy: addEnergy(prev.energy, option === 'expert' ? 3 : 1),
+        completedSquares: Array.from(new Set([...prev.completedSquares, targetTile]))
+      }));
+    });
+  }, [activeOptimizationLadder, gameState.activeLadderBoost, animateStepPath, showNotification]);
+
+  /**
+   * Boss Battle Victory
+   */
+  const handleBossVictory = useCallback((tileNumber: number, xp: number, coins: number, energy: number) => {
+    sound.playStageComplete();
+    confetti({ particleCount: 90, spread: 90, origin: { y: 0.6 } });
+
+    showNotification({
+      type: 'achievement',
+      title: 'REGIONAL BOSS VANQUISHED!',
+      subtitle: `Mastery proven at Tile ${tileNumber}! (+${xp} XP, +${coins} Coins, +${energy} Energy)`
+    });
+
+    setGameState(prev => ({
+      ...prev,
+      totalScore: prev.totalScore + xp,
+      coins: prev.coins + coins,
+      energy: addEnergy(prev.energy, energy),
+      defeatedBosses: Array.from(new Set([...prev.defeatedBosses, tileNumber]))
+    }));
+
+    setIsBossModalOpen(false);
+    setActiveBossBattle(null);
+  }, [showNotification]);
+
+  /**
+   * BugBot Rival Victory
+   */
+  const handleBugBotVictory = useCallback((xp: number, coins: number, energy: number) => {
+    sound.playSuccess();
+    confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
+
+    showNotification({
+      type: 'bonus',
+      title: 'BUGBOT DUEL WON!',
+      subtitle: `Rival solution refuted! (+${xp} XP, +${coins} Coins, +${energy} Energy)`
+    });
+
+    setGameState(prev => ({
+      ...prev,
+      totalScore: prev.totalScore + xp,
+      coins: prev.coins + coins,
+      energy: addEnergy(prev.energy, energy)
+    }));
+
+    setIsBugBotModalOpen(false);
+    setActiveBugBotScenario(null);
+  }, [showNotification]);
+
+  /**
+   * Board Mutation Resolution
+   */
+  const handleResolveMutation = useCallback((isCorrect: boolean, bonusTiles: number, penaltyTiles: number, destination?: number) => {
+    if (!activeMutation) return;
+
+    const mutation = activeMutation;
+    setIsMutationModalOpen(false);
+    setActiveMutation(null);
+
+    setGameState(prev => ({
+      ...prev,
+      completedMutations: [...prev.completedMutations, mutation.id]
+    }));
+
+    const startPos = gameState.currentPosition;
+    let targetPos = destination ?? Math.max(1, Math.min(100, startPos + (isCorrect ? bonusTiles : penaltyTiles)));
+
+    if (isCorrect) {
+      sound.playSuccess();
+      confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
+      showNotification({
+        type: 'bonus',
+        title: 'MUTATION STABILIZED!',
+        subtitle: `${mutation.title} resolved! Moving ${bonusTiles > 0 ? `+${bonusTiles} tiles` : 'forward'}.`
+      });
+      setGameState(prev => ({
+        ...prev,
+        energy: addEnergy(prev.energy, 2)
+      }));
+    } else {
+      sound.playFailure();
+      showNotification({
+        type: 'penalty',
+        title: 'MUTATION DESTABILIZED!',
+        subtitle: `${mutation.title} caused an anomaly. Slide ${penaltyTiles} tiles.`
+      });
+    }
+
+    animateStepPath(startPos, targetPos, () => {
+      setGameState(prev => ({
+        ...prev,
+        currentPosition: targetPos,
+        completedSquares: Array.from(new Set([...prev.completedSquares, targetPos]))
+      }));
+    });
+  }, [activeMutation, gameState.currentPosition, animateStepPath, showNotification]);
 
   /**
    * Start challenge on current or selected square
@@ -221,7 +626,7 @@ export function useGameState() {
   }, [gameState.currentPosition]);
 
   /**
-   * Submits challenge answer and executes Answer-Based Movement Rewards / Penalties!
+   * Submits challenge answer and executes Answer-Based Movement & Evolution Tracking
    */
   const handleCompleteChallenge = useCallback((
     result: ChallengeAttemptResult, 
@@ -244,7 +649,7 @@ export function useGameState() {
       result.hintUsed
     );
 
-    // 2. Calculate Answer-Based Movement
+    // 2. Calculate Answer-Based Movement with Route Modifiers
     let tilesDelta = 0;
     let notifTitle = '';
     let notifSubtitle = '';
@@ -257,26 +662,43 @@ export function useGameState() {
 
       const rewardCalc = calculateCorrectMovement(targetSquare.difficulty, isFirstAttempt, isRecovery);
       tilesDelta = rewardCalc.tilesDelta;
+
+      // Risk Route bonus
+      if (gameState.currentRouteType === 'risk') {
+        tilesDelta += 1;
+      }
+
       notifTitle = isRecovery ? 'COMEBACK!' : 'CORRECT ANSWER!';
       notifSubtitle = rewardCalc.explanation;
 
       showNotification({
         type: isRecovery ? 'recovery' : 'bonus',
         title: notifTitle,
-        subtitle: `${notifSubtitle} (+${economy.xpDelta} XP, +${economy.coinsDelta} Coins)`,
+        subtitle: `${notifSubtitle} (+${economy.xpDelta} XP, +${economy.coinsDelta} Coins, +1 ⚡)`,
         tilesDelta
       });
     } else {
       sound.playFailure();
-      const penaltyCalc = calculateIncorrectPenalty(gameState.consecutiveIncorrect + 1);
-      tilesDelta = penaltyCalc.tilesDelta; // negative number
+      
+      // If shield is active, deflect penalty!
+      if (gameState.activeShield) {
+        showNotification({
+          type: 'bonus',
+          title: 'INVARIANT SHIELD ABSORPTION!',
+          subtitle: 'Shield absorbed your incorrect answer penalty! No backward slide applied.'
+        });
+        tilesDelta = 0;
+      } else {
+        const penaltyCalc = calculateIncorrectPenalty(gameState.consecutiveIncorrect + 1);
+        tilesDelta = penaltyCalc.tilesDelta;
 
-      showNotification({
-        type: 'penalty',
-        title: 'NOT QUITE!',
-        subtitle: `${penaltyCalc.explanation} (Earned +3 XP, +1 Coin for effort)`,
-        tilesDelta
-      });
+        showNotification({
+          type: 'penalty',
+          title: 'NOT QUITE!',
+          subtitle: `${penaltyCalc.explanation} (Slide ${tilesDelta} tiles)`,
+          tilesDelta
+        });
+      }
     }
 
     // 3. Centralized Movement Resolution
@@ -284,59 +706,73 @@ export function useGameState() {
     let intendedPos = Math.max(1, Math.min(100, startPos + tilesDelta));
 
     animateStepPath(startPos, intendedPos, () => {
-      // 4. Resolve Snakes and Ladders on the new landing tile
-      let finalLandingPos = intendedPos;
-      const ladder = LADDER_MAP.get(intendedPos);
-      const snake = SNAKE_MAP.get(intendedPos);
-
-      let laddersClimbed = gameState.laddersClimbed;
-      let snakesEncountered = gameState.snakesEncountered;
-
-      if (ladder && result.isCorrect) {
-        laddersClimbed += 1;
-        sound.playLadderClimb();
-        confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
-        finalLandingPos = ladder.to;
-        setDisplayedPosition(ladder.to);
-        showNotification({
-          type: 'ladder',
-          title: 'Ladder Optimization Leap!',
-          subtitle: `${ladder.title}: Climbed to Tile ${ladder.to}!`
-        });
-      } else if (snake && !result.isCorrect) {
-        snakesEncountered += 1;
-        sound.playSnakeDrop();
-        finalLandingPos = snake.to;
-        setDisplayedPosition(snake.to);
-        showNotification({
-          type: 'snake',
-          title: 'Snake Attack!',
-          subtitle: `${snake.title}: Slid to Tile ${snake.to}!`
-        });
-      }
-
-      const isWin = finalLandingPos >= 100;
+      const isWin = intendedPos >= 100;
       if (isWin) {
         sound.playStageComplete();
         confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
         setIsVictoryModalOpen(true);
       }
 
-      // 5. Update State: XP, Coins, Streaks, Achievements
+      // 4. Update Evolution Mastery & Future Echo Tracking
       setGameState(prev => {
         const oldLevel = calculateLevelInfo(prev.totalScore).level;
         const newScore = prev.totalScore + (isDemo ? 0 : economy.xpDelta);
         const newCoins = prev.coins + (isDemo ? 0 : economy.coinsDelta);
         const newLevel = calculateLevelInfo(newScore).level;
 
-        // Level Up check
-        if (newLevel > oldLevel && !isDemo) {
-          sound.playStageComplete();
-          showNotification({
-            type: 'level_up',
-            title: 'LEVEL UP!',
-            subtitle: `Reached Level ${newLevel}: ${calculateLevelInfo(newScore).title}!`
-          });
+        // Energy gain
+        const energyGained = result.isCorrect ? (prev.currentRouteType === 'risk' ? 2 : 1) : 0;
+        const newEnergy = addEnergy(prev.energy, energyGained);
+
+        // Topic Mastery update
+        const currentTopicMastery = prev.topicMasteryMap[result.topic] || {
+          topicId: result.topic,
+          topicName: result.topic,
+          score: 15,
+          level: 'novice',
+          attempts: 0,
+          correctCount: 0,
+          incorrectCount: 0,
+          firstTryCount: 0,
+          hintsUsedCount: 0,
+          evidence: [],
+          lastUpdated: Date.now()
+        };
+
+        const updatedTopicScore = updateTopicMastery(
+          currentTopicMastery,
+          result.isCorrect,
+          targetSquare.difficulty,
+          isFirstAttempt,
+          isRecovery,
+          result.hintUsed
+        );
+
+        const newMasteryMap = {
+          ...prev.topicMasteryMap,
+          [result.topic]: updatedTopicScore
+        };
+
+        // Future Echo handling
+        const newEchoes = [...prev.futureEchoes];
+        const newMisconceptions = [...prev.misconceptions];
+
+        if (!result.isCorrect && !isDemo) {
+          const misc = createMisconceptionRecord(
+            result.topic,
+            result.skillCategory,
+            result.challengeId,
+            result.feedback || 'Misconception identified',
+            result.hintUsed
+          );
+          newMisconceptions.push(misc);
+          newEchoes.push(generateEchoChallenge(misc, intendedPos));
+        } else if (result.isCorrect) {
+          // Resolve any active echo on this square
+          const echoIdx = newEchoes.findIndex(e => e.scheduledTile === result.squareId && e.active);
+          if (echoIdx !== -1) {
+            newEchoes[echoIdx] = { ...newEchoes[echoIdx], active: false };
+          }
         }
 
         const newStreak = result.isCorrect ? prev.streak + 1 : 0;
@@ -344,7 +780,7 @@ export function useGameState() {
         const newRecoveryStreak = isRecovery ? prev.recoveryStreak + 1 : (result.isCorrect ? prev.recoveryStreak : 0);
         const newConsecutiveIncorrect = result.isCorrect ? 0 : prev.consecutiveIncorrect + 1;
 
-        // Update learner profile
+        // Learner profile update
         const updatedProfile = recordChallengeAttempt(prev.learnerProfile, result);
         const updatedRevision = scheduleTopicRevision(
           updatedProfile.revisionQueue,
@@ -354,11 +790,6 @@ export function useGameState() {
         );
         updatedProfile.revisionQueue = updatedRevision;
 
-        // Milestone streak celebration
-        if ((newStreak === 3 || newStreak === 5 || newStreak === 10) && result.isCorrect && !isDemo) {
-          confetti({ particleCount: 40, spread: 70, origin: { y: 0.5 } });
-        }
-
         // Achievements check
         const { updatedList, newlyUnlocked } = evaluateAchievements(prev.achievements, {
           totalSolved: updatedProfile.totalCorrect,
@@ -366,11 +797,11 @@ export function useGameState() {
           recoveryCount: newRecoveryStreak,
           arraySolved: updatedProfile.topicMasteries['Arrays']?.correct || 0,
           debugSolved: updatedProfile.attemptHistory.filter(h => h.skillCategory === 'debugging' && h.isCorrect).length,
-          optSolved: laddersClimbed,
+          optSolved: prev.laddersClimbed,
           complexitySolved: updatedProfile.attemptHistory.filter(h => h.skillCategory === 'complexity' && h.isCorrect).length,
           graphSolved: updatedProfile.topicMasteries['Graphs']?.correct || 0,
           dpSolved: updatedProfile.topicMasteries['Dynamic Programming']?.correct || 0,
-          currentTile: finalLandingPos
+          currentTile: intendedPos
         });
 
         if (newlyUnlocked.length > 0 && !isDemo) {
@@ -392,23 +823,26 @@ export function useGameState() {
           square: result.squareId,
           title: `${result.isCorrect ? 'Solved' : 'Attempted'}: ${result.topic}`,
           detail: result.isCorrect 
-            ? `${tilesDelta > 0 ? `+${tilesDelta} Tiles` : ''} (+${economy.xpDelta} XP, +${economy.coinsDelta} Coins)` 
+            ? `${tilesDelta > 0 ? `+${tilesDelta} Tiles` : ''} (+${economy.xpDelta} XP, +${economy.coinsDelta} Coins, +${energyGained} ⚡)` 
             : `${tilesDelta} Tiles Penalty (+3 XP, +1 Coin for effort)`,
           scoreDelta: result.isCorrect ? economy.xpDelta : 3
         });
 
         return {
           ...prev,
-          currentPosition: finalLandingPos,
-          completedSquares: Array.from(new Set([...prev.completedSquares, finalLandingPos])),
+          currentPosition: intendedPos,
+          completedSquares: Array.from(new Set([...prev.completedSquares, intendedPos])),
           totalScore: newScore,
           coins: newCoins,
+          energy: newEnergy,
+          activeShield: !result.isCorrect && prev.activeShield ? false : prev.activeShield,
           streak: newStreak,
           longestStreak: newLongest,
           recoveryStreak: newRecoveryStreak,
           consecutiveIncorrect: newConsecutiveIncorrect,
-          laddersClimbed,
-          snakesEncountered,
+          topicMasteryMap: newMasteryMap,
+          misconceptions: newMisconceptions,
+          futureEchoes: newEchoes,
           achievements: updatedList,
           learnerProfile: updatedProfile,
           recentActivities: activities.slice(0, 30)
@@ -423,8 +857,8 @@ export function useGameState() {
   }, [
     gameState.consecutiveIncorrect, 
     gameState.currentPosition, 
-    gameState.laddersClimbed, 
-    gameState.snakesEncountered, 
+    gameState.currentRouteType,
+    gameState.activeShield,
     animateStepPath, 
     showNotification
   ]);
@@ -475,7 +909,7 @@ export function useGameState() {
    * Autoplay Loop
    */
   useEffect(() => {
-    if (!isAutoplayRunning || isAutoplayPaused || isMoving || isRolling || isChallengeOpen) {
+    if (!isAutoplayRunning || isAutoplayPaused || isMoving || isRolling || isChallengeOpen || isRouteModalOpen || isSnakeRecoveryModalOpen || isLadderChoiceModalOpen || isBossModalOpen || isMutationModalOpen) {
       if (autoplayTimerRef.current) {
         clearTimeout(autoplayTimerRef.current);
         autoplayTimerRef.current = null;
@@ -538,6 +972,11 @@ export function useGameState() {
     isMoving, 
     isRolling, 
     isChallengeOpen, 
+    isRouteModalOpen,
+    isSnakeRecoveryModalOpen,
+    isLadderChoiceModalOpen,
+    isBossModalOpen,
+    isMutationModalOpen,
     autoplaySpeed, 
     gameState.currentPosition, 
     gameState.passedCheckpoints, 
@@ -574,6 +1013,11 @@ export function useGameState() {
     setDisplayedPosition(1);
     setIsResetModalOpen(false);
     setIsVictoryModalOpen(false);
+    setIsBossModalOpen(false);
+    setIsRouteModalOpen(false);
+    setIsSnakeRecoveryModalOpen(false);
+    setIsLadderChoiceModalOpen(false);
+    setIsMutationModalOpen(false);
     challengeRegistryRef.current = new ChallengeRegistry([]);
     sound.playMoveStep();
   }, [stopAutoplay]);
@@ -583,6 +1027,12 @@ export function useGameState() {
       ...prev,
       settings: { ...prev.settings, ...newSettings }
     }));
+  }, []);
+
+  const triggerBugBotDuel = useCallback((scenarioIndex: number = 0) => {
+    const scenario = BUGBOT_SCENARIOS[scenarioIndex % BUGBOT_SCENARIOS.length];
+    setActiveBugBotScenario(scenario);
+    setIsBugBotModalOpen(true);
   }, []);
 
   return {
@@ -604,6 +1054,23 @@ export function useGameState() {
     isAutoplayRunning,
     isAutoplayPaused,
     autoplaySpeed,
+
+    // Evolution exports
+    isRouteModalOpen,
+    currentDecisionTile,
+    availableRouteOptions,
+    activeIntelligentSnake,
+    isSnakeRecoveryModalOpen,
+    activeOptimizationLadder,
+    isLadderChoiceModalOpen,
+    activeBossBattle,
+    isBossModalOpen,
+    activeBugBotScenario,
+    isBugBotModalOpen,
+    activeMutation,
+    isMutationModalOpen,
+    isMasteryModalOpen,
+
     handleRollDice,
     handleOpenSquareChallenge,
     handleCompleteChallenge,
@@ -617,6 +1084,18 @@ export function useGameState() {
     handleResetGame,
     updateSettings,
     dismissNotification: () => setCurrentNotification(null),
+
+    // Evolution actions
+    handleSelectRoute,
+    handleUseAbility,
+    handleSelectSnakeChoice,
+    handleSelectLadderOption,
+    handleBossVictory,
+    handleBugBotVictory,
+    handleResolveMutation,
+    triggerBugBotDuel,
+    triggerDecisionCrossroads,
+
     setIsResetModalOpen,
     setIsRevisionModalOpen,
     setIsAdaptiveModalOpen,
@@ -624,6 +1103,13 @@ export function useGameState() {
     setIsVictoryModalOpen,
     setIsShopModalOpen,
     setIsAchievementsModalOpen,
-    setIsChallengeOpen
+    setIsChallengeOpen,
+    setIsRouteModalOpen,
+    setIsSnakeRecoveryModalOpen,
+    setIsLadderChoiceModalOpen,
+    setIsBossModalOpen,
+    setIsBugBotModalOpen,
+    setIsMutationModalOpen,
+    setIsMasteryModalOpen
   };
 }

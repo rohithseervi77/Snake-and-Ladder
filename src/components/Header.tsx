@@ -10,7 +10,9 @@ import {
   ShoppingBag,
   Trophy,
   Flame,
-  Coins
+  Coins,
+  Award,
+  Bot
 } from 'lucide-react';
 import { LearnerProfile } from '../types/learner';
 import { GameSettings } from '../types/game';
@@ -29,6 +31,8 @@ interface HeaderProps {
   onOpenReset: () => void;
   onOpenShop: () => void;
   onOpenAchievements: () => void;
+  onOpenMasteryMatrix?: () => void;
+  onOpenBugBotDuel?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -43,7 +47,9 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenRevision,
   onOpenReset,
   onOpenShop,
-  onOpenAchievements
+  onOpenAchievements,
+  onOpenMasteryMatrix,
+  onOpenBugBotDuel
 }) => {
   const dueRevisionCount = learnerProfile.revisionQueue.filter(r => r.isDue).length;
   const levelInfo = calculateLevelInfo(totalXp);
@@ -114,6 +120,30 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right: Quick Action Buttons */}
       <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Topic Mastery Matrix Button */}
+        {onOpenMasteryMatrix && (
+          <button
+            onClick={onOpenMasteryMatrix}
+            title="Cognitive Mastery Matrix (11 Topics)"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/60 border border-indigo-700/50 text-indigo-300 text-xs font-semibold transition cursor-pointer"
+          >
+            <Award className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="hidden sm:inline">Mastery</span>
+          </button>
+        )}
+
+        {/* BugBot Duel Button */}
+        {onOpenBugBotDuel && (
+          <button
+            onClick={onOpenBugBotDuel}
+            title="Duel Rival BugBot"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-700/50 text-cyan-300 text-xs font-semibold transition cursor-pointer"
+          >
+            <Bot className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden sm:inline">Rival Duel</span>
+          </button>
+        )}
+
         {/* Shop Button */}
         <button
           onClick={onOpenShop}
@@ -132,16 +162,6 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Trophy className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Badges</span>
-        </button>
-
-        {/* Adaptive Intelligence Pill */}
-        <button
-          onClick={onOpenAdaptive}
-          title="Adaptive DSA Intelligence"
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-700/50 text-indigo-300 text-xs font-medium transition cursor-pointer"
-        >
-          <BrainCircuit className="w-3.5 h-3.5 text-indigo-400" />
-          <span className="hidden lg:inline">Mastery</span>
         </button>
 
         {/* Spaced Revision Pill */}

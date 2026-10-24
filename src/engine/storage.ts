@@ -1,8 +1,11 @@
 import { LearnerProfile } from '../types/learner';
 import { GameSettings, ActivityRecord } from '../types/game';
 import { Achievement, EquippedCosmetics } from '../types/rewards';
+import { TopicMasteryScore, MisconceptionRecord, FutureEchoChallenge, RouteType } from '../types/evolution';
 import { createInitialLearnerProfile } from './adaptiveEngine';
 import { INITIAL_ACHIEVEMENTS } from './achievementEngine';
+import { createInitialMasteryMap } from './masteryEngine';
+import { STARTING_ENERGY } from './energyEngine';
 
 export interface PersistentGameState {
   version: number;
@@ -24,9 +27,24 @@ export interface PersistentGameState {
   recentActivities: ActivityRecord[];
   learnerProfile: LearnerProfile;
   settings: GameSettings;
+
+  // Evolution (v3) fields
+  topicMasteryMap: Record<string, TopicMasteryScore>;
+  energy: number;
+  activeShield: boolean;
+  activeLadderBoost: boolean;
+  misconceptions: MisconceptionRecord[];
+  futureEchoes: FutureEchoChallenge[];
+  turnsCompleted: number;
+  defeatedBosses: number[];
+  completedMutations: string[];
+  currentRouteType: RouteType;
+  activeRouteTile: number | null;
 }
 
-const STORAGE_KEY = 'code_and_ladders_save_v2';
+const STORAGE_KEY_V3 = 'code_and_ladders_save_v3';
+const STORAGE_KEY_V2 = 'code_and_ladders_save_v2';
+const STORAGE_KEY_V1 = 'code_and_ladders_save_v1';
 
 export const DEFAULT_SETTINGS: GameSettings = {
   soundEnabled: true,
@@ -44,7 +62,7 @@ export const DEFAULT_EQUIPPED: EquippedCosmetics = {
 
 export function getInitialGameState(): PersistentGameState {
   return {
-    version: 2,
+    version: 3,
     currentPosition: 1,
     completedSquares: [1],
     passedCheckpoints: [],
@@ -67,12 +85,25 @@ export function getInitialGameState(): PersistentGameState {
         type: 'challenge',
         square: 1,
         title: 'Started Journey on Square 1',
-        detail: 'Arrays (Manipulation) concept unlocked',
+        detail: 'Arrays & Strings foundation unlocked',
         scoreDelta: 50
       }
     ],
     learnerProfile: createInitialLearnerProfile(),
-    settings: DEFAULT_SETTINGS
+    settings: DEFAULT_SETTINGS,
+
+    // Evolution initial state
+    topicMasteryMap: createInitialMasteryMap(),
+    energy: STARTING_ENERGY,
+    activeShield: false,
+    activeLadderBoost: false,
+    misconceptions: [],
+    futureEchoes: [],
+    turnsCompleted: 0,
+    defeatedBosses: [],
+    completedMutations: [],
+    currentRouteType: 'knowledge',
+    activeRouteTile: null,
   };
 }
 
@@ -80,7 +111,10 @@ export function loadGameState(): PersistentGameState {
   if (typeof window === 'undefined') return getInitialGameState();
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('code_and_ladders_save_v1');
+    const raw = localStorage.getItem(STORAGE_KEY_V3) 
+      || localStorage.getItem(STORAGE_KEY_V2) 
+      || localStorage.getItem(STORAGE_KEY_V1);
+
     if (!raw) return getInitialGameState();
 
     const parsed = JSON.parse(raw);
@@ -89,7 +123,7 @@ export function loadGameState(): PersistentGameState {
       return {
         ...initial,
         ...parsed,
-        version: 2,
+        version: 3,
         coins: typeof parsed.coins === 'number' ? parsed.coins : initial.coins,
         streak: typeof parsed.streak === 'number' ? parsed.streak : initial.streak,
         longestStreak: typeof parsed.longestStreak === 'number' ? parsed.longestStreak : initial.longestStreak,
@@ -109,7 +143,21 @@ export function loadGameState(): PersistentGameState {
         settings: {
           ...DEFAULT_SETTINGS,
           ...(parsed.settings || {})
-        }
+        },
+        // Evolution migrations
+        topicMasteryMap: parsed.topicMasteryMap && typeof parsed.topicMasteryMap === 'object'
+          ? { ...initial.topicMasteryMap, ...parsed.topicMasteryMap }
+          : initial.topicMasteryMap,
+        energy: typeof parsed.energy === 'number' ? parsed.energy : initial.energy,
+        activeShield: Boolean(parsed.activeShield),
+        activeLadderBoost: Boolean(parsed.activeLadderBoost),
+        misconceptions: Array.isArray(parsed.misconceptions) ? parsed.misconceptions : [],
+        futureEchoes: Array.isArray(parsed.futureEchoes) ? parsed.futureEchoes : [],
+        turnsCompleted: typeof parsed.turnsCompleted === 'number' ? parsed.turnsCompleted : 0,
+        defeatedBosses: Array.isArray(parsed.defeatedBosses) ? parsed.defeatedBosses : [],
+        completedMutations: Array.isArray(parsed.completedMutations) ? parsed.completedMutations : [],
+        currentRouteType: parsed.currentRouteType || 'knowledge',
+        activeRouteTile: parsed.activeRouteTile || null,
       };
     }
   } catch (err) {
@@ -123,7 +171,7 @@ export function saveGameState(state: PersistentGameState): void {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(state));
   } catch (err) {
     console.error('Failed to write to localStorage:', err);
   }
@@ -131,8 +179,9 @@ export function saveGameState(state: PersistentGameState): void {
 
 export function resetGameStorage(): PersistentGameState {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem('code_and_ladders_save_v1');
+    localStorage.removeItem(STORAGE_KEY_V3);
+    localStorage.removeItem(STORAGE_KEY_V2);
+    localStorage.removeItem(STORAGE_KEY_V1);
   }
   return getInitialGameState();
 }
