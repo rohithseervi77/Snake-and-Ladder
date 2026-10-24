@@ -7,21 +7,21 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #0b1120;
+  background-color: #080d1a;
   color: #f1f5f9;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
   user-select: none;
 }
 
-/* Custom scrollbars for clean indie game look */
+/* Global scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #090f1d;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -31,4 +31,55 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
+}
+
+/* Dedicated, high-visibility board viewport scrollbars */
+.board-scroll-viewport {
+  scrollbar-width: auto;
+  scrollbar-color: #38bdf8 #060d1f;
+  -webkit-overflow-scrolling: touch;
+}
+
+.board-scroll-viewport::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.board-scroll-viewport::-webkit-scrollbar-track {
+  background: #060d1f;
+  border-left: 1px solid #1e293b;
+  border-top: 1px solid #1e293b;
+  border-radius: 8px;
+}
+
+.board-scroll-viewport::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #38bdf8, #2563eb);
+  border-radius: 9999px;
+  border: 2px solid #060d1f;
+}
+
+.board-scroll-viewport::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #67e8f9, #3b82f6);
+}
+
+/* Focus Pulse Animation for Active / Jumped Tile */
+@keyframes tileFocusGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.9), 0 0 20px rgba(34, 211, 238, 0.8);
+    transform: scale(1.03);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(34, 211, 238, 0.3), 0 0 45px rgba(34, 211, 238, 0.95);
+    transform: scale(1.08);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.9), 0 0 20px rgba(34, 211, 238, 0.8);
+    transform: scale(1.03);
+  }
+}
+
+.tile-focus-pulse {
+  animation: tileFocusGlow 0.6s ease-in-out infinite !important;
+  z-index: 40 !important;
+  border-color: #22d3ee !important;
 }
