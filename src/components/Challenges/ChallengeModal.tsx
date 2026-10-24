@@ -52,6 +52,8 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
   const [eliminatedOptions, setEliminatedOptions] = useState<number[]>([]);
   const [secondChanceUsed, setSecondChanceUsed] = useState(false);
   const [showForfeitConfirm, setShowForfeitConfirm] = useState(false);
+  const [confidenceLevel, setConfidenceLevel] = useState<'low' | 'medium' | 'high'>('medium');
+  const [reasoningChoice, setReasoningChoice] = useState<number | null>(null);
 
   if (!isOpen) return null;
 
@@ -415,6 +417,70 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
             </div>
           )}
 
+          {/* Metacognitive Calibration: Confidence Rating */}
+          {!hasSubmitted && (
+            <div className="p-3 rounded-xl bg-[#091122] border border-[#1b2b48] flex flex-col gap-1.5 mt-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-300 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                  Metacognitive Calibration: How confident are you?
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono">Confidence vs Accuracy</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { level: 'low', label: 'Unsure (30%)', desc: 'Educated guess' },
+                  { level: 'medium', label: 'Moderate (70%)', desc: 'Fairly confident' },
+                  { level: 'high', label: 'Certain (95%)', desc: 'Proof verified' }
+                ].map(c => (
+                  <button
+                    key={c.level}
+                    type="button"
+                    onClick={() => setConfidenceLevel(c.level as any)}
+                    className={`p-2 rounded-lg border text-center transition cursor-pointer ${
+                      confidenceLevel === c.level
+                        ? 'bg-cyan-950/60 border-cyan-400 text-cyan-200 font-bold shadow-sm'
+                        : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <div className="text-xs">{c.label}</div>
+                    <div className="text-[9.5px] opacity-75">{c.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Explain-Your-Answer Reasoning Justification for Hard/Expert/Optimization Challenges */}
+          {!hasSubmitted && (challenge.difficulty === 'hard' || challenge.difficulty === 'expert' || isOptimization) && (
+            <div className="p-3 rounded-xl bg-[#091122] border border-[#1b2b48] flex flex-col gap-2 mt-1">
+              <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
+                Explain Your Answer: Why does this strategy scale?
+              </span>
+              <div className="flex flex-col gap-1.5">
+                {[
+                  'It maintains strict inductive invariants while bounding auxiliary memory allocation',
+                  'It executes parallel hardware instructions to bypass CPU clock limits',
+                  'It relies on compiler garbage collection to handle unbounded recursion'
+                ].map((reason, rIdx) => (
+                  <button
+                    key={rIdx}
+                    type="button"
+                    onClick={() => setReasoningChoice(rIdx)}
+                    className={`p-2 rounded-lg border text-left text-xs transition cursor-pointer ${
+                      reasoningChoice === rIdx
+                        ? 'bg-amber-950/40 border-amber-500 text-amber-200 font-semibold'
+                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {reason}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Progressive 3-Tier Hint Section */}
           {challenge.hints && challenge.hints.length > 0 && (
             <div className="mt-1 flex flex-col gap-2">
@@ -490,6 +556,31 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
               <p className="text-xs text-slate-300 leading-relaxed">
                 {challenge.explanation}
               </p>
+
+              {/* Metacognitive Diagnostic Insight */}
+              <div className="p-3 rounded-xl bg-black/40 border border-slate-800 flex items-start gap-2.5 text-xs">
+                <span className="text-lg">
+                  {isCorrect && confidenceLevel === 'high' ? '🎯' :
+                   !isCorrect && confidenceLevel === 'high' ? '⚠️' :
+                   isCorrect && confidenceLevel === 'low' ? '💡' : '📚'}
+                </span>
+                <div>
+                  <div className="font-bold text-white">
+                    {isCorrect && confidenceLevel === 'high' ? 'Calibrated Technical Mastery! 🎯' :
+                     !isCorrect && confidenceLevel === 'high' ? 'Overconfidence Blindspot Detected! ⚠️' :
+                     isCorrect && confidenceLevel === 'low' ? 'Algorithmic Intuition Verified! 💡' : 'Constructive Gap Identified 📚'}
+                  </div>
+                  <p className="text-[11px] text-slate-300 mt-0.5 leading-snug">
+                    {isCorrect && confidenceLevel === 'high'
+                      ? 'You were highly confident and your algorithmic reasoning was spot-on. True technical mastery demonstrated!'
+                      : !isCorrect && confidenceLevel === 'high'
+                      ? 'You felt 95% certain, but tripped on a subtle edge case or invariant. Review the pitfall analysis below to eliminate this blindspot.'
+                      : isCorrect && confidenceLevel === 'low'
+                      ? 'You doubted your knowledge, but your conceptual intuition was correct! Trust your algorithmic pattern recognition.'
+                      : 'You accurately anticipated uncertainty. Systematic review of this concept will solidify the missing invariant.'}
+                  </p>
+                </div>
+              </div>
 
               {/* Learning Objective & Trap */}
               {(challenge.learningObjective || challenge.commonMistake) && (

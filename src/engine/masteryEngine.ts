@@ -17,6 +17,46 @@ export const DSA_TOPICS = [
 
 export type DsaTopicName = typeof DSA_TOPICS[number];
 
+/**
+ * Maps raw curriculum topics and challenge titles to canonical DSA mastery categories.
+ */
+export function normalizeDsaTopic(rawTopic: string): DsaTopicName {
+  if (!rawTopic) return 'Arrays and strings';
+  const lower = rawTopic.toLowerCase();
+
+  if (lower.includes('graph') || lower.includes('bfs') || lower.includes('dfs') || lower.includes('dijkstra') || lower.includes('mst') || lower.includes('network') || lower.includes('topological')) {
+    return 'Graphs';
+  }
+  if (lower.includes('dynamic') || lower.includes('dp') || lower.includes('knapsack') || lower.includes('memoization') || lower.includes('tabulation') || lower.includes('subsequence')) {
+    return 'Dynamic programming';
+  }
+  if (lower.includes('greedy') || lower.includes('interval') || lower.includes('huffman')) {
+    return 'Greedy algorithms';
+  }
+  if (lower.includes('tree') || lower.includes('bst') || lower.includes('heap') || lower.includes('priority') || lower.includes('trie') || lower.includes('segment')) {
+    return 'Trees and heaps';
+  }
+  if (lower.includes('hash') || lower.includes('map') || lower.includes('set') || lower.includes('collision')) {
+    return 'Hashing';
+  }
+  if (lower.includes('recur') || lower.includes('backtrack') || lower.includes('subset') || lower.includes('n-queens')) {
+    return 'Recursion and backtracking';
+  }
+  if (lower.includes('search') || lower.includes('sort') || lower.includes('binary search') || lower.includes('quicksort') || lower.includes('mergesort')) {
+    return 'Searching and sorting';
+  }
+  if (lower.includes('stack') || lower.includes('queue') || lower.includes('deque') || lower.includes('lifo') || lower.includes('fifo')) {
+    return 'Stacks and queues';
+  }
+  if (lower.includes('list') || lower.includes('pointer') || lower.includes('linked') || lower.includes('node')) {
+    return 'Linked lists';
+  }
+  if (lower.includes('complex') || lower.includes('time') || lower.includes('space') || lower.includes('big-o') || lower.includes('asymptot')) {
+    return 'Time and space complexity';
+  }
+  return 'Arrays and strings';
+}
+
 export function getInitialMasteryMap(): Record<string, TopicMasteryScore> {
   const map: Record<string, TopicMasteryScore> = {};
 

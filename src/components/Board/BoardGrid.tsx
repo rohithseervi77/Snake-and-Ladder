@@ -3,12 +3,15 @@ import { SquareMetadata } from '../../types/curriculum';
 import { SQUARE_MAP } from '../../data/curriculum100';
 import { BoardCell } from './BoardCell';
 import { SnakeLadderSvg } from './SnakeLadderSvg';
+import { TopicMasteryScore } from '../../types/evolution';
+import { normalizeDsaTopic } from '../../engine/masteryEngine';
 
 interface BoardGridProps {
   currentPosition: number;
   completedSquares: number[];
   equippedMarker?: string;
   boardTheme?: string;
+  topicMasteryMap?: Record<string, TopicMasteryScore>;
   onSelectSquare: (square: SquareMetadata) => void;
   tileWidth?: number;
   tileHeight?: number;
@@ -19,6 +22,7 @@ export const BoardGrid: React.FC<BoardGridProps> = ({
   completedSquares,
   equippedMarker,
   boardTheme = 'theme-obsidian-navy',
+  topicMasteryMap,
   onSelectSquare,
   tileWidth = 138,
   tileHeight = 118
@@ -79,17 +83,23 @@ export const BoardGrid: React.FC<BoardGridProps> = ({
         {/* Layer 1: SVG Snakes & Ladders Paths behind cards (z-0) */}
         <SnakeLadderSvg />
 
-        {/* Layer 2: 100 Clear, Readable Level Cards (z-10) */}
-        {orderedSquares.map(square => (
-          <BoardCell
-            key={`cell-${square.id}`}
-            square={square}
-            isCurrent={square.id === currentPosition}
-            isCompleted={completedSet.has(square.id)}
-            equippedMarker={equippedMarker}
-            onSelect={onSelectSquare}
-          />
-        ))}
+        {/* Layer 2: 100 Clear, Readable Level Cards (z-10) with Mastered Tile Evolution */}
+        {orderedSquares.map(square => {
+          const canonical = normalizeDsaTopic(square.topic);
+          const tm = topicMasteryMap?.[canonical];
+          return (
+            <BoardCell
+              key={`cell-${square.id}`}
+              square={square}
+              isCurrent={square.id === currentPosition}
+              isCompleted={completedSet.has(square.id)}
+              equippedMarker={equippedMarker}
+              masteryScore={tm?.score}
+              masteryLevel={tm?.level}
+              onSelect={onSelectSquare}
+            />
+          );
+        })}
       </div>
     </div>
   );

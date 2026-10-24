@@ -116,10 +116,11 @@ describe('PART 12: Comprehensive Board Movement & Gameplay Verification', () => 
 
     it('Verify that the player cannot move beyond tile 100', () => {
       const passedCheckpoints = new Set<number>([10, 20, 30, 40, 50, 60, 70, 80, 90]);
-      // At tile 98, rolling 5 would reach 103 -> bounces back 3 tiles to 97
+      // At tile 98, rolling 5 would exceed 100 -> stays in place at 98 per Rule 8 exact-roll rule
       const plan = computeMovementPlan(98, 5, passedCheckpoints);
       expect(plan.targetSquareBeforeTransitions).toBeLessThanOrEqual(100);
-      expect(plan.targetSquareBeforeTransitions).toBe(97);
+      expect(plan.targetSquareBeforeTransitions).toBe(98);
+      expect(plan.overshotExplanation).toContain('Exact roll of 2 needed');
     });
 
     it('Verify snake movement downward', () => {

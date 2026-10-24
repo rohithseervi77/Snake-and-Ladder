@@ -29,6 +29,13 @@ import { BugBotModal } from './components/Evolution/BugBotModal';
 import { MutationModal } from './components/Evolution/MutationModal';
 import { MasteryModal } from './components/Evolution/MasteryModal';
 
+// Novelty Systems
+import { ErrorDNAModal } from './components/Novelty/ErrorDNAModal';
+import { ComplexityMeterModal } from './components/Novelty/ComplexityMeterModal';
+import { WhatIfSimulatorModal } from './components/Novelty/WhatIfSimulatorModal';
+import { KnowledgeGraphModal } from './components/Novelty/KnowledgeGraphModal';
+import { DecisionLabModal } from './components/Novelty/DecisionLabModal';
+
 export const App: React.FC = () => {
   const {
     gameState,
@@ -112,6 +119,13 @@ export const App: React.FC = () => {
   const [showLeftSidebar, setShowLeftSidebar] = useState<boolean>(true);
   const [showRightSidebar, setShowRightSidebar] = useState<boolean>(true);
 
+  // Novelty Modals State
+  const [isErrorDnaOpen, setIsErrorDnaOpen] = useState<boolean>(false);
+  const [isComplexityMeterOpen, setIsComplexityMeterOpen] = useState<boolean>(false);
+  const [isWhatIfOpen, setIsWhatIfOpen] = useState<boolean>(false);
+  const [isKnowledgeGraphOpen, setIsKnowledgeGraphOpen] = useState<boolean>(false);
+  const [isDecisionLabOpen, setIsDecisionLabOpen] = useState<boolean>(false);
+
   const currentSquare = useMemo(() => {
     return SQUARE_MAP.get(displayedPosition) || CURRICULUM_100[0];
   }, [displayedPosition]);
@@ -134,6 +148,11 @@ export const App: React.FC = () => {
         onOpenAchievements={() => setIsAchievementsModalOpen(true)}
         onOpenMasteryMatrix={() => setIsMasteryModalOpen(true)}
         onOpenBugBotDuel={() => triggerBugBotDuel()}
+        onOpenKnowledgeGraph={() => setIsKnowledgeGraphOpen(true)}
+        onOpenComplexityMeter={() => setIsComplexityMeterOpen(true)}
+        onOpenWhatIfSimulator={() => setIsWhatIfOpen(true)}
+        onOpenErrorDNA={() => setIsErrorDnaOpen(true)}
+        onOpenDecisionLab={() => setIsDecisionLabOpen(true)}
       />
 
       {/* Floating Movement Reward / Penalty / Level-Up Toast */}
@@ -202,6 +221,7 @@ export const App: React.FC = () => {
               equippedMarker={gameState.equippedCosmetics.playerMarker}
               boardTheme={gameState.equippedCosmetics.boardTheme}
               onSelectSquare={(sq) => setInspectingSquare(sq)}
+              topicMasteryMap={gameState.topicMasteryMap}
             />
           </div>
 
@@ -241,6 +261,13 @@ export const App: React.FC = () => {
               coinBalance={gameState.coins}
               recentActivities={gameState.recentActivities}
               onStartChallenge={handleOpenSquareChallenge}
+              topicMasteryMap={gameState.topicMasteryMap}
+              misconceptions={gameState.misconceptions}
+              onOpenErrorDNA={() => setIsErrorDnaOpen(true)}
+              onOpenDecisionLab={() => setIsDecisionLabOpen(true)}
+              onOpenComplexityMeter={() => setIsComplexityMeterOpen(true)}
+              onOpenWhatIfSimulator={() => setIsWhatIfOpen(true)}
+              onOpenKnowledgeGraph={() => setIsKnowledgeGraphOpen(true)}
             />
           </div>
         )}
@@ -415,6 +442,49 @@ export const App: React.FC = () => {
           setInspectingSquare(null);
           handleOpenSquareChallenge(sqId);
         }}
+      />
+
+      {/* Novelty: Cognitive Error DNA & Learning Debt Diagnostics */}
+      <ErrorDNAModal
+        isOpen={isErrorDnaOpen}
+        onClose={() => setIsErrorDnaOpen(false)}
+        learnerProfile={gameState.learnerProfile}
+        misconceptions={gameState.misconceptions}
+        topicMasteryMap={gameState.topicMasteryMap}
+        onJumpToDrill={(squareId: number) => {
+          setIsErrorDnaOpen(false);
+          handleOpenSquareChallenge(squareId);
+        }}
+      />
+
+      {/* Novelty: Asymptotic Complexity Benchmark */}
+      <ComplexityMeterModal
+        isOpen={isComplexityMeterOpen}
+        onClose={() => setIsComplexityMeterOpen(false)}
+      />
+
+      {/* Novelty: What-If Structural Simulator */}
+      <WhatIfSimulatorModal
+        isOpen={isWhatIfOpen}
+        onClose={() => setIsWhatIfOpen(false)}
+      />
+
+      {/* Novelty: DSA Curriculum Knowledge Roadmap */}
+      <KnowledgeGraphModal
+        isOpen={isKnowledgeGraphOpen}
+        onClose={() => setIsKnowledgeGraphOpen(false)}
+        completedSquares={gameState.completedSquares}
+        topicMasteryMap={gameState.topicMasteryMap}
+        onJumpToStage={(firstTile: number) => {
+          setIsKnowledgeGraphOpen(false);
+          handleOpenSquareChallenge(firstTile);
+        }}
+      />
+
+      {/* Novelty: Algorithm Decision Lab */}
+      <DecisionLabModal
+        isOpen={isDecisionLabOpen}
+        onClose={() => setIsDecisionLabOpen(false)}
       />
     </div>
   );

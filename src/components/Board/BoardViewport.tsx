@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { BoardGrid } from './BoardGrid';
 import { SquareMetadata } from '../../types/curriculum';
+import { TopicMasteryScore } from '../../types/evolution';
 
 interface BoardViewportProps {
   currentPosition: number;
@@ -21,6 +22,7 @@ interface BoardViewportProps {
   equippedMarker?: string;
   boardTheme?: string;
   onSelectSquare: (square: SquareMetadata) => void;
+  topicMasteryMap?: Record<string, TopicMasteryScore>;
 }
 
 const ZOOM_STEPS = [0.75, 0.85, 1.0, 1.15, 1.3];
@@ -45,7 +47,8 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
   completedSquares,
   equippedMarker,
   boardTheme,
-  onSelectSquare
+  onSelectSquare,
+  topicMasteryMap
 }) => {
   const [zoomIndex, setZoomIndex] = useState(() => {
     const saved = localStorage.getItem('board_zoom_level');
@@ -360,6 +363,7 @@ export const BoardViewport: React.FC<BoardViewportProps> = ({
             onSelectSquare={onSelectSquare}
             tileWidth={tileWidth}
             tileHeight={tileHeight}
+            topicMasteryMap={topicMasteryMap}
           />
         </div>
       </div>

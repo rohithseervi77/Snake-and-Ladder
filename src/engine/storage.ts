@@ -128,15 +128,20 @@ export function loadGameState(): PersistentGameState {
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === 'object') {
       const initial = getInitialGameState();
+      const validPosition = typeof parsed.currentPosition === 'number' && !isNaN(parsed.currentPosition)
+        ? Math.max(1, Math.min(100, Math.floor(parsed.currentPosition)))
+        : initial.currentPosition;
+
       return {
         ...initial,
         ...parsed,
         version: 3,
-        coins: typeof parsed.coins === 'number' ? parsed.coins : initial.coins,
-        streak: typeof parsed.streak === 'number' ? parsed.streak : initial.streak,
-        longestStreak: typeof parsed.longestStreak === 'number' ? parsed.longestStreak : initial.longestStreak,
-        recoveryStreak: typeof parsed.recoveryStreak === 'number' ? parsed.recoveryStreak : initial.recoveryStreak,
-        consecutiveIncorrect: typeof parsed.consecutiveIncorrect === 'number' ? parsed.consecutiveIncorrect : 0,
+        currentPosition: validPosition,
+        coins: typeof parsed.coins === 'number' && !isNaN(parsed.coins) ? Math.max(0, parsed.coins) : initial.coins,
+        streak: typeof parsed.streak === 'number' && !isNaN(parsed.streak) ? Math.max(0, parsed.streak) : initial.streak,
+        longestStreak: typeof parsed.longestStreak === 'number' && !isNaN(parsed.longestStreak) ? Math.max(0, parsed.longestStreak) : initial.longestStreak,
+        recoveryStreak: typeof parsed.recoveryStreak === 'number' && !isNaN(parsed.recoveryStreak) ? Math.max(0, parsed.recoveryStreak) : initial.recoveryStreak,
+        consecutiveIncorrect: typeof parsed.consecutiveIncorrect === 'number' && !isNaN(parsed.consecutiveIncorrect) ? Math.max(0, parsed.consecutiveIncorrect) : 0,
         achievements: Array.isArray(parsed.achievements) && parsed.achievements.length > 0 
           ? parsed.achievements 
           : initial.achievements,

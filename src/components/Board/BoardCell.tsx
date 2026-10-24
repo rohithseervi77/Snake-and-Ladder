@@ -16,7 +16,8 @@ import {
   Lock,
   Compass,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  Star
 } from 'lucide-react';
 import { SquareMetadata } from '../../types/curriculum';
 import { SNAKES_AND_LADDERS } from '../../data/snakesAndLadders';
@@ -27,6 +28,8 @@ interface BoardCellProps {
   isCurrent: boolean;
   isCompleted: boolean;
   equippedMarker?: string;
+  masteryScore?: number;
+  masteryLevel?: string;
   onSelect: (square: SquareMetadata) => void;
 }
 
@@ -44,6 +47,7 @@ export const BoardCell: React.FC<BoardCellProps> = ({
   isCurrent,
   isCompleted,
   equippedMarker,
+  masteryScore,
   onSelect
 }) => {
   // Check for ladders and snakes
@@ -147,21 +151,31 @@ export const BoardCell: React.FC<BoardCellProps> = ({
           {getStageIcon()}
         </div>
 
-        {/* Status Indicator */}
+        {/* Status Indicator / Mastered Tile Evolution */}
         <div className="flex items-center gap-1">
           {isCurrent ? (
             <span className="px-1.5 py-0.5 rounded-full bg-cyan-500/30 border border-cyan-400 text-cyan-200 font-extrabold text-[10px] uppercase tracking-wide flex items-center gap-1 animate-pulse">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 inline-block" />
               You
             </span>
+          ) : (masteryScore ?? 0) >= 80 ? (
+            <span className="px-1.5 py-0.5 rounded-full bg-amber-400/25 border border-amber-400/80 text-amber-300 font-black text-[9.5px] uppercase tracking-wide flex items-center gap-0.5 shadow-sm shadow-amber-950/60" title={`Mastered (${masteryScore}%)`}>
+              <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+              ★ Master
+            </span>
+          ) : (masteryScore ?? 0) >= 55 ? (
+            <span className="px-1.5 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/60 text-cyan-300 font-bold text-[9.5px] flex items-center gap-0.5" title={`Strong (${masteryScore}%)`}>
+              <Sparkles className="w-2.5 h-2.5 text-cyan-400" />
+              ◉ Strong
+            </span>
           ) : isCompleted ? (
-            <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-500/60 text-emerald-300 font-bold text-[10px] flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-              Done
+            <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-500/60 text-emerald-300 font-bold text-[9.5px] flex items-center gap-1" title="Practiced">
+              <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+              ◐ Done
             </span>
           ) : (
-            <span className="text-[10px] font-mono font-medium text-slate-400/80">
-              {square.difficulty.slice(0, 3).toUpperCase()}
+            <span className="text-[9.5px] font-mono font-medium text-slate-500" title="Unseen">
+              ○ {square.difficulty.slice(0, 3).toUpperCase()}
             </span>
           )}
         </div>

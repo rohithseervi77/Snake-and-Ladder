@@ -58,13 +58,15 @@ export interface MovementPlan {
   snakeOrLadderEncountered?: SnakeOrLadder;
   finalPosition: number;
   isGameFinished: boolean;
+  overshotTarget?: boolean;
+  overshotExplanation?: string;
 }
 
 /**
  * Calculates step-by-step movement plan respecting:
  * 1. Step-by-step path
  * 2. Stopping at mandatory checkpoints (cannot skip with high roll)
- * 3. 100 Finish boundaries (exact landing / bounce back or cap)
+ * 3. 100 Finish boundaries (exact landing required: rolls exceeding 100 remain in place)
  * 4. Snakes and Ladders transitions
  */
 export function computeMovementPlan(
@@ -74,11 +76,15 @@ export function computeMovementPlan(
 ): MovementPlan {
   let target = currentPos + roll;
   let isGameFinished = false;
+  let overshotTarget = false;
+  let overshotExplanation: string | undefined = undefined;
 
-  // Handle overshoot past 100 (exact landing required)
+  // Exact landing rule for Tile 100: If roll exceeds 100, player remains in place
   if (target > 100) {
-    const overshoot = target - 100;
-    target = 100 - overshoot; // bounce back
+    overshotTarget = true;
+    const needed = 100 - currentPos;
+    overshotExplanation = `Rolled ${roll}! Exact roll of ${needed} needed to face the Final Titan on Tile 100. Remaining on Tile ${currentPos}.`;
+    target = currentPos;
   }
 
   // Check if any unpassed checkpoint lies strictly between currentPos and target
@@ -135,6 +141,8 @@ export function computeMovementPlan(
     targetSquareBeforeTransitions: target,
     snakeOrLadderEncountered,
     finalPosition: finalPos,
-    isGameFinished
+    isGameFinished,
+    overshotTarget,
+    overshotExplanation
   };
 }

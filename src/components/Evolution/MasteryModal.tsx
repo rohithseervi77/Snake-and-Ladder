@@ -26,6 +26,7 @@ export const MasteryModal: React.FC<MasteryModalProps> = ({
   const averageScore = Math.round(
     topics.reduce((acc, t) => acc + t.score, 0) / (topics.length || 1)
   );
+  const learningDebt = Math.max(0, 100 - averageScore);
 
   const getTierColor = (level: string) => {
     switch (level) {
@@ -55,12 +56,21 @@ export const MasteryModal: React.FC<MasteryModalProps> = ({
               <Award className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs uppercase font-mono tracking-wider text-indigo-400 font-semibold">
                   Cognitive Mastery Matrix
                 </span>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">
-                  Overall Index: {averageScore}/100
+                  Mastery Index: {averageScore}/100
+                </span>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-mono border ${
+                  learningDebt < 30 
+                    ? 'bg-emerald-950/40 text-emerald-300 border-emerald-800/40' 
+                    : learningDebt < 60 
+                    ? 'bg-amber-950/40 text-amber-300 border-amber-800/40' 
+                    : 'bg-rose-950/40 text-rose-300 border-rose-800/40'
+                }`}>
+                  Learning Debt: {learningDebt}%
                 </span>
               </div>
               <h2 className="text-xl font-bold text-white tracking-tight">DSA Topic Mastery Dashboard</h2>

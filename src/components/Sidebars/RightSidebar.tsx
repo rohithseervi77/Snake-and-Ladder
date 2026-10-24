@@ -5,10 +5,19 @@ import {
   Circle, 
   Zap, 
   Flame, 
-  Target
+  Target,
+  Dna,
+  Activity,
+  Network,
+  Gauge,
+  Sliders,
+  Workflow,
+  ArrowUpRight
 } from 'lucide-react';
 import { SquareMetadata } from '../../types/curriculum';
 import { ActivityRecord } from '../../types/game';
+import { TopicMasteryScore, MisconceptionRecord } from '../../types/evolution';
+import { calculateLearningDebt } from '../../engine/errorDnaEngine';
 
 interface RightSidebarProps {
   currentSquare: SquareMetadata;
@@ -24,6 +33,13 @@ interface RightSidebarProps {
   coinBalance: number;
   recentActivities: ActivityRecord[];
   onStartChallenge: (squareId: number) => void;
+  topicMasteryMap?: Record<string, TopicMasteryScore>;
+  misconceptions?: MisconceptionRecord[];
+  onOpenErrorDNA?: () => void;
+  onOpenDecisionLab?: () => void;
+  onOpenComplexityMeter?: () => void;
+  onOpenWhatIfSimulator?: () => void;
+  onOpenKnowledgeGraph?: () => void;
 }
 
 export const RightSidebar: React.FC<RightSidebarProps> = ({
@@ -39,9 +55,29 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   totalScore,
   coinBalance,
   recentActivities,
-  onStartChallenge
+  onStartChallenge,
+  topicMasteryMap = {},
+  misconceptions = [],
+  onOpenErrorDNA,
+  onOpenDecisionLab,
+  onOpenComplexityMeter,
+  onOpenWhatIfSimulator,
+  onOpenKnowledgeGraph
 }) => {
   const incorrectCount = Math.max(0, totalAttempts - totalCorrect);
+  const debt = calculateLearningDebt(topicMasteryMap, misconceptions);
+
+  const getHealthBadge = () => {
+    if (accuracy >= 0.8 && debt.debtPercentage <= 30) {
+      return { label: 'Optimal', color: 'text-emerald-400 bg-emerald-950/40 border-emerald-700/50' };
+    }
+    if (accuracy >= 0.5 && debt.debtPercentage <= 60) {
+      return { label: 'Stable', color: 'text-cyan-400 bg-cyan-950/40 border-cyan-700/50' };
+    }
+    return { label: 'Needs Repair', color: 'text-rose-400 bg-rose-950/40 border-rose-700/50' };
+  };
+
+  const health = getHealthBadge();
 
   return (
     <aside className="w-full flex flex-col gap-2.5 text-slate-300">
@@ -129,6 +165,110 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
               <Flame className="w-3 h-3 fill-orange-400" /> {streak}
             </span>
           </div>
+        </div>
+      </div>
+
+      {/* Card 3: Learning Debt & Algorithm Health (Novelty) */}
+      <div className="bg-[#10192e] border border-[#1e2d4d] rounded-xl p-3 shadow-md flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-white uppercase tracking-wider">
+            <Activity className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Algorithm Health</span>
+          </div>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${health.color}`}>
+            {health.label}
+          </span>
+        </div>
+
+        {/* Learning Debt Gauge */}
+        <div className="bg-[#141e35] border border-[#202e4f] rounded-lg p-2.5 flex flex-col gap-1.5">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-slate-400 font-semibold flex items-center gap-1">
+              <Dna className="w-3 h-3 text-rose-400" /> Learning Debt
+            </span>
+            <span className="font-mono font-bold text-rose-300">
+              {debt.debtPercentage}% ({debt.debtStatus})
+            </span>
+          </div>
+
+          <div className="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+            <div 
+              className={`h-full transition-all duration-300 ${
+                debt.debtPercentage < 30 ? 'bg-emerald-500' :
+                debt.debtPercentage < 60 ? 'bg-amber-500' : 'bg-rose-500'
+              }`}
+              style={{ width: `${Math.min(100, Math.max(5, debt.debtPercentage))}%` }}
+            />
+          </div>
+
+          <div className="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
+            <span>{debt.totalMisconceptions} DNA mutations</span>
+            {onOpenErrorDNA && (
+              <button 
+                onClick={onOpenErrorDNA}
+                className="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-0.5 cursor-pointer"
+              >
+                Inspect DNA <ArrowUpRight className="w-2.5 h-2.5" />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Card 4: Interactive DSA Labs Shortcut */}
+      <div className="bg-[#10192e] border border-[#1e2d4d] rounded-xl p-2.5 shadow-md flex flex-col gap-1.5">
+        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">
+          DSA Novelty Labs
+        </div>
+
+        <div className="grid grid-cols-2 gap-1.5">
+          {onOpenKnowledgeGraph && (
+            <button
+              onClick={onOpenKnowledgeGraph}
+              className="p-2 rounded-lg bg-[#141f38] hover:bg-[#1a294c] border border-[#23355a] text-left transition cursor-pointer flex flex-col gap-1"
+            >
+              <div className="flex items-center gap-1 text-[11px] font-bold text-teal-300">
+                <Network className="w-3 h-3 text-teal-400" /> Graph
+              </div>
+              <span className="text-[9px] text-slate-400 leading-tight">Curriculum Map</span>
+            </button>
+          )}
+
+          {onOpenComplexityMeter && (
+            <button
+              onClick={onOpenComplexityMeter}
+              className="p-2 rounded-lg bg-[#141f38] hover:bg-[#1a294c] border border-[#23355a] text-left transition cursor-pointer flex flex-col gap-1"
+            >
+              <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-300">
+                <Gauge className="w-3 h-3 text-emerald-400" /> Big-O
+              </div>
+              <span className="text-[9px] text-slate-400 leading-tight">Complexity Scale</span>
+            </button>
+          )}
+
+          {onOpenWhatIfSimulator && (
+            <button
+              onClick={onOpenWhatIfSimulator}
+              className="p-2 rounded-lg bg-[#141f38] hover:bg-[#1a294c] border border-[#23355a] text-left transition cursor-pointer flex flex-col gap-1"
+            >
+              <div className="flex items-center gap-1 text-[11px] font-bold text-purple-300">
+                <Sliders className="w-3 h-3 text-purple-400" /> What-If
+              </div>
+              <span className="text-[9px] text-slate-400 leading-tight">Structural Sandbox</span>
+            </button>
+          )}
+
+          {onOpenDecisionLab && (
+            <button
+              onClick={onOpenDecisionLab}
+              className="p-2 rounded-lg bg-[#141f38] hover:bg-[#1a294c] border border-[#23355a] text-left transition cursor-pointer flex flex-col gap-1"
+            >
+              <div className="flex items-center gap-1 text-[11px] font-bold text-blue-300">
+                <Workflow className="w-3 h-3 text-blue-400" /> Decision
+              </div>
+              <span className="text-[9px] text-slate-400 leading-tight">Scale Scenarios</span>
+            </button>
+          )}
         </div>
       </div>
     </aside>

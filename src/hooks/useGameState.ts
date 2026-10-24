@@ -46,7 +46,8 @@ import { DECISION_TILE_MAP, evaluateRouteAvailability } from '../data/routeSelec
 import { BOSS_BATTLES } from '../data/bossBattles';
 import { BOARD_MUTATIONS } from '../data/boardMutations';
 import { BUGBOT_SCENARIOS } from '../data/bugBotScenarios';
-import { updateTopicMastery } from '../engine/masteryEngine';
+import { updateTopicMastery, normalizeDsaTopic } from '../engine/masteryEngine';
+import { generatePersonalizedFinalBoss } from '../engine/personalizedBossEngine';
 import { addEnergy, consumeEnergy } from '../engine/energyEngine';
 import { createMisconceptionRecord, generateEchoChallenge } from '../engine/futureEchoEngine';
 
@@ -183,17 +184,22 @@ export function useGameState() {
   }, [gameState.topicMasteryMap, gameState.energy]);
 
   /**
-   * Checks and triggers Regional Boss Battle
+   * Checks and triggers Regional Boss Battle (dynamically personalized at Tile 100)
    */
   const checkBossBattle = useCallback((tile: number): boolean => {
     const boss = BOSS_BATTLES.find(b => b.tileNumber === tile);
     if (boss && !gameState.defeatedBosses.includes(tile)) {
-      setActiveBossBattle(boss);
+      if (tile === 100) {
+        const personalized = generatePersonalizedFinalBoss(gameState.topicMasteryMap, gameState.learnerProfile);
+        setActiveBossBattle(personalized);
+      } else {
+        setActiveBossBattle(boss);
+      }
       setIsBossModalOpen(true);
       return true;
     }
     return false;
-  }, [gameState.defeatedBosses]);
+  }, [gameState.defeatedBosses, gameState.topicMasteryMap, gameState.learnerProfile]);
 
   /**
    * Checks and triggers Board Mutation every 5 turns
@@ -244,7 +250,8 @@ export function useGameState() {
         } else {
           const finalBoss = BOSS_BATTLES.find(b => b.tileNumber === 100);
           if (finalBoss) {
-            setActiveBossBattle(finalBoss);
+            const personalized = generatePersonalizedFinalBoss(gameState.topicMasteryMap, gameState.learnerProfile);
+            setActiveBossBattle(personalized);
             setIsBossModalOpen(true);
             setGamePhase('EVENT');
           } else {
@@ -282,6 +289,15 @@ export function useGameState() {
       const plan = computeMovementPlan(gameState.currentPosition, rollValue, passedSet);
       const landingTile = plan.targetSquareBeforeTransitions;
 
+      if (plan.overshotTarget) {
+        sound.playFailure();
+        showNotification({
+          type: 'penalty',
+          title: 'ROLL EXCEEDS FINISH!',
+          subtitle: plan.overshotExplanation || `Exact roll required to reach Tile 100.`
+        });
+      }
+
       // Execute primary dice roll movement
       animateStepPath(gameState.currentPosition, landingTile, () => {
         setIsMoving(false);
@@ -303,7 +319,12 @@ export function useGameState() {
         const hasBoss = boss && !gameState.defeatedBosses.includes(landingTile);
         if (hasBoss) {
           events.push(() => {
-            setActiveBossBattle(boss);
+            if (landingTile === 100) {
+              const personalized = generatePersonalizedFinalBoss(gameState.topicMasteryMap, gameState.learnerProfile);
+              setActiveBossBattle(personalized);
+            } else {
+              setActiveBossBattle(boss);
+            }
             setIsBossModalOpen(true);
             setGamePhase('EVENT');
           });
@@ -396,7 +417,8 @@ export function useGameState() {
             } else {
               const finalBoss = BOSS_BATTLES.find(b => b.tileNumber === 100);
               if (finalBoss) {
-                setActiveBossBattle(finalBoss);
+                const personalized = generatePersonalizedFinalBoss(gameState.topicMasteryMap, gameState.learnerProfile);
+                setActiveBossBattle(personalized);
                 setIsBossModalOpen(true);
                 setGamePhase('EVENT');
               }
@@ -853,10 +875,11 @@ export function useGameState() {
         const energyGained = result.isCorrect ? (prev.currentRouteType === 'risk' ? 2 : 1) : 0;
         const newEnergy = addEnergy(prev.energy, energyGained);
 
-        // Topic Mastery update
-        const currentTopicMastery = prev.topicMasteryMap[result.topic] || {
-          topicId: result.topic,
-          topicName: result.topic,
+        // Canonical Topic Mastery update
+        const canonicalTopic = normalizeDsaTopic(result.topic);
+        const currentTopicMastery = prev.topicMasteryMap[canonicalTopic] || {
+          topicId: canonicalTopic,
+          topicName: canonicalTopic,
           score: 15,
           level: 'novice',
           attempts: 0,
@@ -879,7 +902,7 @@ export function useGameState() {
 
         const newMasteryMap = {
           ...prev.topicMasteryMap,
-          [result.topic]: updatedTopicScore
+          [canonicalTopic]: updatedTopicScore
         };
 
         // Future Echo handling
