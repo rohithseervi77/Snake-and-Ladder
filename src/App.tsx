@@ -6,41 +6,17 @@ import { LeftSidebar } from './components/Sidebars/LeftSidebar';
 import { RightSidebar } from './components/Sidebars/RightSidebar';
 import { MobileDrawer } from './components/Sidebars/MobileDrawer';
 import { BoardViewport } from './components/Board/BoardViewport';
-import { TileDetailModal } from './components/Board/TileDetailModal';
 import { DiceControls } from './components/Controls/DiceControls';
 import { ChallengeModal } from './components/Challenges/ChallengeModal';
 import { ResetModal } from './components/Dashboard/ResetModal';
-import { RevisionModal } from './components/Dashboard/RevisionModal';
-import { AdaptiveModal } from './components/Dashboard/AdaptiveModal';
 import { SettingsModal } from './components/Dashboard/SettingsModal';
 import { VictoryModal } from './components/Dashboard/VictoryModal';
 import { SyllabusModal } from './components/Dashboard/SyllabusModal';
 import { PracticeModeModal } from './components/Dashboard/PracticeModeModal';
 import { ExamModeModal } from './components/Dashboard/ExamModeModal';
 import { DSALabModal } from './components/Dashboard/DSALabModal';
-import { AlgorithmCardsModal } from './components/Dashboard/AlgorithmCardsModal';
-import { MistakeLogModal } from './components/Dashboard/MistakeLogModal';
-import { ShopModal } from './components/Shop/ShopModal';
-import { AchievementsModal } from './components/Achievements/AchievementsModal';
 import { MovementToast } from './components/Common/MovementToast';
 import { SquareMetadata } from './types/curriculum';
-
-// Evolution Components
-import { EnergyActionBar } from './components/Evolution/EnergyActionBar';
-import { RouteModal } from './components/Evolution/RouteModal';
-import { SnakeRecoveryModal } from './components/Evolution/SnakeRecoveryModal';
-import { LadderChoiceModal } from './components/Evolution/LadderChoiceModal';
-import { BossBattleModal } from './components/Evolution/BossBattleModal';
-import { BugBotModal } from './components/Evolution/BugBotModal';
-import { MutationModal } from './components/Evolution/MutationModal';
-import { MasteryModal } from './components/Evolution/MasteryModal';
-
-// Novelty Systems
-import { ErrorDNAModal } from './components/Novelty/ErrorDNAModal';
-import { ComplexityMeterModal } from './components/Novelty/ComplexityMeterModal';
-import { WhatIfSimulatorModal } from './components/Novelty/WhatIfSimulatorModal';
-import { KnowledgeGraphModal } from './components/Novelty/KnowledgeGraphModal';
-import { DecisionLabModal } from './components/Novelty/DecisionLabModal';
 
 export const App: React.FC = () => {
   const {
@@ -52,38 +28,16 @@ export const App: React.FC = () => {
     activeChallenge,
     isChallengeOpen,
     isResetModalOpen,
-    isRevisionModalOpen,
-    isAdaptiveModalOpen,
     isSettingsModalOpen,
     isVictoryModalOpen,
-    isShopModalOpen,
-    isAchievementsModalOpen,
     currentNotification,
     isAutoplayRunning,
     isAutoplayPaused,
     autoplaySpeed,
 
-    // Evolution state
-    isRouteModalOpen,
-    currentDecisionTile,
-    availableRouteOptions,
-    activeIntelligentSnake,
-    isSnakeRecoveryModalOpen,
-    activeOptimizationLadder,
-    isLadderChoiceModalOpen,
-    activeBossBattle,
-    isBossModalOpen,
-    activeBugBotScenario,
-    isBugBotModalOpen,
-    activeMutation,
-    isMutationModalOpen,
-    isMasteryModalOpen,
-
     handleRollDice,
     handleOpenSquareChallenge,
     handleCompleteChallenge,
-    handlePurchaseCosmetic,
-    handleEquipCosmetic,
     startAutoplay,
     pauseAutoplay,
     resumeAutoplay,
@@ -95,157 +49,73 @@ export const App: React.FC = () => {
     handleRecordPracticeMistake,
     dismissNotification,
 
-    // Evolution actions
-    handleSelectRoute,
     handleUseAbility,
-    handleSelectSnakeChoice,
-    handleSelectLadderOption,
-    handleBossVictory,
-    handleBugBotVictory,
-    handleResolveMutation,
-    triggerBugBotDuel,
-    triggerDecisionCrossroads,
 
     setIsResetModalOpen,
-    setIsRevisionModalOpen,
-    setIsAdaptiveModalOpen,
     setIsSettingsModalOpen,
     setIsVictoryModalOpen,
-    setIsShopModalOpen,
-    setIsAchievementsModalOpen,
-    setIsChallengeOpen,
-    setIsRouteModalOpen,
-    setIsSnakeRecoveryModalOpen,
-    setIsLadderChoiceModalOpen,
-    setIsBossModalOpen,
-    setIsBugBotModalOpen,
-    setIsMutationModalOpen,
-    setIsMasteryModalOpen
+    setIsChallengeOpen
   } = useGameState();
 
   const [inspectingSquare, setInspectingSquare] = useState<SquareMetadata | null>(null);
-  const [showLeftSidebar, setShowLeftSidebar] = useState<boolean>(true);
-  const [showRightSidebar, setShowRightSidebar] = useState<boolean>(true);
-
-  // Novelty Modals State
-  const [isErrorDnaOpen, setIsErrorDnaOpen] = useState<boolean>(false);
-  const [isComplexityMeterOpen, setIsComplexityMeterOpen] = useState<boolean>(false);
-  const [isWhatIfOpen, setIsWhatIfOpen] = useState<boolean>(false);
-  const [isKnowledgeGraphOpen, setIsKnowledgeGraphOpen] = useState<boolean>(false);
-  const [isDecisionLabOpen, setIsDecisionLabOpen] = useState<boolean>(false);
 
   // Student Academic Modals State
   const [isSyllabusOpen, setIsSyllabusOpen] = useState<boolean>(false);
   const [isPracticeModeOpen, setIsPracticeModeOpen] = useState<boolean>(false);
   const [isExamModeOpen, setIsExamModeOpen] = useState<boolean>(false);
   const [isDSALabOpen, setIsDSALabOpen] = useState<boolean>(false);
-  const [isAlgorithmCardsOpen, setIsAlgorithmCardsOpen] = useState<boolean>(false);
-  const [isMistakeLogOpen, setIsMistakeLogOpen] = useState<boolean>(false);
 
   const currentSquare = useMemo(() => {
     return SQUARE_MAP.get(displayedPosition) || CURRICULUM_100[0];
   }, [displayedPosition]);
 
+  const activeFocusSquare = inspectingSquare || currentSquare;
+
   return (
-    <div className="min-h-screen lg:h-screen lg:overflow-hidden w-full bg-[var(--app-bg)] text-[var(--text-primary)] flex flex-col font-sans select-none antialiased transition-colors duration-200">
-      {/* Top Application Header */}
+    <div className="min-h-screen w-full bg-[var(--app-bg)] text-[var(--text-primary)] flex flex-col font-sans select-none antialiased transition-colors duration-200">
+      {/* 1. Header: Clean Student Project Navbar */}
       <Header
         totalXp={gameState.totalScore}
         coinBalance={gameState.coins}
         streak={gameState.streak}
-        learnerProfile={gameState.learnerProfile}
-        settings={gameState.settings}
-        onToggleSound={() => updateSettings({ soundEnabled: !gameState.settings.soundEnabled })}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
-        onOpenAdaptive={() => setIsAdaptiveModalOpen(true)}
-        onOpenRevision={() => setIsRevisionModalOpen(true)}
         onOpenReset={() => setIsResetModalOpen(true)}
-        onOpenShop={() => setIsShopModalOpen(true)}
-        onOpenAchievements={() => setIsAchievementsModalOpen(true)}
         onOpenSyllabus={() => setIsSyllabusOpen(true)}
         onOpenPracticeMode={() => setIsPracticeModeOpen(true)}
         onOpenExamMode={() => setIsExamModeOpen(true)}
         onOpenDSALab={() => setIsDSALabOpen(true)}
-        onOpenAlgorithmCards={() => setIsAlgorithmCardsOpen(true)}
-        onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
-        onOpenComplexityMeter={() => setIsComplexityMeterOpen(true)}
       />
 
-      {/* Floating Movement Reward / Penalty / Level-Up Toast */}
+      {/* Floating Movement Notification Toast */}
       <MovementToast
         notification={currentNotification}
         onDismiss={dismissNotification}
       />
 
-      {/* Main Game Dashboard */}
-      <main className="flex-1 w-full max-w-[1920px] mx-auto px-2 sm:px-3 py-1 sm:py-2 flex flex-col lg:flex-row gap-2.5 xl:gap-3.5 items-stretch justify-center overflow-hidden">
-        {/* Left Sidebar: Rules & Legend */}
-        {showLeftSidebar && (
-          <div className="hidden lg:flex flex-col flex-shrink-0 w-60 xl:w-64 max-h-[calc(100vh-68px)] overflow-y-auto pr-1 scrollbar-thin transition-all">
-            <LeftSidebar />
-          </div>
-        )}
+      {/* 2. Main 3-Section Game Layout */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-4 py-3 flex flex-col lg:flex-row gap-4 items-start justify-center">
+        {/* Left Section: How to Play & Syllabus Units */}
+        <section className="w-full lg:w-60 xl:w-64 shrink-0 order-2 lg:order-1">
+          <LeftSidebar />
+        </section>
 
-        {/* Center Board & Controls */}
-        <section className="flex-1 w-full flex flex-col items-center justify-between gap-1.5 h-full max-h-[calc(100vh-68px)] min-h-0 overflow-hidden">
-          {/* Top Row: Sidebar Toggles & Energy Action Bar */}
-          <div className="w-full flex items-center gap-2">
-            <button
-              onClick={() => setShowLeftSidebar(prev => !prev)}
-              className={`hidden lg:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm shrink-0 active:scale-95 cursor-pointer ${
-                showLeftSidebar 
-                  ? 'bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]' 
-                  : 'bg-[var(--color-indigo-light)] hover:bg-[var(--color-indigo-border)] border-[var(--color-indigo)] text-[var(--color-indigo)]'
-              }`}
-              title={showLeftSidebar ? 'Collapse Rules & Legend Sidebar' : 'Show Rules & Legend Sidebar'}
-            >
-              <span>{showLeftSidebar ? '◀ Legend' : '▶ Legend'}</span>
-            </button>
-
-            <div className="flex-1 min-w-0">
-              <EnergyActionBar
-                energy={gameState.energy}
-                hasShield={gameState.activeShield}
-                hasLadderBoost={gameState.activeLadderBoost}
-                canReroll={!isRolling && !isMoving && !isAutoplayRunning}
-                turn={gameState.turnsCompleted + 1}
-                currentRouteType={gameState.currentRouteType}
-                onOpenCrossroads={() => triggerDecisionCrossroads(15)}
-                onOpenBugBot={() => triggerBugBotDuel()}
-                onUseAbility={handleUseAbility}
-              />
-            </div>
-
-            <button
-              onClick={() => setShowRightSidebar(prev => !prev)}
-              className={`hidden lg:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm shrink-0 active:scale-95 cursor-pointer ${
-                showRightSidebar 
-                  ? 'bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]' 
-                  : 'bg-[var(--color-indigo-light)] hover:bg-[var(--color-indigo-border)] border-[var(--color-indigo)] text-[var(--color-indigo)]'
-              }`}
-              title={showRightSidebar ? 'Collapse Stats Sidebar' : 'Show Stats Sidebar'}
-            >
-              <span>{showRightSidebar ? 'Stats ▶' : 'Stats ◀'}</span>
-            </button>
-          </div>
-
-          {/* 1-100 Serpentine Board with Dedicated Zoom & Viewport */}
-          <div className="flex-1 w-full min-h-0">
+        {/* Center Section: Snake & Ladder Board + Roll Dice */}
+        <section className="flex-1 w-full flex flex-col items-center gap-3 order-1 lg:order-2">
+          {/* Authentic 100-Square Game Board */}
+          <div className="w-full flex items-center justify-center">
             <BoardViewport
               currentPosition={displayedPosition}
+              selectedSquareId={activeFocusSquare.id}
               completedSquares={gameState.completedSquares}
               equippedMarker={gameState.equippedCosmetics.playerMarker}
-              boardTheme={gameState.equippedCosmetics.boardTheme}
               onSelectSquare={(sq) => setInspectingSquare(sq)}
-              topicMasteryMap={gameState.topicMasteryMap}
             />
           </div>
 
-          {/* Unified Dice & Autoplay Movement Controller */}
+          {/* Simple Bottom Roll Dice Control Bar */}
           <DiceControls
             currentPosition={displayedPosition}
             lastDiceRoll={lastDiceRoll}
-            diceSkin={gameState.equippedCosmetics.diceSkin}
             isRolling={isRolling}
             isMoving={isMoving}
             isAutoplayRunning={isAutoplayRunning}
@@ -260,53 +130,32 @@ export const App: React.FC = () => {
           />
         </section>
 
-        {/* Right Sidebar: Focus & Progression */}
-        {showRightSidebar && (
-          <div className="hidden lg:flex flex-col flex-shrink-0 w-64 xl:w-72 max-h-[calc(100vh-68px)] overflow-y-auto pr-1 scrollbar-thin transition-all">
-            <RightSidebar
-              currentSquare={currentSquare}
-              completedCount={gameState.completedSquares.length}
-              totalAttempts={gameState.learnerProfile.totalAttempts}
-              totalCorrect={gameState.learnerProfile.totalCorrect}
-              accuracy={gameState.learnerProfile.overallAccuracy}
-              streak={gameState.streak}
-              recoveryStreak={gameState.recoveryStreak}
-              laddersClimbed={gameState.laddersClimbed}
-              snakesEncountered={gameState.snakesEncountered}
-              totalScore={gameState.totalScore}
-              coinBalance={gameState.coins}
-              recentActivities={gameState.recentActivities}
-              onStartChallenge={handleOpenSquareChallenge}
-              topicMasteryMap={gameState.topicMasteryMap}
-              misconceptions={gameState.misconceptions}
-              onOpenErrorDNA={() => setIsErrorDnaOpen(true)}
-              onOpenDecisionLab={() => setIsDecisionLabOpen(true)}
-              onOpenComplexityMeter={() => setIsComplexityMeterOpen(true)}
-              onOpenWhatIfSimulator={() => setIsWhatIfOpen(true)}
-              onOpenKnowledgeGraph={() => setIsKnowledgeGraphOpen(true)}
-            />
-          </div>
-        )}
+        {/* Right Section: Current Challenge & Your Stats */}
+        <section className="w-full lg:w-72 xl:w-80 shrink-0 order-3">
+          <RightSidebar
+            currentSquare={activeFocusSquare}
+            totalAttempts={gameState.learnerProfile.totalAttempts}
+            totalCorrect={gameState.learnerProfile.totalCorrect}
+            accuracy={gameState.learnerProfile.overallAccuracy}
+            streak={gameState.streak}
+            totalScore={gameState.totalScore}
+            onStartChallenge={(sqId) => handleOpenSquareChallenge(sqId)}
+          />
+        </section>
       </main>
 
-      {/* Touch-Friendly Mobile Drawer */}
+      {/* Mobile Drawer for Small Screens */}
       <MobileDrawer
-        currentSquare={currentSquare}
-        completedCount={gameState.completedSquares.length}
+        currentSquare={activeFocusSquare}
         totalAttempts={gameState.learnerProfile.totalAttempts}
         totalCorrect={gameState.learnerProfile.totalCorrect}
         accuracy={gameState.learnerProfile.overallAccuracy}
         streak={gameState.streak}
-        recoveryStreak={gameState.recoveryStreak}
-        laddersClimbed={gameState.laddersClimbed}
-        snakesEncountered={gameState.snakesEncountered}
         totalScore={gameState.totalScore}
-        coinBalance={gameState.coins}
-        recentActivities={gameState.recentActivities}
-        onStartChallenge={handleOpenSquareChallenge}
+        onStartChallenge={(sqId) => handleOpenSquareChallenge(sqId)}
       />
 
-      {/* Interactive Challenge Modal */}
+      {/* 3. Challenge Dialog Modal */}
       {activeChallenge && (
         <ChallengeModal
           challenge={activeChallenge}
@@ -321,189 +170,7 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Evolution: Route Decision Modal */}
-      <RouteModal
-        isOpen={isRouteModalOpen}
-        tile={currentDecisionTile}
-        routeOptions={availableRouteOptions}
-        currentSelectedRoute={gameState.currentRouteType}
-        onSelectRoute={handleSelectRoute}
-        onClose={() => setIsRouteModalOpen(false)}
-      />
-
-      {/* Evolution: Intelligent Snake Recovery Modal */}
-      <SnakeRecoveryModal
-        isOpen={isSnakeRecoveryModalOpen}
-        snake={activeIntelligentSnake}
-        hasShield={gameState.activeShield}
-        onUseShield={() => handleUseAbility('shield')}
-        onSelectChoice={handleSelectSnakeChoice}
-        onClose={() => setIsSnakeRecoveryModalOpen(false)}
-      />
-
-      {/* Evolution: Optimization Ladder Modal */}
-      <LadderChoiceModal
-        isOpen={isLadderChoiceModalOpen}
-        ladder={activeOptimizationLadder}
-        hasLadderBoost={gameState.activeLadderBoost}
-        onSelectOption={handleSelectLadderOption}
-        onClose={() => setIsLadderChoiceModalOpen(false)}
-      />
-
-      {/* Evolution: Regional Boss Battle Modal */}
-      <BossBattleModal
-        isOpen={isBossModalOpen}
-        boss={activeBossBattle}
-        onVictory={handleBossVictory}
-        onClose={() => setIsBossModalOpen(false)}
-      />
-
-      {/* Evolution: BugBot Rival Modal */}
-      <BugBotModal
-        isOpen={isBugBotModalOpen}
-        scenario={activeBugBotScenario}
-        onVictory={handleBugBotVictory}
-        onClose={() => setIsBugBotModalOpen(false)}
-      />
-
-      {/* Evolution: Board Mutation Modal */}
-      <MutationModal
-        isOpen={isMutationModalOpen}
-        mutation={activeMutation}
-        onResolve={handleResolveMutation}
-        onClose={() => setIsMutationModalOpen(false)}
-      />
-
-      {/* Evolution: Cognitive Mastery Modal */}
-      <MasteryModal
-        isOpen={isMasteryModalOpen}
-        topicMasteryMap={gameState.topicMasteryMap}
-        onClose={() => setIsMasteryModalOpen(false)}
-      />
-
-      {/* Cosmetics & Themes Shop Modal */}
-      <ShopModal
-        isOpen={isShopModalOpen}
-        onClose={() => setIsShopModalOpen(false)}
-        coinBalance={gameState.coins}
-        purchasedIds={gameState.purchasedCosmetics}
-        equipped={gameState.equippedCosmetics}
-        onPurchaseItem={handlePurchaseCosmetic}
-        onEquipItem={handleEquipCosmetic}
-      />
-
-      {/* Achievements Modal */}
-      <AchievementsModal
-        isOpen={isAchievementsModalOpen}
-        onClose={() => setIsAchievementsModalOpen(false)}
-        achievements={gameState.achievements}
-      />
-
-      {/* Spaced Revision Modal */}
-      <RevisionModal
-        isOpen={isRevisionModalOpen}
-        onClose={() => setIsRevisionModalOpen(false)}
-        revisionQueue={gameState.learnerProfile.revisionQueue}
-        onStartRevision={(sqId) => handleOpenSquareChallenge(sqId)}
-      />
-
-      {/* Adaptive Mastery Modal */}
-      <AdaptiveModal
-        isOpen={isAdaptiveModalOpen}
-        onClose={() => setIsAdaptiveModalOpen(false)}
-        learnerProfile={gameState.learnerProfile}
-        onJumpToSquare={(sqId) => handleOpenSquareChallenge(sqId)}
-      />
-
-      {/* Game Settings Modal */}
-      <SettingsModal
-        isOpen={isSettingsModalOpen}
-        onClose={() => setIsSettingsModalOpen(false)}
-        settings={gameState.settings}
-        onUpdateSettings={updateSettings}
-      />
-
-      {/* Reset Confirmation Modal */}
-      <ResetModal
-        isOpen={isResetModalOpen}
-        onClose={() => setIsResetModalOpen(false)}
-        onConfirmReset={handleResetGame}
-      />
-
-      {/* Victory Celebration Modal */}
-      <VictoryModal
-        isOpen={isVictoryModalOpen}
-        onClose={() => setIsVictoryModalOpen(false)}
-        onPlayAgain={handleResetGame}
-        totalScore={gameState.totalScore}
-        coins={gameState.coins}
-        laddersClimbed={gameState.laddersClimbed}
-        snakesEncountered={gameState.snakesEncountered}
-        turnsCompleted={gameState.turnsCompleted}
-        questionsAttempted={gameState.questionsAttempted}
-        questionsCorrect={gameState.questionsCorrect}
-        longestStreak={gameState.longestStreak}
-        energyUsed={gameState.energyUsed}
-        topicMasteryMap={gameState.topicMasteryMap}
-      />
-
-      {/* Tile Curriculum & Checkpoint Inspection Modal */}
-      <TileDetailModal
-        square={inspectingSquare}
-        isOpen={inspectingSquare !== null}
-        isCurrent={inspectingSquare?.id === displayedPosition}
-        isCompleted={inspectingSquare ? gameState.completedSquares.includes(inspectingSquare.id) : false}
-        onClose={() => setInspectingSquare(null)}
-        onStartChallenge={(sqId) => {
-          setInspectingSquare(null);
-          handleOpenSquareChallenge(sqId);
-        }}
-      />
-
-      {/* Novelty: Cognitive Error DNA & Learning Debt Diagnostics */}
-      <ErrorDNAModal
-        isOpen={isErrorDnaOpen}
-        onClose={() => setIsErrorDnaOpen(false)}
-        learnerProfile={gameState.learnerProfile}
-        misconceptions={gameState.misconceptions}
-        topicMasteryMap={gameState.topicMasteryMap}
-        onJumpToDrill={(squareId: number) => {
-          setIsErrorDnaOpen(false);
-          handleOpenSquareChallenge(squareId);
-        }}
-      />
-
-      {/* Novelty: Asymptotic Complexity Benchmark */}
-      <ComplexityMeterModal
-        isOpen={isComplexityMeterOpen}
-        onClose={() => setIsComplexityMeterOpen(false)}
-      />
-
-      {/* Novelty: What-If Structural Simulator */}
-      <WhatIfSimulatorModal
-        isOpen={isWhatIfOpen}
-        onClose={() => setIsWhatIfOpen(false)}
-      />
-
-      {/* Novelty: DSA Curriculum Knowledge Roadmap */}
-      <KnowledgeGraphModal
-        isOpen={isKnowledgeGraphOpen}
-        onClose={() => setIsKnowledgeGraphOpen(false)}
-        completedSquares={gameState.completedSquares}
-        topicMasteryMap={gameState.topicMasteryMap}
-        onJumpToStage={(firstTile: number) => {
-          setIsKnowledgeGraphOpen(false);
-          handleOpenSquareChallenge(firstTile);
-        }}
-      />
-
-      {/* Novelty: Algorithm Decision Lab */}
-      <DecisionLabModal
-        isOpen={isDecisionLabOpen}
-        onClose={() => setIsDecisionLabOpen(false)}
-      />
-
-      {/* Student Syllabus Tracker Modal */}
+      {/* Syllabus Modal */}
       <SyllabusModal
         isOpen={isSyllabusOpen}
         onClose={() => setIsSyllabusOpen(false)}
@@ -533,21 +200,36 @@ export const App: React.FC = () => {
         onAwardReward={handleAwardReward}
       />
 
-      {/* Algorithm Study Flashcards */}
-      <AlgorithmCardsModal
-        isOpen={isAlgorithmCardsOpen}
-        onClose={() => setIsAlgorithmCardsOpen(false)}
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
+        settings={gameState.settings}
+        onUpdateSettings={updateSettings}
       />
 
-      {/* Academic Mistake Log & Concept Remediation */}
-      <MistakeLogModal
-        isOpen={isMistakeLogOpen}
-        onClose={() => setIsMistakeLogOpen(false)}
-        learnerProfile={gameState.learnerProfile}
-        onRetryChallenge={(challenge) => {
-          setIsMistakeLogOpen(false);
-          handleOpenSquareChallenge(challenge.squareId);
-        }}
+      {/* Reset Confirmation Modal */}
+      <ResetModal
+        isOpen={isResetModalOpen}
+        onClose={() => setIsResetModalOpen(false)}
+        onConfirmReset={handleResetGame}
+      />
+
+      {/* Victory Celebration Modal */}
+      <VictoryModal
+        isOpen={isVictoryModalOpen}
+        onClose={() => setIsVictoryModalOpen(false)}
+        onPlayAgain={handleResetGame}
+        totalScore={gameState.totalScore}
+        coins={gameState.coins}
+        laddersClimbed={gameState.laddersClimbed}
+        snakesEncountered={gameState.snakesEncountered}
+        turnsCompleted={gameState.turnsCompleted}
+        questionsAttempted={gameState.questionsAttempted}
+        questionsCorrect={gameState.questionsCorrect}
+        longestStreak={gameState.longestStreak}
+        energyUsed={gameState.energyUsed}
+        topicMasteryMap={gameState.topicMasteryMap}
       />
     </div>
   );

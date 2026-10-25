@@ -1,22 +1,4 @@
 import React from 'react';
-import { 
-  Trophy, 
-  Zap, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Code, 
-  GitBranch, 
-  Layers, 
-  Search, 
-  Hash, 
-  FolderTree, 
-  Network, 
-  Clock, 
-  Sparkles, 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  Star 
-} from 'lucide-react';
 import { SquareMetadata } from '../../types/curriculum';
 import { SNAKES_AND_LADDERS } from '../../data/snakesAndLadders';
 import { PlayerMarker } from './PlayerMarker';
@@ -25,92 +7,50 @@ interface BoardCellProps {
   square: SquareMetadata;
   isCurrent: boolean;
   isCompleted: boolean;
+  isSelected: boolean;
   equippedMarker?: string;
-  masteryScore?: number;
-  masteryLevel?: string;
   onSelect: (square: SquareMetadata) => void;
-}
-
-/**
- * Clean multi-line formatting for topics so text wraps gracefully across lines
- * instead of arbitrary or awkward character slicing.
- */
-function formatTopicName(title: string): string {
-  return title.replace(/\s*\([^)]*\)/g, '').trim();
 }
 
 export const BoardCell: React.FC<BoardCellProps> = ({
   square,
   isCurrent,
   isCompleted,
+  isSelected,
   equippedMarker,
-  masteryScore,
   onSelect
 }) => {
-  // Check for ladders and snakes
   const ladder = SNAKES_AND_LADDERS.find(item => item.type === 'ladder' && item.from === square.id);
   const snake = SNAKES_AND_LADDERS.find(item => item.type === 'snake' && item.from === square.id);
-  const ladderDestination = SNAKES_AND_LADDERS.find(item => item.type === 'ladder' && item.to === square.id);
-  const snakeDestination = SNAKES_AND_LADDERS.find(item => item.type === 'snake' && item.to === square.id);
+  const isStart = square.id === 1;
+  const isFinish = square.id === 100;
 
-  // Card theme styling strictly based on the Light/Dark semantic palette
-  const getCardClasses = () => {
-    // 1. Current Player Tile
+  // Alternate tile background color for clean board-game feel
+  const isAlt = (Math.floor((square.id - 1) / 10) + ((square.id - 1) % 10)) % 2 === 1;
+
+  const getTileClasses = () => {
     if (isCurrent) {
-      return 'bg-[var(--card-bg)] border-[var(--color-indigo)] text-[var(--text-primary)] shadow-[0_0_20px_rgba(99,102,241,0.35)] ring-2 ring-[var(--color-indigo)]/70 z-20 scale-[1.02]';
+      return 'bg-[var(--card-bg)] border-[var(--color-indigo)] shadow-md ring-2 ring-[var(--color-indigo)] z-20';
     }
-    // 2. Boss / Tile 100
-    if (square.id === 100) {
-      return 'bg-[var(--card-bg)] border-[var(--color-violet)] text-[var(--text-primary)] shadow-[0_0_16px_rgba(139,92,246,0.3)] hover:border-[var(--color-violet)]';
+    if (isSelected) {
+      return 'bg-[var(--card-secondary-bg)] border-[var(--color-indigo)] ring-2 ring-[var(--color-indigo)]/50 z-10';
     }
-    // 3. Snake Tile (Danger / Mistake)
+    if (isFinish) {
+      return 'bg-[var(--card-bg)] border-[var(--color-amber)] text-[var(--color-amber)]';
+    }
+    if (isStart) {
+      return 'bg-[var(--card-bg)] border-[var(--color-emerald)] text-[var(--color-emerald)]';
+    }
     if (snake) {
-      return 'bg-[var(--card-bg)] border-[var(--color-rose)] text-[var(--text-primary)] hover:border-[var(--color-rose)] shadow-sm';
+      return 'bg-[var(--card-bg)] border-[var(--color-rose-border)] hover:border-[var(--color-rose)]';
     }
-    // 4. Ladder Tile (Optimization / Progress)
     if (ladder) {
-      return 'bg-[var(--card-bg)] border-[var(--color-amber)] text-[var(--text-primary)] hover:border-[var(--color-amber)] shadow-sm';
+      return 'bg-[var(--card-bg)] border-[var(--color-amber-border)] hover:border-[var(--color-amber)]';
     }
-    // 5. Checkpoint Tile (Reward / Milestone)
-    if (square.isCheckpoint) {
-      return 'bg-[var(--card-bg)] border-[var(--color-amber)] text-[var(--text-primary)] hover:border-[var(--color-amber)] shadow-sm';
-    }
-    // 6. Mastered Tile (Emerald)
-    if ((masteryScore ?? 0) >= 80) {
-      return 'bg-[var(--card-bg)] border-[var(--color-emerald)] text-[var(--text-primary)] hover:border-[var(--color-emerald)] shadow-sm';
-    }
-    // 7. Completed Tile (Cyan)
-    if (isCompleted) {
-      return 'bg-[var(--card-bg)] border-[var(--color-cyan)] text-[var(--text-primary)] hover:border-[var(--color-cyan)] shadow-sm';
-    }
-    // 8. Normal Knowledge Tile (Clean neutral surface with subtle border)
-    return 'bg-[var(--card-bg)] border-[var(--border-subtle)] text-[var(--text-primary)] hover:border-[var(--color-indigo)]/60 shadow-sm';
+    return isAlt 
+      ? 'bg-[var(--card-secondary-bg)] border-[var(--border-subtle)] hover:border-[var(--color-indigo-border)]'
+      : 'bg-[var(--card-bg)] border-[var(--border-subtle)] hover:border-[var(--color-indigo-border)]';
   };
-
-  const getStageIcon = () => {
-    switch (square.stage) {
-      case 'co1_math_analysis': 
-      case 'co1_asymptotic': 
-      case 'co1_recurrence_sub': 
-      case 'co1_master_tree': 
-        return <Code className="w-3.5 h-3.5 text-[var(--color-emerald)] shrink-0" />;
-      case 'co2_stacks': 
-      case 'co2_queues': 
-      case 'co2_linked_lists': 
-        return <Layers className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
-      case 'co3_sorting_searching': 
-        return <Search className="w-3.5 h-3.5 text-[var(--color-indigo)] shrink-0" />;
-      case 'co4_trees': 
-        return <FolderTree className="w-3.5 h-3.5 text-[var(--color-violet)] shrink-0" />;
-      case 'co4_graphs_algorithms': 
-        return <Network className="w-3.5 h-3.5 text-[var(--color-violet)] shrink-0" />;
-      default: 
-        return <Sparkles className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
-    }
-  };
-
-  const formattedNumber = square.id < 10 ? `0${square.id}` : `${square.id}`;
-  const topicName = formatTopicName(square.title);
 
   return (
     <div
@@ -124,125 +64,66 @@ export const BoardCell: React.FC<BoardCellProps> = ({
           onSelect(square);
         }
       }}
-      aria-label={`Level ${square.id}: ${square.title}. Status: ${isCurrent ? 'Current' : isCompleted ? 'Completed' : 'Available'}`}
-      style={{
-        width: 'var(--tile-width, 135px)',
-        height: 'var(--tile-height, 115px)',
-        minWidth: 'var(--tile-width, 135px)',
-        minHeight: 'var(--tile-height, 115px)'
-      }}
-      className={`relative z-10 rounded-2xl border-2 p-2 sm:p-2.5 flex flex-col justify-between transition-all duration-200 cursor-pointer select-none group text-left ${getCardClasses()} ${
-        !isCurrent ? 'hover:-translate-y-0.5 hover:shadow-md' : ''
-      }`}
+      aria-label={`Tile ${square.id}: ${square.title}`}
+      className={`relative w-full h-full aspect-square rounded-lg sm:rounded-xl border p-1 sm:p-1.5 flex flex-col justify-between transition-all duration-150 cursor-pointer select-none group ${getTileClasses()}`}
     >
-      {/* 1. TOP ROW: Level Number and Status/Badge */}
-      <div className="flex items-center justify-between w-full border-b border-[var(--border-subtle)] pb-1">
-        <div className="flex items-center gap-1.5">
-          <span className={`font-mono font-black text-lg sm:text-xl tracking-tight leading-none ${
-            isCurrent 
-              ? 'text-[var(--color-indigo)]' 
-              : square.id === 100 
-                ? 'text-[var(--color-violet)]' 
+      {/* Top Header: Tile Number + Badge/Icon */}
+      <div className="flex items-center justify-between w-full leading-none">
+        <span className={`font-mono font-black text-xs sm:text-sm md:text-base ${
+          isCurrent 
+            ? 'text-[var(--color-indigo)]' 
+            : isFinish 
+              ? 'text-[var(--color-amber)]' 
+              : isStart 
+                ? 'text-[var(--color-emerald)]' 
                 : 'text-[var(--text-primary)]'
-          }`}>
-            {formattedNumber}
-          </span>
-          {getStageIcon()}
-        </div>
+        }`}>
+          {square.id}
+        </span>
 
-        {/* Status Indicator / Mastered Tile Evolution */}
-        <div className="flex items-center gap-1">
-          {isCurrent ? (
-            <span className="px-1.5 py-0.5 rounded-full bg-[var(--color-indigo-light)] border border-[var(--color-indigo)] text-[var(--color-indigo)] font-black text-[9.5px] uppercase tracking-wide flex items-center gap-1 shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-indigo)] animate-pulse" />
-              You
+        {/* Small Game Marker: Snake / Ladder / Start / Finish / Question */}
+        <div className="flex items-center gap-0.5 text-[9px] sm:text-[10px] font-bold">
+          {isFinish && (
+            <span className="text-[var(--color-amber)]" title="Finish Tile 100">🏆</span>
+          )}
+          {isStart && (
+            <span className="text-[var(--color-emerald)]" title="Start Tile 1">🏁</span>
+          )}
+          {snake && !isFinish && (
+            <span className="text-[var(--color-rose)] font-mono font-bold flex items-center" title={`Snake slides down to Tile ${snake.to}`}>
+              <span>🐍</span>
+              <span className="hidden xl:inline text-[8px] ml-0.5">↓{snake.to}</span>
             </span>
-          ) : (masteryScore ?? 0) >= 80 ? (
-            <span className="px-1.5 py-0.5 rounded-full bg-[var(--color-emerald-light)] border border-[var(--color-emerald-border)] text-[var(--color-emerald)] font-bold text-[9.5px] uppercase tracking-wide flex items-center gap-0.5 shadow-sm" title={`Mastered (${masteryScore}%)`}>
-              <Star className="w-2.5 h-2.5 fill-[var(--color-emerald)] text-[var(--color-emerald)]" />
-              ★ Master
+          )}
+          {ladder && !isStart && (
+            <span className="text-[var(--color-amber)] font-mono font-bold flex items-center" title={`Ladder climbs up to Tile ${ladder.to}`}>
+              <span>🪜</span>
+              <span className="hidden xl:inline text-[8px] ml-0.5">↑{ladder.to}</span>
             </span>
-          ) : (masteryScore ?? 0) >= 55 ? (
-            <span className="px-1.5 py-0.5 rounded-full bg-[var(--color-cyan-light)] border border-[var(--color-cyan-border)] text-[var(--color-cyan)] font-bold text-[9.5px] flex items-center gap-0.5 shadow-sm" title={`Strong (${masteryScore}%)`}>
-              <Sparkles className="w-2.5 h-2.5 text-[var(--color-cyan)]" />
-              ◉ Strong
-            </span>
-          ) : isCompleted ? (
-            <span className="px-1.5 py-0.5 rounded-full bg-[var(--color-cyan-light)] border border-[var(--color-cyan-border)] text-[var(--color-cyan)] font-bold text-[9.5px] flex items-center gap-1 shadow-sm" title="Completed">
-              <CheckCircle2 className="w-2.5 h-2.5 text-[var(--color-cyan)]" />
-              ✓ Done
-            </span>
-          ) : (
-            <span className="text-[9.5px] font-mono font-medium text-[var(--text-muted)]" title="Unseen">
-              ○ {square.difficulty.slice(0, 3).toUpperCase()}
+          )}
+          {!snake && !ladder && !isStart && !isFinish && square.isCheckpoint && (
+            <span className="w-3.5 h-3.5 rounded-full bg-[var(--color-cyan-light)] text-[var(--color-cyan)] border border-[var(--color-cyan-border)] flex items-center justify-center text-[9px] font-bold" title="Checkpoint Challenge">
+              ?
             </span>
           )}
         </div>
       </div>
 
-      {/* 2. MIDDLE ROW: Topic Name and Short Description */}
-      <div className="flex-1 flex flex-col justify-center py-1">
-        <h4 className="font-extrabold text-[13px] sm:text-[14px] md:text-[15px] text-[var(--text-primary)] leading-tight tracking-tight line-clamp-2 break-words group-hover:text-[var(--color-indigo)] transition-colors">
-          {topicName}
-        </h4>
-        <p className="text-[10.5px] sm:text-[11.5px] text-[var(--text-secondary)] leading-tight line-clamp-1 mt-0.5 font-medium">
-          {square.subtopic || square.summary || square.topic}
-        </p>
+      {/* Center: Player Token (When on this tile) */}
+      <div className="flex-1 flex items-center justify-center my-auto">
+        {isCurrent ? (
+          <div className="scale-75 sm:scale-90 md:scale-100 transition-transform">
+            <PlayerMarker equippedMarker={equippedMarker} />
+          </div>
+        ) : isCompleted ? (
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[var(--color-emerald)]/70" title="Completed" />
+        ) : null}
       </div>
 
-      {/* 3. BOTTOM ROW: Type Badge ([CONCEPT], [LADDER], [SNAKE], [BOSS], [FINAL]) */}
-      <div className="flex items-center justify-between w-full pt-1 border-t border-[var(--border-subtle)]">
-        {square.id === 100 ? (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--color-violet-light)] border border-[var(--color-violet-border)] text-[var(--color-violet)] font-black text-[10px] uppercase tracking-wider shadow-sm">
-            <Trophy className="w-3 h-3 text-[var(--color-violet)]" />
-            FINAL TITAN
-          </span>
-        ) : square.id === 1 ? (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--color-indigo-light)] border border-[var(--color-indigo-border)] text-[var(--color-indigo)] font-bold text-[10px] uppercase tracking-wider shadow-sm">
-            START
-          </span>
-        ) : ladder ? (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--color-amber-light)] border border-[var(--color-amber-border)] text-[var(--color-amber)] font-bold text-[10px] uppercase tracking-wide shadow-sm">
-            <Zap className="w-3 h-3 text-[var(--color-amber)]" />
-            <span>LADDER &rarr; {ladder.to}</span>
-          </span>
-        ) : snake ? (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--color-rose-light)] border border-[var(--color-rose-border)] text-[var(--color-rose)] font-bold text-[10px] uppercase tracking-wide shadow-sm">
-            <AlertTriangle className="w-3 h-3 text-[var(--color-rose)]" />
-            <span>SNAKE &darr; {snake.to}</span>
-          </span>
-        ) : ladderDestination ? (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[var(--color-amber-light)] border border-[var(--color-amber-border)] text-[var(--color-amber)] font-medium text-[9.5px]">
-            <ArrowUpRight className="w-2.5 h-2.5 text-[var(--color-amber)]" />
-            Exit ({ladderDestination.from})
-          </span>
-        ) : snakeDestination ? (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[var(--color-rose-light)] border border-[var(--color-rose-border)] text-[var(--color-rose)] font-medium text-[9.5px]">
-            <ArrowDownRight className="w-2.5 h-2.5 text-[var(--color-rose)]" />
-            Drop ({snakeDestination.from})
-          </span>
-        ) : square.isCheckpoint ? (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[var(--color-amber-light)] border border-[var(--color-amber-border)] text-[var(--color-amber)] font-bold text-[10px] uppercase shadow-sm">
-            CHECKPOINT
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] text-[10px] font-semibold uppercase tracking-wider">
-            {square.stageName.split(' ')[0]}
-          </span>
-        )}
-
-        {/* Small Detail Indicator */}
-        <span className="text-[10px] text-[var(--text-muted)] font-mono group-hover:text-[var(--color-indigo)] transition-colors">
-          Info &rarr;
-        </span>
+      {/* Bottom Subtitle / Tag (Short & clean) */}
+      <div className="w-full text-[8px] sm:text-[9px] font-medium text-[var(--text-secondary)] truncate leading-none">
+        {square.topic}
       </div>
-
-      {/* 4. PLAYER TOKEN (Non-overlapping Anchor) */}
-      {isCurrent && (
-        <div className="absolute -top-3 -right-3 z-30 pointer-events-none">
-          <PlayerMarker equippedMarker={equippedMarker} />
-        </div>
-      )}
     </div>
   );
 };
