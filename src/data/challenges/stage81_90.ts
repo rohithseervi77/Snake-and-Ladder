@@ -2,279 +2,315 @@ import { Challenge } from '../../types/challenge';
 
 export const STAGE_81_90_CHALLENGES: Challenge[] = [
   {
-    id: 'c-81-bitwise-xor-single-number',
+    id: 'q-81-tree-preliminaries',
     squareId: 81,
-    title: 'Bitwise XOR: Single Number Invariant',
-    topic: 'Bit Manipulation',
-    subtopic: 'XOR Algebraic Properties',
+    co: 'CO4',
+    title: 'Tree Terminology & Edge Count',
+    topic: 'Trees Preliminaries',
+    subtopic: 'Root, Depth, Height, Leaves, Degree',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'In an array where every element appears twice except for one unique element, XORing all elements together finds the unique element in O(N) time and O(1) space. What algebraic properties make this work?',
-    options: [
-      'Self-inverse (`x ^ x = 0`), Identity (`x ^ 0 = x`), and Commutative/Associative ordering',
-      'XOR converts decimal integers into floating point IEEE 754 representations',
-      'The CPU accumulator reverses the sign bit on duplicate elements',
-      'XOR calculates the arithmetic mean of all odd-indexed numbers'
-    ],
+    prompt: 'A tree has exactly 25 vertices. How many edges must it contain?',
+    options: ['24 edges (n - 1)', '25 edges', '50 edges', '12 edges'],
     correctOptionIndex: 0,
     hints: [
-      'What is 5 ^ 5? 0.',
-      'What is 0 ^ 9? 9.',
-      'Because order does not matter ((a ^ a) ^ (b ^ b) ^ ... ^ x = 0 ^ 0 ^ ... ^ x = x).'
+      'In any tree, every vertex except the root has exactly one incoming edge from its parent.',
+      'Total edges = number of vertices - 1.'
     ],
-    explanation: 'XOR is commutative (`a ^ b = b ^ a`) and associative (`(a ^ b) ^ c = a ^ (b ^ c)`). Furthermore, `x ^ x = 0` (any number XORed with itself cancels out to 0) and `x ^ 0 = x`. Therefore, pairing duplicate numbers cancels them all to zero, leaving strictly the single non-duplicate element in O(N) time and O(1) space.',
-    learningObjective: 'Leverage group-theoretic properties of bitwise XOR for linear-time O(1) memory algorithms.',
-    commonMistake: 'Allocating a hash table or sorting array to find the single element, wasting O(N) space or O(N log N) time.',
-    tags: ['bit-manipulation', 'xor', 'invariants']
+    explanation: 'A fundamental theorem of tree graph theory states that any tree with n vertices contains exactly n - 1 edges, with zero cycles.',
+    tags: ['trees', 'terminology', 'edge_count']
   },
   {
-    id: 'c-82-brian-kernighan-bits',
+    id: 'q-82-tree-traversals',
     squareId: 82,
-    title: 'Brian Kernighan\'s Algorithm: Set Bit Invariant',
-    topic: 'Bit Manipulation',
-    subtopic: 'Bit Masking & Low Bit Elimination',
-    skillCategory: 'conceptual',
+    co: 'CO4',
+    title: 'Inorder Traversal of Binary Tree',
+    topic: 'Trees Preliminaries',
+    subtopic: 'Inorder, Preorder, Postorder Traversals',
+    skillCategory: 'dry_run',
     difficulty: 'easy',
-    type: 'conceptual_mcq',
-    prompt: 'Why does the bitwise expression `n & (n - 1)` clear the lowest (rightmost) set 1-bit of `n` in O(1) time?',
+    type: 'output_prediction',
+    prompt: 'Given a binary tree with root 1, left child 2 (with children 4, 5), and right child 3 (with child 6):\n        1\n       / \\\n      2   3\n     / \\   \\\n    4   5   6\n\nWhat is the INORDER traversal (Left, Root, Right)?',
     options: [
-      'Subtracting 1 flips the rightmost 1-bit to 0 and all trailing 0s to 1s; bitwise AND with original n zeroes out that bit and keeps higher bits unchanged',
-      'It performs an arithmetic right shift by 1 position',
-      'It multiplies n by -1 in two\'s complement',
-      'Bitwise AND with n - 1 clears all odd bits in the integer'
+      '4, 2, 5, 1, 3, 6',
+      '1, 2, 4, 5, 3, 6',
+      '4, 5, 2, 6, 3, 1',
+      '1, 2, 3, 4, 5, 6'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Take n = 12 (binary 1100). What is n - 1? 11 (binary 1011).',
-      'Now compute 1100 & 1011: 1000 (decimal 8).',
-      'The rightmost 1-bit at position 2 was cleared, leaving the rest intact.'
+      'Inorder visits: Left Subtree, then Root, then Right Subtree.',
+      'For root 1: Left is (4, 2, 5), Root is 1, Right is (3, 6).'
     ],
-    explanation: 'In binary, `n - 1` borrows from the least significant set bit, flipping that 1 to 0 and setting all subsequent lower zero bits to 1. Higher bits remain identical. Performing `n & (n - 1)` leaves higher bits untouched and annihilates the lowest set bit. Repeating this counts set bits in O(number of 1-bits) rather than O(32).',
-    learningObjective: 'Master Brian Kernighan\'s lowest-set-bit cancellation technique for bit manipulation.',
-    commonMistake: 'Iterating through all 32 or 64 bits with shifts when only set bits need processing.',
-    tags: ['bit-manipulation', 'kernighan', 'optimization']
+    explanation: 'Inorder order: Left-Root-Right. Left subtree of 1: inorder of 2 is (4, 2, 5). Then root 1. Right subtree of 1: 3 has no left, so visit 3, then right 6. Result: 4, 2, 5, 1, 3, 6.',
+    tags: ['tree_traversal', 'inorder', 'binary_tree']
   },
   {
-    id: 'c-83-power-of-two-invariant',
+    id: 'q-83-bst-invariant-search',
     squareId: 83,
-    title: 'Power of Two: Single Bit Invariant',
-    topic: 'Bit Manipulation',
-    subtopic: 'Binary Representation Properties',
+    co: 'CO4',
+    title: 'BST Invariant & Inorder Sortedness',
+    topic: 'Binary Search Tree and its Operations',
+    subtopic: 'BST Property & Search Algorithm',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'Which single conditional expression correctly checks if integer `n` is a power of two in O(1) time?',
+    prompt: 'What special property is ALWAYS true about the Inorder traversal of any Binary Search Tree (BST)?',
     options: [
-      '`n > 0 && (n & (n - 1)) === 0`',
-      '`n % 2 === 0`',
-      '`(n | (n - 1)) === n`',
-      '`Math.pow(2, Math.log2(n)) === 0`'
+      'The values are visited in strictly ascending sorted order',
+      'The root node is always printed first',
+      'All leaf nodes are printed before any parent nodes',
+      'The values alternate between even and odd numbers'
     ],
     correctOptionIndex: 0,
     hints: [
-      'A power of two in binary has exactly ONE set bit: 1 (0001), 2 (0010), 4 (0100), 8 (1000).',
-      'If it has only one set bit, clearing that bit using `n & (n - 1)` must produce 0.',
-      'Remember to guard against n <= 0 (e.g. 0 is not a power of two).'
+      'Left < Root < Right.',
+      'Since Inorder visits Left, then Root, then Right, values are always visited from smallest to largest.'
     ],
-    explanation: 'A positive power of two has exactly one bit set to 1 in its binary representation. Clearing that single set bit via `n & (n - 1)` results in 0. Guarding with `n > 0` ensures non-positive numbers (like 0 and negative integers) are excluded.',
-    learningObjective: 'Apply bitwise operations to evaluate integer algebraic properties in O(1) time.',
-    commonMistake: 'Forgetting `n > 0`, which mistakenly identifies 0 as a power of two since `0 & -1 === 0`.',
-    tags: ['bit-manipulation', 'math', 'invariants']
+    explanation: 'Because a BST enforces left < root < right, an Inorder traversal (Left, Root, Right) recursively visits nodes in strictly ascending sorted order in O(n) time.',
+    tags: ['bst', 'inorder_sorted', 'invariant']
   },
   {
-    id: 'c-84-two-single-numbers-bitmask',
+    id: 'q-84-bst-insertion',
     squareId: 84,
-    title: 'Two Non-Repeating Numbers: Diff Bit Partition',
-    topic: 'Bit Manipulation',
-    subtopic: 'Two\'s Complement & Bitmask Partitioning',
-    skillCategory: 'conceptual',
-    difficulty: 'hard',
-    type: 'conceptual_mcq',
-    prompt: 'In an array where every number appears twice except TWO numbers (x and y), XORing all numbers produces `XOR_total = x ^ y`. How do we isolate a discriminating bit to partition the array into two groups?',
-    options: [
-      'Find any set bit in `XOR_total` via `diffBit = XOR_total & (-XOR_total)`; numbers with that bit set belong to group 1, and others to group 2',
-      'Divide XOR_total by 2 and run binary search on both halves',
-      'Invert XOR_total and multiply by the array length',
-      'Cast XOR_total to a string and inspect the first character'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Since x !== y, XOR_total has at least one bit set to 1.',
-      'A 1-bit in XOR_total means x and y differ at that exact bit position.',
-      'Using `diff & (-diff)` extracts the lowest set bit in two\'s complement, allowing an unambiguous 2-group partition.'
-    ],
-    explanation: 'Because x !== y, `x ^ y !== 0`. Any set bit in `x ^ y` indicates that x and y differ at that bit position (one has 1, the other 0). `diff & (-diff)` isolates the lowest set bit. Partitioning all array elements into two groups based on whether this bit is set splits x and y into different buckets, while identical duplicates always fall into the same bucket and cancel out via XOR.',
-    learningObjective: 'Use two\'s complement lowest-set-bit masking (`x & -x`) to partition datasets.',
-    commonMistake: 'Assuming two unknown values cannot be disentangled after being merged with XOR.',
-    tags: ['bit-manipulation', 'xor', 'partitioning']
-  },
-  {
-    id: 'c-85-unique-paths-grid-dp',
-    squareId: 85,
-    title: 'Unique Paths on 2D Grid: Recurrence & Combinatorics',
-    topic: 'Dynamic Programming',
-    subtopic: '2D Grid DP & Pascal\'s Triangle',
-    skillCategory: 'conceptual',
-    difficulty: 'medium',
-    type: 'conceptual_mcq',
-    prompt: 'A robot starts at (0, 0) and can only move Down or Right to reach (M-1, N-1). What is the exact combinatorial formula for the total number of unique paths?',
-    options: [
-      'Combination `C((M - 1) + (N - 1), M - 1)` = `(M + N - 2)! / ((M - 1)! * (N - 1)!)`',
-      '`(M * N) / 2`',
-      '`2^(M + N)`',
-      '`M^(N - 1)`'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'How many total moves must the robot make? (M - 1) Down moves and (N - 1) Right moves.',
-      'Total moves = (M - 1) + (N - 1) = M + N - 2.',
-      'Out of these total moves, how many must be chosen as "Down"? Exactly M - 1.'
-    ],
-    explanation: 'Any valid route consists of exactly `(M - 1)` Down steps and `(N - 1)` Right steps in some sequence. The total number of steps is `(M + N - 2)`. Choosing which `M - 1` of these steps are Down steps is given by the combination formula `C(M+N-2, M-1)`. This can be computed in O(min(M, N)) time or via 2D DP in O(M * N).',
-    learningObjective: 'Connect 2D grid DP transitions (`dp[i][j] = dp[i-1][j] + dp[i][j-1]`) with binomial coefficients.',
-    commonMistake: 'Simulating paths with recursive DFS without memoization, leading to exponential O(2^(M+N)) blowup.',
-    tags: ['dynamic-programming', 'combinatorics', 'grid-paths']
-  },
-  {
-    id: 'c-86-min-path-sum-grid',
-    squareId: 86,
-    title: 'Minimum Path Sum: In-Place DP Invariant',
-    topic: 'Dynamic Programming',
-    subtopic: 'Grid Optimization & In-Place Updates',
+    co: 'CO4',
+    title: 'BST Insertion Tree Structure',
+    topic: 'Binary Search Tree and its Operations',
+    subtopic: 'Iterative & Recursive Node Insertion',
     skillCategory: 'dry_run',
     difficulty: 'medium',
-    type: 'code_trace',
-    codeSnippet: `// Grid: [[1, 3], [1, 5]]
-// Cell (0,0) = 1
-// First row: grid[0][1] += grid[0][0] => 3 + 1 = 4
-// First col: grid[1][0] += grid[0][0] => 1 + 1 = 2
-// What is the value of grid[1][1] after grid[1][1] += min(grid[0][1], grid[1][0])?`,
-    prompt: 'What is the minimum path sum to reach cell (1, 1)?',
+    type: 'dry_run_trace',
+    prompt: 'Insert the following values sequentially into an initially empty BST:\n50, 30, 70, 20, 40, 60, 80\n\nWhich node becomes the RIGHT child of 30?',
+    options: ['40', '20', '50', '60'],
+    correctOptionIndex: 0,
+    hints: [
+      '50 is the root.',
+      '30 is smaller than 50 (left of 50).',
+      '40 is smaller than 50 (left) but larger than 30 (right of 30).'
+    ],
+    explanation: '50 is root. 30 goes left of 50. 70 goes right of 50. 20 is < 50 and < 30 (left child of 30). 40 is < 50 and > 30 (right child of 30). Thus, the right child of 30 is 40.',
+    tags: ['bst_insertion', 'dry_run', 'tree_shape']
+  },
+  {
+    id: 'q-85-bst-deletion',
+    squareId: 85,
+    co: 'CO4',
+    title: 'BST Deletion of Node with Two Children',
+    topic: 'Binary Search Tree and its Operations',
+    subtopic: 'Deleting Leaf, Single-Child, and Two-Child Nodes',
+    skillCategory: 'conceptual',
+    difficulty: 'hard',
+    type: 'conceptual_mcq',
+    prompt: 'When deleting a node that has BOTH a left child and a right child from a BST, which node can safely replace its value without violating the BST invariant?',
     options: [
-      '7 (via Path: 1 -> 1 -> 5)',
-      '9 (via Path: 1 -> 3 -> 5)',
-      '6',
-      '8'
+      'Its Inorder Successor (smallest node in its right subtree) OR its Inorder Predecessor (largest node in its left subtree)',
+      'Any randomly chosen leaf node in the tree',
+      'Its immediate parent node',
+      'The left child always, regardless of value'
     ],
     correctOptionIndex: 0,
     hints: [
-      'To reach (1, 1), you come from above (0, 1 with cost 4) or from left (1, 0 with cost 2).',
-      'min(4, 2) is 2.',
-      'Add current cell cost 5: 2 + 5 = 7.'
+      'The replacement node must be greater than all nodes in the left subtree and smaller than all remaining nodes in the right subtree.',
+      'The minimum of the right subtree or maximum of the left subtree satisfies this.'
     ],
-    explanation: 'To reach cell (1, 1), the robot enters from (0, 1) [cost 4] or (1, 0) [cost 2]. The minimum entry cost is `min(4, 2) = 2`. Adding cell (1, 1)\'s weight (5) yields `2 + 5 = 7`. Modifying the input grid directly achieves O(M * N) time with O(1) auxiliary space.',
-    learningObjective: 'Trace in-place DP grid state transitions and cost minimization.',
-    commonMistake: 'Taking path 1 -> 3 -> 5 = 9 instead of the cheaper 1 -> 1 -> 5 = 7.',
-    tags: ['dynamic-programming', 'grid', 'dry-run']
+    explanation: 'The Inorder Successor is guaranteed to be strictly greater than all nodes in the left subtree and strictly smaller than all other nodes in the right subtree. Replacing the deleted value with it and deleting the successor node preserves the BST invariant.',
+    tags: ['bst_deletion', 'two_children', 'inorder_successor']
   },
   {
-    id: 'c-87-edit-distance-recurrence',
+    id: 'q-86-inorder-successor',
+    squareId: 86,
+    co: 'CO4',
+    title: 'Finding the Inorder Successor in a BST',
+    topic: 'Binary Search Tree and its Operations',
+    subtopic: 'Finding Next and Previous Keys',
+    skillCategory: 'dry_run',
+    difficulty: 'medium',
+    type: 'output_prediction',
+    prompt: 'In a BST containing keys: 10, 20, 25, 30, 40, 50, 60, what is the Inorder Successor of node 30 if 30 has a right child 50 (which has left child 40 and right child 60)?',
+    options: [
+      '40 (the minimum element in the right subtree of 30)',
+      '50',
+      '60',
+      '25'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'If node X has a right subtree, its inorder successor is the leftmost (minimum) node in that right subtree.',
+      'In the right subtree rooted at 50, left child is 40.'
+    ],
+    explanation: 'When node 30 has a right child (50), its inorder successor is found by going right once (50) and then following left pointers as far as possible (40). Hence, 40 is the minimum node in the right subtree.',
+    tags: ['inorder_successor', 'bst_search']
+  },
+  {
+    id: 'q-87-skewed-bst',
     squareId: 87,
-    title: 'Edit Distance (Levenshtein): 3-Operation Recurrence',
-    topic: 'Dynamic Programming',
-    subtopic: 'String Distance Metrics',
-    skillCategory: 'conceptual',
-    difficulty: 'hard',
-    type: 'conceptual_mcq',
-    prompt: 'In Wagner-Fischer algorithm for Edit Distance between word1 and word2, what do the three terms `dp[i-1][j]`, `dp[i][j-1]`, and `dp[i-1][j-1]` represent when characters mismatch (`word1[i-1] !== word2[j-1]`)?',
+    co: 'CO4',
+    title: 'Degenerate Skewed BST Worst Case',
+    topic: 'Binary Search Tree and its Operations',
+    subtopic: 'O(n) Worst-Case Search Deterioration',
+    skillCategory: 'complexity',
+    difficulty: 'medium',
+    type: 'time_complexity',
+    prompt: 'If elements are inserted into an empty BST in sorted ascending order (e.g. 10, 20, 30, 40, 50), what is the resulting tree height and worst-case search complexity?',
     options: [
-      'Delete from word1 (`dp[i-1][j] + 1`), Insert into word1 (`dp[i][j-1] + 1`), and Replace in word1 (`dp[i-1][j-1] + 1`)',
-      'Reverse word1, Reverse word2, and Swap adjacent characters',
-      'Uppercase word1, Lowercase word2, and Clear string buffer',
-      'Left bit shift, Right bit shift, and Bitwise NOT'
+      'Height: n; Search Time: O(n) (degenerates into a right-skewed linked list)',
+      'Height: log2(n); Search Time: O(log n)',
+      'Height: 1; Search Time: O(1)',
+      'Height: n^2; Search Time: O(n^2)'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Transition: `1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])`.',
-      'i-1 with j represents removing a character from word1 (deletion).',
-      'i with j-1 represents inserting a matching character into word1.',
-      'i-1 with j-1 represents substituting the mismatching character.'
+      'Each new element is larger than all previous elements.',
+      'Every node only gets a right child, forming a single linear strand.'
     ],
-    explanation: 'When characters mismatch, we choose the cheapest of 3 edits: (1) `dp[i-1][j] + 1` (delete word1[i-1]); (2) `dp[i][j-1] + 1` (insert word2[j-1]); (3) `dp[i-1][j-1] + 1` (replace word1[i-1] with word2[j-1]). Taking the minimum over all three subproblems in an M x N table solves Levenshtein distance in O(M * N).',
-    learningObjective: 'Master the formal operational mapping of 2D string editing dynamic programming.',
-    commonMistake: 'Assuming insertion and deletion always cost different amounts without checking problem weights.',
-    tags: ['dynamic-programming', 'edit-distance', 'strings']
+    explanation: 'Sorted insertions place every node as the right child of the previous node. The tree degenerates into a right-skewed linked list with height h = n. Binary search advantages are lost, dropping to linear O(n) search time.',
+    tags: ['skewed_bst', 'worst_case', 'degeneration']
   },
   {
-    id: 'c-88-matrix-chain-multiplication',
+    id: 'q-88-avl-balance-factor',
     squareId: 88,
-    title: 'Matrix Chain Multiplication: Interval DP',
-    topic: 'Dynamic Programming',
-    subtopic: 'Interval DP & Parenthesization',
-    skillCategory: 'complexity',
-    difficulty: 'hard',
-    type: 'complexity_choice',
-    prompt: 'Given matrices A1, A2, ..., An, why does the interval DP formulation for optimal parenthesization require O(N^3) time complexity?',
+    co: 'CO4',
+    title: 'AVL Tree Balance Factor Definition',
+    topic: 'AVL Trees',
+    subtopic: 'Height-Balanced Trees: BF = h_L - h_R',
+    skillCategory: 'conceptual',
+    difficulty: 'medium',
+    type: 'conceptual_mcq',
+    prompt: 'In an AVL Tree, how is the Balance Factor (BF) of a node defined, and what are its valid allowed values for a balanced node?',
     options: [
-      'There are O(N^2) intervals [i, j], and finding the optimal split point k between i and j takes O(N) comparisons: sum from len=2 to N of (N - len + 1) * len = O(N^3)',
-      'Matrix multiplication itself is always an O(N^4) algorithm on floating point hardware',
-      'Interval DP requires building a full 3D spatial tensor',
-      'It computes all N! permutations of matrix multiplications'
+      'BF = height(left_subtree) - height(right_subtree); allowed values: {-1, 0, +1}',
+      'BF = number_of_left_nodes - number_of_right_nodes; allowed values: {0, 1}',
+      'BF = depth(node) - height(node); allowed values: any positive number',
+      'BF = height(node) / 2; allowed values: integers'
     ],
     correctOptionIndex: 0,
     hints: [
-      'State: `dp[i][j]` = minimum scalar multiplications to multiply matrices from index i to j.',
-      'How many pairs of (i, j) exist? O(N^2) intervals.',
-      'For each interval [i, j], split point k ranges from i to j-1 (up to O(N) choices). O(N^2) * O(N) = O(N^3).'
+      'Balance factor compares the heights of the left and right subtrees.',
+      'The difference can never exceed 1 in absolute value.'
     ],
-    explanation: 'Interval DP defines `dp[i][j] = min_{i <= k < j} (dp[i][k] + dp[k+1][j] + p_{i-1} * p_k * p_j)`. There are O(N^2) subproblems (intervals of length 2 to N). For each subproblem, testing all possible split positions k requires O(j - i) = O(N) work. Total time is Theta(N^3) with O(N^2) space.',
-    learningObjective: 'Understand the subproblem structure and cubic complexity of interval DP.',
-    commonMistake: 'Trying to solve matrix chain parenthesization with a greedy approach based on dimension sizes.',
-    tags: ['dynamic-programming', 'interval-dp', 'complexity']
+    explanation: 'In an AVL tree, Balance Factor BF = height(left) - height(right). An AVL node is balanced iff BF is in {-1, 0, +1}. If BF reaches +2 or -2, rebalancing rotations are immediately triggered.',
+    tags: ['avl_tree', 'balance_factor', 'height_balanced']
   },
   {
-    id: 'c-89-bitmask-dp-tsp',
+    id: 'q-89-avl-single-rotations',
     squareId: 89,
-    title: 'Bitmask Dynamic Programming: TSP Invariant',
-    topic: 'Dynamic Programming',
-    subtopic: 'State Compression & Traveling Salesperson',
-    skillCategory: 'complexity',
-    difficulty: 'hard',
-    type: 'complexity_choice',
-    prompt: 'In the Held-Karp algorithm for Traveling Salesperson Problem (TSP), state `dp[mask][u]` denotes the minimum cost to visit the set of cities encoded by bitmask `mask` ending at city `u`. What is the time complexity of this bitmask DP?',
-    options: [
-      'O(N^2 * 2^N) time, a monumental improvement over brute-force O(N!) factorial time',
-      'O(N!) time and O(N^2) space',
-      'O(2^N) time strictly with O(N) space',
-      'O(N^3) polynomial time'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'How many subsets of N cities exist? 2^N masks.',
-      'How many ending cities u can each subset have? At most N.',
-      'From state (mask, u), transitioning to next unvisited city v takes O(N) iterations. Thus: 2^N * N * N = O(N^2 * 2^N).'
-    ],
-    explanation: 'Held-Karp replaces O(N!) brute force with bitmask DP. There are 2^N masks and N possible last-visited cities, giving N * 2^N total states. From each state, trying to visit any unvisited city v requires N transitions, yielding O(N^2 * 2^N) total time. For N=20, 20! is ~2.4 x 10^18 (impossible), whereas 20^2 * 2^20 is ~4.1 x 10^8 operations (feasible).',
-    learningObjective: 'Apply bitmask state compression to optimize exponential combinatorial search problems.',
-    commonMistake: 'Assuming NP-hard problems cannot be significantly accelerated through dynamic programming.',
-    tags: ['dynamic-programming', 'bitmask', 'tsp', 'complexity']
-  },
-  {
-    id: 'c-90-burst-balloons-inverse-dp',
-    squareId: 90,
-    title: 'Burst Balloons: The Inverse Thinking Invariant',
-    topic: 'Dynamic Programming',
-    subtopic: 'Inverse Interval DP',
+    co: 'CO4',
+    title: 'AVL Single Rotations: LL and RR Cases',
+    topic: 'AVL Trees',
+    subtopic: 'Right Rotation (LL) & Left Rotation (RR)',
     skillCategory: 'conceptual',
     difficulty: 'hard',
     type: 'conceptual_mcq',
-    prompt: 'In the Burst Balloons problem, why does defining the subproblem by choosing which balloon to burst FIRST fail, whereas choosing which balloon to burst LAST succeeds?',
+    prompt: 'You insert a new node into the LEFT subtree of the LEFT child of node A, causing node A to have a Balance Factor of +2. What rotation fixes this imbalance?',
     options: [
-      'Bursting a balloon first creates dependencies across subproblems (left and right become adjacent and interact); choosing the LAST balloon k keeps the boundary balloons intact, isolating subproblems [i, k] and [k, j] independently',
-      'Bursting the first balloon causes array index out of bounds errors in C++',
-      'The last balloon always has a value equal to 1',
-      'Interval DP can only be evaluated backwards from right to left'
+      'Single Right Rotation (LL Rotation) on node A',
+      'Single Left Rotation (RR Rotation) on node A',
+      'Left-Right (LR) Double Rotation',
+      'Right-Left (RL) Double Rotation'
     ],
     correctOptionIndex: 0,
     hints: [
-      'If you burst balloon k first, balloon k-1 and k+1 become new neighbors. Now subproblem left depends on subproblem right!',
-      'If balloon k is the LAST to burst in range (i, j), who are its neighbors when it bursts?',
-      'Since all other balloons in (i, j) are already burst, its neighbors are guaranteed to be exactly the fixed boundaries i and j!'
+      'Insertion happened in the Left child\'s Left subtree (LL).',
+      'A single Right Rotation brings the left child up to become the new root.'
     ],
-    explanation: 'Reverse thinking invariant: If balloon k bursts first, the subproblems on either side are coupled because their elements become adjacent. But if balloon k is assumed to be the LAST to burst in interval (i, j), all other balloons in that range are already gone. Therefore, balloon k is guaranteed to be flanked by boundary balloons arr[i] and arr[j]. This decouples the subproblems into `dp[i][k] + dp[k][j] + arr[i]*arr[k]*arr[j]`.',
-    learningObjective: 'Master inverse thinking in interval dynamic programming to decouple interacting subproblems.',
-    commonMistake: 'Attempting to divide intervals based on the first action rather than the final isolating event.',
-    tags: ['dynamic-programming', 'interval-dp', 'hard', 'boss-battle']
+    explanation: 'An insertion in the left child\'s left subtree creates an LL imbalance (BF = +2). A single Right Rotation on node A pulls the left child up to the root position and pushes node A down to the right child, restoring balance in O(1) time.',
+    tags: ['avl_rotations', 'll_rotation', 'right_rotate']
+  },
+  {
+    id: 'q-90-checkpoint-avl',
+    squareId: 90,
+    co: 'CO4',
+    title: 'Checkpoint 9: AVL Double Rotation (LR Case)',
+    topic: 'AVL Trees',
+    subtopic: 'Unit 9 Milestone Evaluation: LR and RL Rotations',
+    skillCategory: 'dry_run',
+    difficulty: 'hard',
+    type: 'dry_run_trace',
+    prompt: 'Insert into an empty AVL tree in order: 30, 10, 20.\n10 is inserted left of 30, and 20 is inserted right of 10 (LR zigzag).\nWhich sequence of rotations restores the AVL tree, and what is the final root?',
+    options: [
+      'Left Rotation on 10, then Right Rotation on 30 (LR Double Rotation); final root is 20',
+      'Single Right Rotation on 30; final root is 10',
+      'Single Left Rotation on 30; final root is 20',
+      'Right-Left Rotation; final root is 30'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'This is an LR case (left child, right grandchild).',
+      'Step 1: Left Rotate on 10 -> 20 becomes left child of 30, 10 becomes left child of 20.',
+      'Step 2: Right Rotate on 30 -> 20 becomes root with children 10 (left) and 30 (right).'
+    ],
+    explanation: 'Inserting 30, 10, 20 causes an LR imbalance at 30 (BF = +2, child BF = -1). Step 1: Left Rotate child 10 -> transforms zigzag into straight line 30-20-10. Step 2: Right Rotate parent 30 -> 20 becomes the new root with left child 10 and right child 30.',
+    tags: ['checkpoint', 'avl_double_rotation', 'lr_case']
+  },
+  {
+    id: 'q-extra-81',
+    squareId: 81,
+    co: 'CO4',
+    title: 'Leaf Nodes in Strict Binary Tree',
+    topic: 'Trees Preliminaries',
+    subtopic: 'Binary Tree Properties',
+    skillCategory: 'numerical',
+    difficulty: 'medium',
+    type: 'output_prediction',
+    prompt: 'In any strictly binary tree (where every non-leaf node has exactly 2 children), if there are L leaf nodes, how many internal nodes I does the tree contain?',
+    options: ['I = L - 1', 'I = L', 'I = 2L', 'I = L + 1'],
+    correctOptionIndex: 0,
+    hints: [
+      'Test for a tree with root and 2 children: L = 2 leaves, I = 1 internal node.',
+      '1 = 2 - 1.'
+    ],
+    explanation: 'A classic mathematical theorem for strictly binary trees states that the number of leaf nodes L always exceeds the number of internal nodes I by exactly 1: L = I + 1, so I = L - 1.',
+    tags: ['binary_tree', 'leaves', 'properties']
+  },
+  {
+    id: 'q-extra-88',
+    squareId: 88,
+    co: 'CO4',
+    title: 'Maximum Height of AVL Tree',
+    topic: 'AVL Trees',
+    subtopic: 'AVL Height Bound',
+    skillCategory: 'complexity',
+    difficulty: 'hard',
+    type: 'time_complexity',
+    prompt: 'What is the theoretical maximum height of an AVL tree containing n nodes in terms of Big-O?',
+    options: [
+      'O(log2 n), specifically bounded by ~1.44 * log2(n)',
+      'O(n)',
+      'O(sqrt(n))',
+      'O(n log n)'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'The minimum number of nodes in an AVL tree of height h relates to Fibonacci numbers.',
+      'Even in the worst-case, height is strictly logarithmic.'
+    ],
+    explanation: 'Because AVL trees maintain |BF| <= 1, the worst-case height (Fibonacci AVL tree) is bounded by h < 1.4404 * log2(n + 2) - 0.3277 = O(log n). This mathematically guarantees O(log n) lookup time in all cases.',
+    tags: ['avl', 'height_bound', 'fibonacci_tree']
+  },
+  {
+    id: 'q-extra-85',
+    squareId: 85,
+    co: 'CO4',
+    title: 'Deleting Leaf Node in BST',
+    topic: 'Binary Search Tree and its Operations',
+    subtopic: 'BST Deletion Case 1',
+    skillCategory: 'implementation',
+    difficulty: 'easy',
+    type: 'conceptual_mcq',
+    prompt: 'When deleting a leaf node (a node with 0 children) from a BST, what is the required operation?',
+    options: [
+      'Simply set the parent\'s pointer that references the leaf node to NULL and free the node',
+      'Replace it with the root node',
+      'Rotate the entire tree left',
+      'Traverse the left subtree'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'A leaf node has no children to preserve or reconnect.',
+      'Just disconnect it from its parent.'
+    ],
+    explanation: 'Deleting a leaf node is the simplest BST deletion case: set the parent\'s corresponding left or right child pointer to NULL, and deallocate the leaf node memory.',
+    tags: ['bst', 'leaf_deletion']
   }
 ];

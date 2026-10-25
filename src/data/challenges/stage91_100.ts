@@ -2,273 +2,351 @@ import { Challenge } from '../../types/challenge';
 
 export const STAGE_91_100_CHALLENGES: Challenge[] = [
   {
-    id: 'c-91-trie-prefix-tree',
+    id: 'q-91-graph-representations',
     squareId: 91,
-    title: 'Trie (Prefix Tree) Node Architecture',
-    topic: 'Trees',
-    subtopic: 'Prefix Trees & Retrieval',
+    co: 'CO4',
+    title: 'Adjacency Matrix vs Adjacency List Space Comparison',
+    topic: 'Graph Preliminaries',
+    subtopic: 'Adjacency Matrix vs Adjacency List',
+    skillCategory: 'compare_approaches',
+    difficulty: 'easy',
+    type: 'compare_approaches',
+    prompt: 'You are representing a social network graph with V = 100,000 users and E = 200,000 friendship edges. Why is an Adjacency List overwhelmingly superior to an Adjacency Matrix here?',
+    options: [
+      'Adjacency List requires O(V + E) space (~300,000 entries), whereas an Adjacency Matrix requires O(V^2) space (10,000,000,000 entries = ~10 GB RAM)',
+      'Adjacency List automatically prevents graph cycles',
+      'Adjacency Matrix cannot store undirected edges',
+      'Adjacency List runs Dijkstra in O(1) time'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Compute V^2 for 100,000 vertices: (10^5)^2 = 10^10 entries.',
+      'A sparse graph has E << V^2.'
+    ],
+    explanation: 'For sparse graphs where E << V^2, an adjacency matrix allocates V*V slots (10 billion entries, wasting ~10-40 GB of RAM on mostly 0s). An adjacency list stores only actual edges, taking O(V + E) space (negligible megabytes).',
+    tags: ['graph_representation', 'sparse_graph', 'space_complexity']
+  },
+  {
+    id: 'q-92-bfs-traversal',
+    squareId: 92,
+    co: 'CO4',
+    title: 'Breadth-First Search (BFS) Traversal Order',
+    topic: 'Graph Traversals',
+    subtopic: 'Queue-Based Level-Order Traversal',
+    skillCategory: 'dry_run',
+    difficulty: 'medium',
+    type: 'dry_run_trace',
+    prompt: 'Given an undirected graph with edges: (A-B), (A-C), (B-D), (B-E), (C-F). Neighbors are enqueued in alphabetical order.\nStarting from vertex A, what is the exact BFS traversal order?',
+    options: [
+      'A, B, C, D, E, F',
+      'A, B, D, E, C, F',
+      'A, C, F, B, E, D',
+      'F, E, D, C, B, A'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Level 0: Start at A.',
+      'Level 1: Neighbors of A are B and C.',
+      'Level 2: Neighbors of B are D, E; neighbor of C is F.'
+    ],
+    explanation: 'BFS uses a FIFO queue: 1) Enqueue A. 2) Dequeue A, enqueue neighbors B, C (queue: [B, C]). 3) Dequeue B, enqueue neighbors D, E (queue: [C, D, E]). 4) Dequeue C, enqueue neighbor F (queue: [D, E, F]). 5) Dequeue D, E, F. Result: A, B, C, D, E, F.',
+    tags: ['bfs', 'traversal', 'queue_order']
+  },
+  {
+    id: 'q-93-dfs-traversal',
+    squareId: 93,
+    co: 'CO4',
+    title: 'Depth-First Search (DFS) Traversal Order',
+    topic: 'Graph Traversals',
+    subtopic: 'Recursive & Stack-Based Exploration',
+    skillCategory: 'dry_run',
+    difficulty: 'medium',
+    type: 'dry_run_trace',
+    prompt: 'For the same graph with edges (A-B), (A-C), (B-D), (B-E), (C-F), neighbors are visited in alphabetical order.\nStarting from vertex A, what is the exact DFS traversal order?',
+    options: [
+      'A, B, D, E, C, F',
+      'A, B, C, D, E, F',
+      'A, C, F, B, E, D',
+      'A, B, E, D, C, F'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'DFS goes as deep as possible before backtracking.',
+      'From A -> go to first neighbor B -> from B go to first neighbor D (dead end) -> backtrack to B -> go to E.'
+    ],
+    explanation: 'DFS follows deep paths: 1) Visit A -> visit first neighbor B. 2) From B -> visit first neighbor D. 3) D has no unvisited neighbors, backtrack to B. 4) From B -> visit neighbor E. 5) Backtrack to A. 6) From A -> visit neighbor C -> visit F. Result: A, B, D, E, C, F.',
+    tags: ['dfs', 'backtracking', 'traversal']
+  },
+  {
+    id: 'q-94-dijkstra-algorithm',
+    squareId: 94,
+    co: 'CO4',
+    title: "Dijkstra's Algorithm Edge Relaxation",
+    topic: 'Shortest Path Algorithm',
+    subtopic: 'Single-Source Shortest Path with Min-Heap',
     skillCategory: 'conceptual',
     difficulty: 'medium',
     type: 'conceptual_mcq',
-    prompt: 'In a Trie (Prefix Tree) used for fast string lookup and autocomplete, what does each Trie node typically contain?',
+    prompt: 'In Dijkstra\'s algorithm, what condition triggers the relaxation of an edge from vertex u to vertex v with weight w?',
     options: [
-      'An array or map of child node references indexed by character, and a boolean flag `isEndOfWord` marking word termination',
-      'The complete string value concatenated from the root to the current node',
-      'A pointer to an operating system thread lock',
-      'A hash value computed from the entire dictionary'
+      'if (dist[u] + w < dist[v]) { dist[v] = dist[u] + w; }',
+      'if (dist[v] + w < dist[u]) { dist[u] = dist[v] + w; }',
+      'if (dist[u] == dist[v]) { dist[v] += w; }',
+      'if (w < 0) { dist[v] = 0; }'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Do Trie nodes need to store the full word string at each node?',
-      'No! The path from the root down to the node represents the prefix.',
-      'Each node only needs pointers to children (`children: Map<char, TrieNode>`) and a flag indicating if that prefix is a complete word.'
+      'Relaxation checks if the path through u is shorter than the currently recorded distance to v.',
+      'New candidate distance to v via u is dist[u] + weight(u, v).'
     ],
-    explanation: 'A Trie node represents a shared prefix. It contains links to its children (e.g. an array of size 26 or a Map) and a boolean `isEndOfWord`. Characters are implicitly defined by the edge transitions. Inserting and searching words of length L takes strictly O(L) time regardless of dictionary size.',
-    learningObjective: 'Master Trie node memory structure and O(L) prefix querying.',
-    commonMistake: 'Storing entire prefix strings inside every node, wasting substantial heap memory.',
-    tags: ['trie', 'prefix-tree', 'strings', 'data-structures']
+    explanation: 'Edge relaxation tests whether taking edge (u, v) offers a shorter path to v than previously found: if `dist[u] + weight(u, v) < dist[v]`, update `dist[v] = dist[u] + weight(u, v)`.',
+    tags: ['dijkstra', 'relaxation', 'shortest_path']
   },
   {
-    id: 'c-92-lru-cache-design',
-    squareId: 92,
-    title: 'LRU Cache Design: Hash Map + Doubly Linked List',
-    topic: 'Stacks & Queues',
-    subtopic: 'System Design & Composite Data Structures',
-    skillCategory: 'conceptual',
-    difficulty: 'hard',
-    type: 'conceptual_mcq',
-    prompt: 'To achieve strictly O(1) time complexity for BOTH `get(key)` and `put(key, value)` in a Least Recently Used (LRU) Cache, which two data structures must be combined?',
-    options: [
-      'A Hash Map (for O(1) key-to-node lookups) and a Doubly Linked List (for O(1) node removal and insertion at head)',
-      'A Binary Search Tree and a Min-Heap',
-      'A Single Dynamic Array and a Stack',
-      'A Trie and a Circular Queue'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Hash Map alone provides O(1) lookup, but cannot maintain usage ordering in O(1).',
-      'Singly linked list cannot delete a node in O(1) because it lacks access to the predecessor node.',
-      'A Doubly Linked List can unlink any node in O(1) given its direct pointer from the Hash Map.'
-    ],
-    explanation: 'An LRU cache pairs a Hash Map with a Doubly Linked List. The Map provides O(1) access to any node. The Doubly Linked List allows moving an accessed node to the most-recently-used front or evicting the least-recently-used tail node in O(1) time without traversal. Together, both get() and put() run in strictly O(1) time.',
-    learningObjective: 'Combine Hash Maps and Doubly Linked Lists to build O(1) composite eviction systems.',
-    commonMistake: 'Using a Singly Linked List, which requires O(N) traversal to locate the preceding node for deletion.',
-    tags: ['lru-cache', 'system-design', 'hash-map', 'doubly-linked-list']
-  },
-  {
-    id: 'c-93-sliding-window-max-deque',
-    squareId: 93,
-    title: 'Sliding Window Maximum: Monotonic Deque Invariant',
-    topic: 'Stacks & Queues',
-    subtopic: 'Monotonic Double-Ended Queue (Deque)',
-    skillCategory: 'conceptual',
-    difficulty: 'hard',
-    type: 'conceptual_mcq',
-    prompt: 'To find the maximum element in every sliding window of size K in O(N) total time, which invariant must the double-ended queue (deque) maintain?',
-    options: [
-      'Elements stored as indices in the deque must have strictly decreasing values from front to back; front of deque is always the current window maximum',
-      'The deque must be sorted in strictly ascending order from front to back',
-      'The deque must store exactly K elements at all times',
-      'The deque must alternate between maximum and minimum values'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'If an incoming element arr[i] is greater than an existing element arr[j] in the window (with j < i), can arr[j] ever be the maximum in any future window?',
-      'No! arr[j] is smaller AND expires sooner. It can be safely popped from the back of the deque.',
-      'This keeps the deque monotonically decreasing; the front always holds the maximum.'
-    ],
-    explanation: 'Monotonic Deque invariant: If an older element is smaller than the newly arrived element, it can never be the maximum in any future window because it is both smaller and expires earlier. Popping smaller elements from the back maintains a strictly decreasing sequence. The front always points to the maximum. Each index is pushed and popped at most once, yielding O(N) total time.',
-    learningObjective: 'Apply monotonic double-ended queues for linear-time sliding window extrema.',
-    commonMistake: 'Using a max-heap of size K, which takes O(N log K) time and requires lazy deletion.',
-    tags: ['deque', 'monotonic-queue', 'sliding-window', 'optimization']
-  },
-  {
-    id: 'c-94-segment-tree-invariants',
-    squareId: 94,
-    title: 'Segment Tree: Range Query & Point Update Invariants',
-    topic: 'Trees',
-    subtopic: 'Range Queries & Point Updates',
-    skillCategory: 'complexity',
-    difficulty: 'hard',
-    type: 'complexity_choice',
-    prompt: 'For an array of size N that undergoes frequent range sum queries `query(L, R)` and single-element modifications `update(idx, val)`, why is a Segment Tree optimal?',
-    options: [
-      'Both range queries and point updates run in strictly O(log N) time, avoiding the O(N) query time of prefix arrays with updates',
-      'Segment trees run queries in O(1) time and updates in O(1) time',
-      'Segment trees compress the array data using Huffman coding',
-      'Segment trees run on GPUs without CPU intervention'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'A plain array has O(1) update but O(N) range query.',
-      'A prefix sum array has O(1) range query, but updating an element takes O(N) to recalculate prefixes.',
-      'A Segment Tree balances both operations to O(log N).'
-    ],
-    explanation: 'A segment tree decomposes intervals into canonical binary intervals. A point update modifies one leaf and its ancestors up the tree (depth = log N), taking O(log N) time. A range query decomposes any arbitrary [L, R] into at most 2 * log N disjoint canonical segments, taking O(log N) time. This balances mutable range queries optimally.',
-    learningObjective: 'Master logarithmic range query and point update tradeoffs in segment trees.',
-    commonMistake: 'Attempting to use a static prefix sum array for high-frequency mutable point-update streams.',
-    tags: ['segment-tree', 'range-queries', 'complexity']
-  },
-  {
-    id: 'c-95-fenwick-tree-lowbit',
+    id: 'q-95-dijkstra-negative-edges',
     squareId: 95,
-    title: 'Fenwick Tree (Binary Indexed Tree): Lowbit Navigation',
-    topic: 'Trees',
-    subtopic: 'Binary Indexed Trees & Bitwise Navigation',
+    co: 'CO4',
+    title: 'Why Dijkstra Fails on Negative Edge Weights',
+    topic: 'Shortest Path Algorithm',
+    subtopic: 'Why Dijkstra Fails on Negative Edges',
     skillCategory: 'conceptual',
     difficulty: 'hard',
     type: 'conceptual_mcq',
-    prompt: 'In a 1-indexed Fenwick Tree (BIT), which bitwise expression calculates the length of the interval responsible for index `i`, used to traverse ancestors during prefix queries (`i -= lowbit(i)`) and updates (`i += lowbit(i)`)?',
+    prompt: 'Why does Dijkstra\'s algorithm produce INCORRECT shortest paths on graphs containing negative edge weights?',
     options: [
-      '`i & (-i)` (the lowest set bit in two\'s complement)',
-      '`i ^ (i - 1)`',
-      '`i >> 1`',
-      '`~i`'
+      'Dijkstra greedily marks a vertex as permanently visited under the assumption that path lengths only increase; a negative edge could later offer a cheaper path to an already visited vertex',
+      'Negative numbers cause integer overflow in the distance array',
+      'Dijkstra\'s algorithm uses queues instead of stacks',
+      'Adjacency lists cannot store negative numbers'
     ],
     correctOptionIndex: 0,
     hints: [
-      'In two\'s complement binary: -i = ~i + 1.',
-      'Bitwise AND of i and -i isolates the rightmost 1-bit.',
-      'For i = 12 (1100 in binary), 12 & -12 = 4 (0100).'
+      'Dijkstra assumes that once vertex u is extracted from the min-heap, dist[u] is optimal and final.',
+      'If an edge has negative weight, a path through a later vertex could reduce dist[u].'
     ],
-    explanation: 'The elegance of Peter Fenwick\'s Binary Indexed Tree lies in the lowest set bit `lowbit(i) = i & (-i)`. Each cell `tree[i]` stores the sum of `lowbit(i)` consecutive elements ending at i. To compute prefix sums, we subtract `lowbit(i)` to jump to predecessor ranges in O(log N). To update, we add `lowbit(i)` to propagate modifications to all containing intervals in O(log N).',
-    learningObjective: 'Apply two\'s complement lowbit arithmetic for compact binary indexed trees.',
-    commonMistake: 'Using 0-indexing for a Fenwick tree without offset, causing an infinite loop since `0 & -0 === 0`.',
-    tags: ['fenwick-tree', 'bit', 'lowbit', 'data-structures']
+    explanation: 'Dijkstra relies on the greedy invariant that once a vertex is finalized in the visited set, no shorter path to it can exist. Negative edge weights violate this invariant, because a detour through a negative edge could reduce the path cost after the vertex was already marked visited.',
+    tags: ['dijkstra', 'negative_edges', 'greedy_failure']
   },
   {
-    id: 'c-96-tarjan-bridges-lowlink',
+    id: 'q-96-prim-mst',
     squareId: 96,
-    title: 'Tarjan\'s Bridge-Finding Algorithm: Low-Link Invariant',
-    topic: 'Graph Algorithms',
-    subtopic: 'Articulation Points, Bridges & Low-Link Values',
+    co: 'CO4',
+    title: "Prim's Minimum Spanning Tree Strategy",
+    topic: 'Minimum Spanning Tree',
+    subtopic: 'Greedy Cut Property from Single Seed Vertex',
     skillCategory: 'conceptual',
-    difficulty: 'expert',
-    type: 'conceptual_mcq',
-    prompt: 'In Tarjan\'s linear-time bridge-finding algorithm, edge `(u, v)` (where v is a DFS child of u) is a BRIDGE (critical connection) if and only if which condition holds?',
+    difficulty: 'hard',
+    type: 'compare_approaches',
+    prompt: 'How does Prim\'s algorithm grow the Minimum Spanning Tree (MST), and what graph data structure makes it most efficient for dense graphs?',
     options: [
-      '`low[v] > tin[u]` (the subtree rooted at v has NO back edge to u or any of u\'s ancestors)',
-      '`low[v] < tin[u]`',
-      '`tin[u] === tin[v]`',
-      'The degree of vertex u is equal to 1'
+      'It grows a single connected tree from a starting vertex, repeatedly adding the cheapest edge crossing into the unvisited set; Adjacency Matrix runs in O(V^2)',
+      'It sorts all edges first and merges disconnected trees',
+      'It removes maximum cycles until a tree remains',
+      'It uses DFS to visit all vertices'
     ],
     correctOptionIndex: 0,
     hints: [
-      'tin[u] is the discovery time of vertex u.',
-      'low[v] is the earliest discovery time reachable from v\'s subtree using at most one back edge.',
-      'If low[v] > tin[u], can v reach any vertex above u without passing through edge (u, v)?'
+      'Prim maintains a single growing connected tree at all times.',
+      'Contrast this with Kruskal, which maintains a forest of disconnected components.'
     ],
-    explanation: 'In Tarjan\'s bridge algorithm: `tin[u]` is u\'s discovery time, and `low[v]` is the smallest discovery time reachable from v\'s subtree via back edges. If `low[v] > tin[u]`, it means no node in v\'s subtree can bypass edge (u, v) to reach u or any ancestor of u. Removing edge (u, v) disconnects v\'s subtree, making (u, v) a critical bridge.',
-    learningObjective: 'Master DFS tree back-edge classification and low-link invariants for connectivity analysis.',
-    commonMistake: 'Using `>=` instead of `>` (low[v] >= tin[u] is the condition for Articulation Points, NOT Bridges).',
-    tags: ['graphs', 'tarjan', 'bridges', 'advanced']
+    explanation: 'Prim\'s algorithm grows a single connected component starting from an arbitrary root vertex, greedily adding the cheapest edge that connects the existing tree to an unvisited vertex. For dense graphs (E approx V^2), Prim with an Adjacency Matrix runs in optimal O(V^2) time.',
+    tags: ['prim', 'mst', 'cut_property']
   },
   {
-    id: 'c-97-trapping-rain-water',
+    id: 'q-97-kruskal-mst',
     squareId: 97,
-    title: 'Trapping Rain Water: Two-Pointer Elevation Invariant',
-    topic: 'Arrays',
-    subtopic: 'Two-Pointer Elevation Bounding',
+    co: 'CO4',
+    title: "Kruskal's Algorithm & Cycle Detection",
+    topic: 'Minimum Spanning Tree',
+    subtopic: 'Edge Sorting & Cycle Check',
+    skillCategory: 'conceptual',
+    difficulty: 'medium',
+    type: 'select_data_structure',
+    prompt: 'In Kruskal\'s MST algorithm, all edges are sorted by weight ascending. What is the standard check performed before adding edge (u, v) to the MST?',
+    options: [
+      'Check if adding edge (u, v) creates a cycle; if it does NOT create a cycle, add it to the MST',
+      'Check if u is smaller than v',
+      'Check if both vertices are connected to the root',
+      'Verify that the edge weight is an even number'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'A spanning tree on V vertices cannot have any cycles.',
+      'Adding an edge between two already connected vertices would form a cycle.'
+    ],
+    explanation: 'Kruskal\'s algorithm considers edges in non-decreasing order of weight. It adds edge (u, v) to the MST iff u and v belong to different components (i.e., adding the edge does not form a cycle). This repeats until V - 1 edges are selected.',
+    tags: ['kruskal', 'mst', 'cycle_detection']
+  },
+  {
+    id: 'q-98-huffman-coding',
+    squareId: 98,
+    co: 'CO4',
+    title: 'Huffman Coding Prefix Property',
+    topic: 'Huffman Coding',
+    subtopic: 'Optimal Prefix Tree & Lossless Compression',
     skillCategory: 'conceptual',
     difficulty: 'hard',
     type: 'conceptual_mcq',
-    prompt: 'In the O(N) time, O(1) space Two-Pointer algorithm for Trapping Rain Water, why can we safely calculate trapped water at `left` whenever `leftMax <= rightMax` without knowing the exact heights of intermediate bars?',
+    prompt: 'In Huffman Coding, what is the "prefix-free property", and why is it essential for decompression?',
     options: [
-      'The volume of water trapped above a bar is strictly bounded by the SHORTER of its left and right boundaries; since `leftMax <= rightMax`, the right side is guaranteed to be tall enough to retain water up to `leftMax`',
-      'Rain water always drains towards the left side of the screen',
-      'The right pointer is always stationary until left finishes',
-      'All intermediate bars are guaranteed to be zero height'
+      'No character\'s bit code is a prefix of another character\'s bit code, allowing instantaneous, unambiguous decoding without delimiters',
+      'All bit codes must have the exact same length of 8 bits',
+      'Every code must begin with a 0 bit',
+      'The most frequent character must be assigned code 1111'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Water level at index i is `min(maxLeft, maxRight) - height[i]`.',
-      'If leftMax <= rightMax, which is the limiting boundary? leftMax!',
-      'Even if there is a bar in the middle taller than rightMax, the bottleneck for left is ALREADY determined by leftMax.'
+      'If \'A\' was "0" and \'B\' was "01", when reading "01...", you wouldn\'t know if it is \'A\' followed by \'1\' or \'B\'.',
+      'Prefix-free ensures unique decodability.'
     ],
-    explanation: 'Water trapped at any column is governed by `min(maxLeft, maxRight) - height[i]`. When `leftMax <= rightMax`, `leftMax` is unequivocally the limiting factor for `left`, regardless of whether intermediate bars are taller or shorter. We can immediately accumulate `leftMax - height[left]` and advance `left++`. Symmetrically, if `rightMax < leftMax`, `right` is bounded by `rightMax`.',
-    learningObjective: 'Prove two-pointer boundary sufficiency for container capacity invariants.',
-    commonMistake: 'Thinking water calculation requires scanning both maximums in both directions in O(N) space.',
-    tags: ['arrays', 'two-pointers', 'trapping-rain-water', 'invariants']
+    explanation: 'A prefix-free code ensures that no code word is a prefix of any other code word. This guarantees that encoded bitstreams can be parsed uniquely and instantaneously from left to right without needing separators between characters.',
+    tags: ['huffman', 'prefix_property', 'compression']
   },
   {
-    id: 'c-98-median-two-sorted-arrays',
-    squareId: 98,
-    title: 'Median of Two Sorted Arrays: Logarithmic Binary Partition',
-    topic: 'Searching & Sorting',
-    subtopic: 'Dual Array Partitioning & Binary Search',
-    skillCategory: 'complexity',
-    difficulty: 'expert',
-    type: 'complexity_choice',
-    prompt: 'Why does the binary search partition approach for finding the median of two sorted arrays of sizes M and N achieve O(log(min(M, N))) time complexity?',
-    options: [
-      'By always binary searching on the SHORTER array (size <= min(M, N)), the partition index on the longer array is automatically determined in O(1) by `(M + N + 1) / 2 - partitionX`',
-      'It merges both arrays in parallel using a GPU compute shader',
-      'It drops half the elements from both arrays simultaneously',
-      'The algorithm relies on precomputed hash tables of array medians'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'If you partition the first array at index i, how many elements MUST be taken from the second array to form half of the total elements?',
-      'Exactly `(M + N + 1)/2 - i`.',
-      'By searching on the shorter array, the search space is bounded to [0, min(M, N)], guaranteeing O(log(min(M, N))) steps.'
-    ],
-    explanation: 'The combined median partitions the union into two equal halves. Partitioning array A at index i implies array B must be partitioned at `j = (M + N + 1)/2 - i`. Binary searching exclusively over the shorter array guarantees valid indices in both arrays and minimizes iterations to O(log(min(M, N))) with O(1) space.',
-    learningObjective: 'Formulate dependent dual-variable binary search on partitioned continuous sets.',
-    commonMistake: 'Merging both arrays in O(M + N) time, violating the strict logarithmic interview constraint.',
-    tags: ['searching', 'binary-search', 'median', 'hard']
-  },
-  {
-    id: 'c-99-kmp-failure-function',
+    id: 'q-99-strassen-multiplication',
     squareId: 99,
-    title: 'Knuth-Morris-Pratt (KMP): Prefix Function Invariant',
-    topic: 'Strings',
-    subtopic: 'KMP String Matching & LPS Array',
-    skillCategory: 'conceptual',
-    difficulty: 'expert',
-    type: 'conceptual_mcq',
-    prompt: 'In the Knuth-Morris-Pratt (KMP) string matching algorithm, what does each entry `pi[i]` (or `lps[i]`) of the Longest Proper Prefix which is also Suffix array represent?',
+    co: 'CO4',
+    title: "Strassen's Sub-Cubic Matrix Multiplication",
+    topic: 'Strassen Matrix Multiplication',
+    subtopic: 'Sub-Cubic O(n^2.807) Divide-and-Conquer',
+    skillCategory: 'complexity',
+    difficulty: 'hard',
+    type: 'time_complexity',
+    prompt: 'Standard recursive matrix multiplication requires 8 multiplications of (n/2 x n/2) submatrices. How many multiplications does Strassen\'s algorithm use, and what is the resulting time complexity?',
     options: [
-      'The length of the longest proper prefix of `pattern[0...i]` that is also a suffix of `pattern[0...i]`, enabling the pattern to shift without re-matching previous text characters',
-      'The total number of unique vowels in the prefix up to index i',
-      'The ASCII checksum of the first i characters',
-      'The frequency of the most common character in the pattern'
+      '7 multiplications; Complexity O(n^log2(7)) approx O(n^2.807)',
+      '6 multiplications; Complexity O(n^2.58)',
+      '8 multiplications; Complexity O(n^3)',
+      '4 multiplications; Complexity O(n^2)'
     ],
     correctOptionIndex: 0,
     hints: [
-      'If pattern "AABA" mismatches on character 4, what prefix can be salvaged?',
-      '"A" is both a prefix and a suffix.',
-      'KMP shifts the pattern pointer to `lps[j-1]` instead of backtracking the text pointer.'
+      'Strassen ingeniously uses algebraic additions/subtractions to save 1 multiplication.',
+      '8 multiplications drops to 7 multiplications.',
+      'T(n) = 7T(n/2) + O(n^2).'
     ],
-    explanation: 'The KMP failure function `pi[i]` stores the length of the longest proper prefix that matches a suffix of the prefix ending at i. When a mismatch occurs at `pattern[j]`, the text pointer does NOT backtrack; instead, the pattern pointer jumps to `pi[j-1]`. This guarantees linear O(N + M) search time with zero text pointer reversal.',
-    learningObjective: 'Understand the deterministic finite automaton principles behind KMP prefix failure functions.',
-    commonMistake: 'Backtracking the text pointer upon a mismatch, which causes worst-case O(N * M) behavior.',
-    tags: ['strings', 'kmp', 'pattern-matching', 'advanced']
+    explanation: 'Strassen discovered formulas to compute the product of two 2x2 matrices using 7 scalar multiplications instead of 8. The recurrence T(n) = 7T(n/2) + Theta(n^2) solves via Master Theorem Case 1 to O(n^(log2 7)) approx O(n^2.807), beating standard cubic O(n^3) time.',
+    tags: ['strassen', 'matrix_multiplication', 'divide_and_conquer']
   },
   {
-    id: 'c-100-grand-titan-final-boss',
+    id: 'q-100-matrix-chain-order',
     squareId: 100,
-    title: 'THE FINAL GATEWAY: THE GRAND ARCHITECT TITAN',
-    topic: 'Graph Algorithms',
-    subtopic: 'Capstone Algorithmic Synthesis & System Optimization',
-    skillCategory: 'optimization',
-    difficulty: 'expert',
-    type: 'conceptual_mcq',
-    prompt: 'You have ascended to Tile 100! To claim ultimate mastery over Data Structures and Algorithms, synthesize the four foundational paradigms: (1) Invariant Preservation, (2) Space-Time Duality, (3) Monotonic State Pruning, and (4) Cache Locality. Which of the following statements represents the absolute golden rule of professional algorithmic engineering?',
+    co: 'CO4',
+    title: 'Matrix Chain Multiplication: Associative Ordering',
+    topic: 'Ordering Matrix Multiplication',
+    subtopic: 'Optimal Parenthesization to Minimize Multiplications',
+    skillCategory: 'numerical',
+    difficulty: 'hard',
+    type: 'output_prediction',
+    prompt: 'Given three matrices: A1 (10 x 100), A2 (100 x 5), A3 (5 x 50).\n1. Parenthesization 1: (A1 * A2) * A3\n2. Parenthesization 2: A1 * (A2 * A3)\nHow many scalar multiplications do they require, and which is optimal?',
     options: [
-      'The optimal solution is defined by identifying the invariant domain of the problem, pruning redundant state transitions before allocation, and aligning data structures with hardware memory hierarchies to achieve minimal asymptotic and constant-factor complexity',
-      'Always use nested hash maps because memory lookup is instantaneously zero seconds on all hardware architectures',
-      'Recursive algorithms without memoization are always superior because they utilize operating system hardware stacks directly',
-      'Sorting an array before every query is the most robust strategy because CPU sorting algorithms are unconstrained by Big-O bounds'
+      '(A1 * A2) * A3 takes 7,500 operations (Optimal); A1 * (A2 * A3) takes 75,000 operations (10x slower!)',
+      'Both take 50,000 operations because matrix multiplication is associative',
+      'A1 * (A2 * A3) takes 7,500 operations; (A1 * A2) * A3 takes 75,000 operations',
+      '(A1 * A2) * A3 takes 1,000 operations'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Recall all the lessons across the 100 tiles: loop invariants, two pointers, prefix sums, tree balances, dynamic programming, and memory layouts.',
-      'True mastery combines theoretical asymptotic optimality with practical hardware sympathetic design.',
-      'Option 1 unites all four core engineering pillars.'
+      'Multiplying (p x q) and (q x r) takes p * q * r multiplications.',
+      '(A1 * A2): 10 * 100 * 5 = 5,000 (result is 10 x 5). Then (10x5) * (5x50) takes 10 * 5 * 50 = 2,500. Total = 7,500.',
+      '(A2 * A3): 100 * 5 * 50 = 25,000 (result is 100 x 50). Then (10x100) * (100x50) takes 10 * 100 * 50 = 50,000. Total = 75,000.'
     ],
-    explanation: 'Algorithmic Mastery: Theoretical Big-O complexity establishes asymptotic boundaries, but true software engineering excellence demands preserving state invariants, eliminating redundant state spaces via monotonicity and dynamic programming, and structuring memory to maximize CPU L1/L2 cache locality. You have conquered the 100 tiles of Code & Ladders!',
-    learningObjective: 'Synthesize invariant design, algorithmic complexity, and hardware memory sympathy for production systems.',
-    commonMistake: 'Treating algorithmic design as isolated trivia rather than an integrated engineering methodology.',
-    tags: ['capstone', 'grand-boss', 'mastery', 'synthesis', 'victory']
+    explanation: 'Parenthesization 1: (A1*A2) takes 10*100*5 = 5,000 ops (matrix of 10x5). Multiplying by A3 takes 10*5*50 = 2,500 ops. Total = 7,500 ops. Parenthesization 2: (A2*A3) takes 100*5*50 = 25,000 ops (100x50). Multiplying A1 by this takes 10*100*50 = 50,000 ops. Total = 75,000 ops! The choice of order makes a 10x performance difference.',
+    tags: ['matrix_chain', 'parenthesization', 'final_boss', 'capstone']
+  },
+  {
+    id: 'q-extra-91',
+    squareId: 91,
+    co: 'CO4',
+    title: 'Connected Components via BFS/DFS',
+    topic: 'Graph Traversals',
+    subtopic: 'Graph Connectivity',
+    skillCategory: 'conceptual',
+    difficulty: 'easy',
+    type: 'conceptual_mcq',
+    prompt: 'How can you find the total number of connected components in an undirected graph?',
+    options: [
+      'Loop through all vertices; whenever an unvisited vertex is found, increment component count and launch BFS/DFS to mark all reachable nodes',
+      'Count the number of edges and divide by 2',
+      'Run Dijkstra from vertex 0 only',
+      'Multiply the adjacency matrix by itself'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Each call to BFS/DFS explores one complete connected component.',
+      'Iterate through vertices 0 to V-1.'
+    ],
+    explanation: 'Iterate through all vertices. For each vertex that has not yet been marked visited, increment the component counter and run a BFS or DFS traversal to mark all vertices in that component. Total time is O(V + E).',
+    tags: ['connected_components', 'bfs', 'dfs']
+  },
+  {
+    id: 'q-extra-94',
+    squareId: 94,
+    co: 'CO4',
+    title: 'Dijkstra Time Complexity with Min-Heap',
+    topic: 'Shortest Path Algorithm',
+    subtopic: 'Dijkstra Complexity Analysis',
+    skillCategory: 'complexity',
+    difficulty: 'medium',
+    type: 'time_complexity',
+    prompt: 'What is the time complexity of Dijkstra\'s algorithm implemented with an Adjacency List and a Binary Min-Heap (Priority Queue)?',
+    options: [
+      'O((V + E) log V)',
+      'O(V^2)',
+      'O(V * E)',
+      'O(V log V)'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Extract-Min is called V times (V * log V).',
+      'Decrease-Key / edge relaxation is called E times (E * log V).'
+    ],
+    explanation: 'With a binary min-heap, each of the V vertex extractions takes O(log V) time, and each of the E edge relaxations takes O(log V) time to update the heap. Total running time is O((V + E) log V).',
+    tags: ['dijkstra', 'min_heap', 'complexity']
+  },
+  {
+    id: 'q-extra-96',
+    squareId: 96,
+    co: 'CO4',
+    title: 'Number of Edges in a Spanning Tree',
+    topic: 'Minimum Spanning Tree',
+    subtopic: 'MST Properties',
+    skillCategory: 'numerical',
+    difficulty: 'easy',
+    type: 'output_prediction',
+    prompt: 'A connected graph has V = 15 vertices and E = 35 edges. Exactly how many edges will its Minimum Spanning Tree (MST) contain?',
+    options: ['14 edges (V - 1)', '15 edges', '35 edges', '7 edges'],
+    correctOptionIndex: 0,
+    hints: [
+      'A spanning tree connects all V vertices without any cycles.',
+      'Every tree with V vertices has V - 1 edges.'
+    ],
+    explanation: 'By definition, any spanning tree connecting V vertices must contain exactly V - 1 edges to connect all nodes without cycles. For V = 15, the MST contains exactly 14 edges.',
+    tags: ['mst', 'spanning_tree', 'edge_count']
+  },
+  {
+    id: 'q-extra-98',
+    squareId: 98,
+    co: 'CO4',
+    title: 'Huffman Code Length and Frequency',
+    topic: 'Huffman Coding',
+    subtopic: 'Frequency Inversion in Huffman Trees',
+    skillCategory: 'conceptual',
+    difficulty: 'medium',
+    type: 'conceptual_mcq',
+    prompt: 'In Huffman Coding, what is the relationship between a character\'s occurrence frequency and the length of its assigned binary bit code?',
+    options: [
+      'Characters with higher frequency receive shorter bit codes; characters with lower frequency receive longer bit codes',
+      'All characters receive identical bit lengths',
+      'Characters with higher frequency receive longer bit codes',
+      'The bit length is determined solely by alphabetical order'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Frequent characters appear often in the text.',
+      'Making common characters like \'e\' or space take fewer bits minimizes total file size.'
+    ],
+    explanation: 'Huffman Coding is an optimal greedy algorithm where high-frequency symbols are placed near the top of the tree (short codes), and rare symbols are placed near the bottom (longer codes), minimizing total expected file length.',
+    tags: ['huffman', 'frequency', 'compression']
   }
 ];

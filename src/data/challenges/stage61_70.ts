@@ -2,289 +2,299 @@ import { Challenge } from '../../types/challenge';
 
 export const STAGE_61_70_CHALLENGES: Challenge[] = [
   {
-    id: 'c-61-graph-representation',
+    id: 'q-61-array-vs-linked-list',
     squareId: 61,
-    title: 'Adjacency List vs Adjacency Matrix',
-    topic: 'Graph Algorithms',
-    subtopic: 'Graph Representations & Memory Tradeoffs',
-    skillCategory: 'conceptual',
+    co: 'CO2',
+    title: 'Array Lists vs Linked Lists Memory Model',
+    topic: 'Array implementation of Lists',
+    subtopic: 'Contiguous vs Dynamic Pointer Memory',
+    skillCategory: 'compare_approaches',
     difficulty: 'easy',
-    type: 'conceptual_mcq',
-    prompt: 'For a sparse graph with V vertices and E edges (where E << V^2), why is an Adjacency List preferred over an Adjacency Matrix?',
+    type: 'compare_approaches',
+    prompt: 'What is the primary memory difference between an Array-based list and a Linked List in C/C++?',
     options: [
-      'Adjacency List uses O(V + E) space and allows iterating over neighbors in O(deg(u)), whereas Adjacency Matrix wastes O(V^2) space and O(V) per vertex inspection',
-      'Adjacency List enables O(1) edge existence queries between arbitrary vertices (u, v)',
-      'Adjacency Matrix cannot store directed edges',
-      'Adjacency Matrix cannot represent weighted graphs'
+      'Arrays require contiguous memory blocks and have fixed size; Linked list nodes are allocated dynamically anywhere in heap memory and linked via pointers',
+      'Arrays store elements in heap memory; linked lists store elements only in CPU registers',
+      'Linked lists use less memory per element than arrays because pointers take 0 bytes',
+      'Arrays can only store character data, while linked lists store integers'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Consider a graph with 1,000,000 vertices and only 2,000,000 edges.',
-      'An adjacency matrix requires a 1,000,000 x 1,000,000 table (~1 terabyte of RAM).',
-      'An adjacency list only stores the 2,000,000 existing edges.'
+      'Think about where malloc / new allocates memory.',
+      'Contiguous array blocks allow index arithmetic; linked lists can be fragmented.'
     ],
-    explanation: 'In sparse graphs (common in web, social networks, road maps), an adjacency matrix allocates V^2 cells, wasting memory on zeroes. Adjacency lists use strictly O(V + E) memory and allow visiting adjacent vertices in O(degree(v)) time rather than scanning all V columns.',
-    learningObjective: 'Choose appropriate graph representations based on graph density and memory constraints.',
-    commonMistake: 'Defaulting to an adjacency matrix for large graphs, causing Out-Of-Memory errors.',
-    tags: ['graphs', 'representations', 'complexity']
+    explanation: 'Arrays require a single contiguous block of physical RAM, providing O(1) random access by index. Linked lists allocate individual nodes dynamically on the heap; nodes can be anywhere in memory and are connected by pointer addresses.',
+    tags: ['linked_list', 'arrays', 'memory_allocation']
   },
   {
-    id: 'c-62-bfs-shortest-path',
+    id: 'q-62-sll-traversal',
     squareId: 62,
-    title: 'BFS: Unweighted Shortest Path Invariant',
-    topic: 'Graph Algorithms',
-    subtopic: 'Breadth-First Search & Level Sets',
+    co: 'CO2',
+    title: 'Singly Linked List Traversal Loop',
+    topic: 'Linked List and its Types',
+    subtopic: 'Node Structure & Traversal Termination',
+    skillCategory: 'code_trace',
+    difficulty: 'easy',
+    type: 'code_trace',
+    prompt: 'Which C code snippet correctly traverses a Singly Linked List from `head` to the end and counts the number of nodes?',
+    options: [
+      'int count = 0; struct Node* curr = head; while (curr != NULL) { count++; curr = curr->next; }',
+      'int count = 0; while (head->next != NULL) { count++; }',
+      'for (int i = 0; i < sizeof(head); i++) { count++; }',
+      'while (curr != head) { curr++; }'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Use a temporary pointer `curr` to avoid losing the original `head`.',
+      'The last node in a singly linked list has its next pointer set to NULL.'
+    ],
+    explanation: 'To traverse without losing the head pointer, initialize `struct Node* curr = head;`. The loop `while (curr != NULL)` visits every node and advances via `curr = curr->next;` until NULL is encountered.',
+    tags: ['singly_linked_list', 'traversal', 'pointers']
+  },
+  {
+    id: 'q-63-sll-insertion',
+    squareId: 63,
+    co: 'CO2',
+    title: 'Singly Linked List: Insert at Beginning',
+    topic: 'Singly Linked List Operations',
+    subtopic: 'Insert at Beginning, End, and After Node',
+    skillCategory: 'implementation',
+    difficulty: 'medium',
+    type: 'complete_code',
+    prompt: 'To insert a newly allocated `newNode` at the beginning of a Singly Linked List with pointer `head`, what is the correct two-line pointer sequence?',
+    options: [
+      'newNode->next = head; head = newNode;',
+      'head = newNode; newNode->next = head;',
+      'head->next = newNode; newNode = head;',
+      'newNode = head->next; head = newNode;'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'If you overwrite `head` first, you lose the reference to the existing list!',
+      'Connect the new node to the old head first, then update head.'
+    ],
+    explanation: 'First, link `newNode->next = head;` so the new node points to the current first node. Then, update `head = newNode;` so the list begins with the new node. Swapping these lines causes an infinite loop / lost list.',
+    tags: ['sll_insert', 'head_insert', 'pointer_order']
+  },
+  {
+    id: 'q-64-sll-deletion-reverse',
+    squareId: 64,
+    co: 'CO2',
+    title: 'In-Place Reversal of Singly Linked List',
+    topic: 'Singly Linked List Operations',
+    subtopic: 'Delete Head, Delete Key, Reverse Pointers',
+    skillCategory: 'implementation',
+    difficulty: 'hard',
+    type: 'complete_code',
+    prompt: 'To reverse a Singly Linked List in-place in O(n) time and O(1) space, we maintain three pointers: `prev`, `curr`, and `nextNode`. Inside the loop `while (curr != NULL)`, what is the correct 4-line pointer rotation?',
+    options: [
+      'nextNode = curr->next; curr->next = prev; prev = curr; curr = nextNode;',
+      'curr->next = prev; prev = curr; curr = curr->next; nextNode = prev;',
+      'prev = curr; curr = curr->next; curr->next = prev;',
+      'nextNode = prev; prev = curr->next; curr = nextNode;'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      '1. Save the next node before reversing: nextNode = curr->next.',
+      '2. Reverse current pointer: curr->next = prev.',
+      '3. Step prev forward: prev = curr.',
+      '4. Step curr forward: curr = nextNode.'
+    ],
+    explanation: 'To reverse in-place: 1) Save future: `nextNode = curr->next;` 2) Reverse link: `curr->next = prev;` 3) Advance prev: `prev = curr;` 4) Advance curr: `curr = nextNode;`. Finally, `head = prev;`.',
+    tags: ['reverse_list', 'three_pointers', 'in_place']
+  },
+  {
+    id: 'q-65-dll-structure',
+    squareId: 65,
+    co: 'CO2',
+    title: 'Doubly Linked List Node Structure',
+    topic: 'Doubly Linked List Implementation',
+    subtopic: 'Bidirectional Pointers: prev and next',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'Why does Breadth-First Search (BFS) guarantee finding the shortest path (minimum edge count) between two vertices in an unweighted graph?',
+    prompt: 'What structural feature allows a Doubly Linked List (DLL) to be traversed both forward and backward?',
     options: [
-      'BFS explores all vertices at distance d before touching any vertex at distance d + 1, ensuring the first time a target is dequeued is via the shortest path',
-      'BFS uses a min-heap that sorts vertices by their vertex IDs',
-      'BFS recurses down the deepest path first and backtracks on dead ends',
-      'Edges in unweighted graphs are always sorted in increasing order'
+      'Each node contains two pointers: `prev` pointing to the predecessor, and `next` pointing to the successor',
+      'The last node always loops back to the head node',
+      'The elements are stored in a contiguous 2D matrix',
+      'The list uses an integer index table'
     ],
     correctOptionIndex: 0,
     hints: [
-      'BFS uses a FIFO queue.',
-      'Vertices entered into the queue have monotonically non-decreasing distances from the source.',
-      'The first time target is reached, no shorter route could exist.'
+      'Look at the prefix "Doubly".',
+      'Each node links both to the left (prev) and to the right (next).'
     ],
-    explanation: 'Monotonic queue invariant: In BFS, all vertices at distance d are popped before any vertex at distance d+1 is popped. When target vertex v is first discovered, it is reached through the smallest possible number of hops. This holds strictly for graphs where all edge weights are equal/unweighted.',
-    learningObjective: 'Master the level-synchronous property of BFS for unweighted shortest path problems.',
-    commonMistake: 'Using Dijkstra\'s algorithm on an unweighted graph, adding unnecessary O(E log V) overhead over BFS\'s O(V + E).',
-    tags: ['graphs', 'bfs', 'shortest-path']
+    explanation: 'A Doubly Linked List node has three fields: `data`, a pointer `prev` to the prior node, and a pointer `next` to the following node. This permits bidirectional traversal and O(1) predecessor deletion.',
+    tags: ['doubly_linked_list', 'node_structure', 'bidirectional']
   },
   {
-    id: 'c-63-dfs-cycle-directed',
-    squareId: 63,
-    title: 'Directed Graph Cycle Detection: 3-Color States',
-    topic: 'Graph Algorithms',
-    subtopic: 'Cycle Detection & DFS Coloring',
-    skillCategory: 'debugging',
-    difficulty: 'medium',
-    type: 'bug_hunt',
-    codeSnippet: `// 3-Color state: 0 = Unvisited (White), 1 = Visiting / On Call Stack (Gray), 2 = Visited / Completed (Black)
-function hasCycle(u, adj, state) {
-  state[u] = 1; // Mark Visiting
-  for (let v of adj[u]) {
-    if (state[v] === 1) return true; // BACK EDGE FOUND!
-    if (state[v] === 0 && hasCycle(v, adj, state)) return true;
-  }
-  state[u] = 2; // Mark Visited
-  return false;
-}`,
-    prompt: 'What graph theoretic edge does `state[v] === 1` identify, and why does it prove the existence of a cycle?',
-    options: [
-      'A "Back Edge" to an active ancestor node currently on the DFS call stack, completing a directed loop',
-      'A "Cross Edge" between two independent subtrees',
-      'A "Forward Edge" to an already completed child node',
-      'A self-loop caused by memory address aliasing'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'State 1 (Gray) means the node was visited and its descendants are CURRENTLY being explored.',
-      'If you reach a node that is currently being explored, you have circled back to an ancestor.',
-      'An edge from a node to one of its active ancestors is a back edge, which forms a cycle.'
-    ],
-    explanation: 'In directed DFS, reaching a vertex currently in state 1 (VISITING) means there is an edge from u to an ancestor v currently on the DFS call stack. Since v can reach u and u points back to v, a directed cycle exists. This tri-color method detects cycles in O(V + E) time.',
-    learningObjective: 'Distinguish back edges from cross edges and forward edges in directed DFS.',
-    commonMistake: 'Using a simple boolean `visited` array (which only works for undirected graphs) and misidentifying cross edges as cycles.',
-    tags: ['graphs', 'dfs', 'cycle-detection', 'invariants']
-  },
-  {
-    id: 'c-64-bipartite-graph-coloring',
-    squareId: 64,
-    title: 'Bipartite Graph & Odd Cycle Invariant',
-    topic: 'Graph Algorithms',
-    subtopic: 'Graph Coloring & Bipartiteness',
-    skillCategory: 'conceptual',
-    difficulty: 'medium',
-    type: 'conceptual_mcq',
-    prompt: 'A graph is bipartite (2-colorable) if and only if it satisfies which fundamental graph theoretic condition?',
-    options: [
-      'It contains NO odd-length cycles (all cycles must have even lengths)',
-      'The number of vertices must be an even integer',
-      'Every vertex must have an even degree',
-      'It must be a complete graph where every vertex connects to all others'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Try 2-coloring a triangle (cycle of length 3): Red -> Blue -> Red -> conflicts with first Red!',
-      'What about a 4-cycle (square)? Red -> Blue -> Red -> Blue -> valid.',
-      'Odd cycles make 2-coloring impossible.'
-    ],
-    explanation: 'König\'s Theorem: A graph is bipartite if and only if it contains no cycles of odd length. When 2-coloring with BFS/DFS, encountering an adjacent neighbor already painted with the current node\'s color immediately reveals an odd cycle, disproving bipartiteness.',
-    learningObjective: 'Connect 2-coloring algorithms with the odd-cycle graph invariant.',
-    commonMistake: 'Assuming a graph with an even number of vertices cannot have odd cycles.',
-    tags: ['graphs', 'bipartite', 'coloring']
-  },
-  {
-    id: 'c-65-topological-sort-kahn',
-    squareId: 65,
-    title: 'Topological Sort: Kahn\'s In-Degree Invariant',
-    topic: 'Graph Algorithms',
-    subtopic: 'Topological Ordering & In-Degrees',
-    skillCategory: 'dry_run',
-    difficulty: 'medium',
-    type: 'code_trace',
-    codeSnippet: `// Kahn's Algorithm for DAG:
-// Compute inDegrees: [A: 0, B: 1, C: 1, D: 2]
-// Edges: A->B, A->C, B->D, C->D
-// Queue initially: [A]
-// Dequeue A, decrement B and C: inDegrees become [B: 0, C: 0, D: 2]
-// What vertices are added to the queue next?`,
-    prompt: 'After processing vertex A, which vertices are enqueued next in Kahn\'s algorithm?',
-    options: [
-      'Both B and C (their in-degrees dropped to 0)',
-      'Vertex D (because it has the highest in-degree)',
-      'Only vertex B (alphabetical priority)',
-      'Vertex A (re-enqueued for validation)'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'A node is enqueued when all its prerequisites have been fulfilled (in-degree drops to 0).',
-      'Both B and C had in-degree 1 from A.',
-      'With A removed, both B and C now have in-degree 0.'
-    ],
-    explanation: 'Kahn\'s algorithm maintains a queue of vertices with in-degree 0 (ready to be scheduled). Dequeuing A removes its outgoing edges, reducing inDegrees of B and C from 1 to 0. Since both now have no remaining dependencies, both are pushed to the queue.',
-    learningObjective: 'Master Kahn\'s in-degree zero queue invariant for dependency scheduling and DAG validation.',
-    commonMistake: 'Enqueuing nodes whose in-degrees have not yet reached 0.',
-    tags: ['graphs', 'topological-sort', 'kahns-algorithm']
-  },
-  {
-    id: 'c-66-dijkstra-invariants',
+    id: 'q-66-dll-operations',
     squareId: 66,
-    title: 'Dijkstra\'s Algorithm & Non-Negative Weights',
-    topic: 'Graph Algorithms',
-    subtopic: 'Greedy Shortest Path',
-    skillCategory: 'conceptual',
-    difficulty: 'medium',
+    co: 'CO2',
+    title: 'Doubly Linked List: Deleting a Given Node',
+    topic: 'Doubly Linked List Implementation',
+    subtopic: 'Updating 4 Pointers during Insertion/Deletion',
+    skillCategory: 'implementation',
+    difficulty: 'hard',
     type: 'conceptual_mcq',
-    prompt: 'Why does standard Dijkstra\'s algorithm FAIL or run infinitely on graphs with negative edge weights?',
+    prompt: 'Given a pointer `del` pointing directly to an interior node in a Doubly Linked List, how is `del` deleted in O(1) time without traversing from head?',
     options: [
-      'Dijkstra assumes that extracting the minimum distance node from the priority queue finalizes its shortest path; negative edges violate this monotonic distance assumption',
-      'Priority queues cannot compare negative numbers in binary heaps',
-      'Negative edges cause graph adjacency lists to delete vertices',
-      'Dijkstra\'s algorithm requires that the graph be bipartite'
+      'del->prev->next = del->next; del->next->prev = del->prev; free(del);',
+      'del->next = NULL; del->prev = NULL;',
+      'head = del->next; free(del);',
+      'del->data = 0;'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Dijkstra is a greedy algorithm.',
-      'Once a node u is settled (dist[u] is extracted from min-heap), Dijkstra never reconsiders it.',
-      'If a negative edge later reduces the path to u, Dijkstra\'s finalized assumption is invalidated.'
+      'Bypass `del` from the left: update the next pointer of the node before del.',
+      'Bypass `del` from the right: update the prev pointer of the node after del.',
+      'Release memory with free().'
     ],
-    explanation: 'Dijkstra is greedy: it assumes adding an edge can only increase or maintain path cost (weights >= 0). Once a vertex is popped from the min-heap, its shortest distance is considered permanently settled. A negative edge can retroactively make a previously longer path shorter, invalidating the greedy invariant.',
-    learningObjective: 'Understand the mathematical necessity of non-negative edge weights in Dijkstra\'s greedy proof.',
-    commonMistake: 'Attempting to run Dijkstra on graphs with negative weights instead of Bellman-Ford or SPFA.',
-    tags: ['graphs', 'dijkstra', 'greedy', 'invariants']
+    explanation: 'Because a DLL node has a `prev` pointer, we can access the preceding node directly: `del->prev->next = del->next;` bypasses del from the left, and `del->next->prev = del->prev;` bypasses del from the right. This achieves O(1) deletion without any traversal.',
+    tags: ['dll_deletion', 'constant_time', 'pointer_update']
   },
   {
-    id: 'c-67-bellman-ford-negative-cycles',
+    id: 'q-67-cll-operations',
     squareId: 67,
-    title: 'Bellman-Ford & Negative Weight Cycle Detection',
-    topic: 'Graph Algorithms',
-    subtopic: 'Dynamic Programming on Graphs',
-    skillCategory: 'complexity',
-    difficulty: 'hard',
-    type: 'complexity_choice',
-    prompt: 'Bellman-Ford relaxes all E edges (V - 1) times. Why does relaxing edges a V-th time detect the presence of a reachable negative-weight cycle?',
+    co: 'CO2',
+    title: 'Circular Linked List Termination Condition',
+    topic: 'Circular Linked List',
+    subtopic: 'Head Cycle & Traversal Termination',
+    skillCategory: 'code_trace',
+    difficulty: 'medium',
+    type: 'conceptual_mcq',
+    prompt: 'In a non-empty Singly Circular Linked List, how do you detect that a full traversal of the list has completed?',
     options: [
-      'In a graph without negative cycles, any shortest path contains at most V - 1 edges; if an edge can still be relaxed on the V-th pass, a negative cycle must exist',
-      'The V-th pass inverts the edge weights to positive values',
-      'V-1 edges cannot span all vertices in a disconnected graph',
-      'The priority queue overflows on the V-th iteration'
+      'When the traversal pointer `curr->next == head` (it has reached the node that loops back to the beginning)',
+      'When `curr == NULL`',
+      'When `curr->next == NULL`',
+      'When `curr->data == -1`'
     ],
     correctOptionIndex: 0,
     hints: [
-      'A simple path visiting V vertices can have at most V - 1 edges without repeating a vertex.',
-      'If repeating a vertex makes the total path weight smaller, what does that mean?',
-      'It means spinning around that loop decreases total cost indefinitely (negative cycle).'
+      'In a circular linked list, NO pointer is ever equal to NULL.',
+      'The last node points back to `head`.'
     ],
-    explanation: 'Any shortest path without cycles touches at most V vertices, meaning it contains at most V - 1 edges. Therefore, V - 1 relaxation iterations guarantee shortest paths for all reachable vertices. If any distance can still decrease on the V-th iteration (`dist[u] + w < dist[v]`), a negative cycle must exist.',
-    learningObjective: 'Understand the edge-bound theorem in shortest path theory and negative cycle detection.',
-    commonMistake: 'Believing shortest paths can be defined in graphs with negative weight cycles reachable from the source.',
-    tags: ['graphs', 'bellman-ford', 'complexity']
+    explanation: 'A circular linked list contains no NULL pointers; the last node links back to the head. Traversal begins at head and completes when `curr->next == head` (or using a `do { curr = curr->next; } while (curr != head);` loop).',
+    tags: ['circular_linked_list', 'traversal', 'no_null']
   },
   {
-    id: 'c-68-dsu-path-compression-rank',
+    id: 'q-68-ll-stack-queue',
     squareId: 68,
-    title: 'Disjoint Set Union (DSU): Near O(1) Amortized Time',
-    topic: 'Graph Algorithms',
-    subtopic: 'Disjoint Set Union (Union-Find)',
-    skillCategory: 'complexity',
+    co: 'CO2',
+    title: 'Linked List Implementation of Stack & Queue',
+    topic: 'Linked List Implementation of Stack and Queue',
+    subtopic: 'Dynamic Stack & Queue without Size Limits',
+    skillCategory: 'implementation',
     difficulty: 'medium',
-    type: 'complexity_choice',
-    prompt: 'When Disjoint Set Union (DSU) incorporates BOTH Path Compression and Union by Rank (or Size), what is its amortized time complexity per operation?',
+    type: 'select_data_structure',
+    prompt: 'To implement a dynamic Queue using a Singly Linked List with `head` and `tail` pointers in O(1) time per operation, where should `enqueue` and `dequeue` take place?',
     options: [
-      'O(alpha(N)) where alpha is the Inverse Ackermann function (practically <= 4 for all universe sizes)',
-      'Strictly O(1) worst-case time per operation',
-      'O(log N) worst-case time',
-      'O(N) amortized time'
+      'enqueue at `tail` (insert at end) and dequeue at `head` (delete from beginning)',
+      'enqueue at `head` and dequeue at `tail`',
+      'both enqueue and dequeue at `tail`',
+      'both enqueue and dequeue at `head`'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Path compression flattens the tree during find.',
-      'Union by rank attaches the shorter tree under the taller tree.',
-      'Together, they achieve an almost constant bound denoted by alpha(N).'
+      'In a singly linked list, deleting the tail requires O(n) traversal to find the node before tail.',
+      'Deleting the head (`head = head->next`) is O(1).',
+      'Inserting at tail (`tail->next = node; tail = node;`) is O(1).'
     ],
-    explanation: 'Tarjan proved that combining Path Compression (`parent[x] = find(parent[x])`) and Union by Rank bounds the amortized cost per operation to O(alpha(N)), where alpha is the Inverse Ackermann function. For any conceivable input size (even N = 10^80, atoms in universe), alpha(N) < 5, making it practically constant.',
-    learningObjective: 'Master the Inverse Ackermann complexity bound for optimized Disjoint Set Union.',
-    commonMistake: 'Omitting path compression, which allows the tree to degenerate into an O(N) chain.',
-    tags: ['graphs', 'dsu', 'union-find', 'complexity']
+    explanation: 'Deleting from the beginning (`head = head->next`) takes O(1) time. Inserting at the end with a tail pointer (`tail->next = newNode; tail = newNode;`) also takes O(1) time. Thus, enqueue at tail and dequeue at head gives O(1) for both operations.',
+    tags: ['linked_queue', 'efficiency', 'o1_operations']
   },
   {
-    id: 'c-69-kruskal-mst-greedy',
+    id: 'q-69-polynomial-addition',
     squareId: 69,
-    title: 'Kruskal\'s Minimum Spanning Tree (MST)',
-    topic: 'Graph Algorithms',
-    subtopic: 'Greedy Minimum Spanning Trees',
+    co: 'CO2',
+    title: 'Polynomial Addition using Linked Lists',
+    topic: 'Linked List Application — Polynomial Addition',
+    subtopic: 'Adding Polynomials using Sorted Exponents',
+    skillCategory: 'dry_run',
+    difficulty: 'hard',
+    type: 'output_prediction',
+    prompt: 'You are adding two polynomials represented as linked lists sorted by descending exponent:\nP1: 4x^3 + 3x^2 + 5\nP2: 2x^3 + 6x + 2\n\nWhat is the resulting polynomial linked list?',
+    options: [
+      '6x^3 + 3x^2 + 6x + 7',
+      '8x^3 + 9x^2 + 7',
+      '6x^6 + 18x^2 + 10',
+      '6x^3 + 9x^3 + 7'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Terms with exponent 3: 4x^3 + 2x^3 = 6x^3.',
+      'Terms with exponent 2: 3x^2 (only in P1).',
+      'Terms with exponent 1: 6x (only in P2).',
+      'Constants (exponent 0): 5 + 2 = 7.'
+    ],
+    explanation: 'When exponents match (3), add coefficients: 4 + 2 = 6 -> 6x^3. When exponents differ, copy the term with the larger exponent: 3x^2 from P1, then 6x from P2. Finally, add constants 5 + 2 = 7. Result: 6x^3 + 3x^2 + 6x + 7.',
+    tags: ['polynomial_addition', 'linked_list_application', 'exam_problem']
+  },
+  {
+    id: 'q-70-checkpoint-linked-lists',
+    squareId: 70,
+    co: 'CO2',
+    title: 'Checkpoint 7: Linked List Lab Exam Problem',
+    topic: 'Linked List Application — Polynomial Addition',
+    subtopic: 'Unit 7 Milestone Evaluation',
+    skillCategory: 'debugging',
+    difficulty: 'hard',
+    type: 'find_bug',
+    prompt: 'A student writes this code to delete a node with value `target` from a Singly Linked List:\n\nstruct Node* curr = head;\nwhile (curr->next != NULL && curr->next->data != target)\n    curr = curr->next;\ncurr->next = curr->next->next;\n\nWhat critical edge case does this code FAIL to handle?',
+    options: [
+      'It crashes with a Null Pointer Exception if the node to be deleted is the very first node (`head->data == target`)',
+      'It cannot delete nodes with negative values',
+      'It only works for lists with more than 100 nodes',
+      'It fails if target is an even number'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Look at the condition: `curr->next->data != target`.',
+      'What if the head itself contains `target`? The code never checks `head->data`.'
+    ],
+    explanation: 'If `head->data == target`, the head itself must be deleted (`head = head->next;`). The student\'s code only inspects `curr->next`, completely missing the first node and potentially dereferencing NULL if the list has only 1 element.',
+    tags: ['checkpoint', 'linked_list_debugging', 'edge_case']
+  },
+  {
+    id: 'q-extra-61',
+    squareId: 61,
+    co: 'CO2',
+    title: 'Time Complexity of Linked List Deletion at Head',
+    topic: 'Singly Linked List Operations',
+    subtopic: 'Operation Complexity',
+    skillCategory: 'complexity',
+    difficulty: 'easy',
+    type: 'time_complexity',
+    prompt: 'What is the time complexity of deleting the first node (head) of a Singly Linked List?',
+    options: ['O(1)', 'O(n)', 'O(log n)', 'O(n^2)'],
+    correctOptionIndex: 0,
+    hints: [
+      'Deleting head requires only: `head = head->next;`.',
+      'No traversal is needed.'
+    ],
+    explanation: 'Deleting at the head requires simply pointing head to the second node: `head = head->next;`. This is a single pointer update, executing in O(1) constant time.',
+    tags: ['sll', 'complexity', 'head_deletion']
+  },
+  {
+    id: 'q-extra-65',
+    squareId: 65,
+    co: 'CO2',
+    title: 'Detecting Memory Leaks in Linked Lists',
+    topic: 'Doubly Linked List Implementation',
+    subtopic: 'Dynamic Memory Deallocation',
     skillCategory: 'conceptual',
     difficulty: 'medium',
     type: 'conceptual_mcq',
-    prompt: 'In Kruskal\'s algorithm for Minimum Spanning Trees, what role does the Disjoint Set Union (DSU) structure play?',
-    options: [
-      'It checks in O(alpha(V)) whether the two endpoints of the lowest-weight edge already belong to the same connected component, preventing cycles',
-      'It sorts all edges in ascending order of their weights',
-      'It computes the shortest paths from the source vertex to all other vertices',
-      'It calculates the degree of each vertex in the graph'
-    ],
+    prompt: 'In C, what function must be called on a deleted linked list node to prevent a memory leak in heap RAM?',
+    options: ['free(node)', 'delete node', 'clear(node)', 'drop(node)'],
     correctOptionIndex: 0,
     hints: [
-      'Kruskal considers edges from smallest weight to largest weight.',
-      'If adding edge (u, v) creates a cycle, it must be rejected.',
-      'How do we check if u and v are already connected? `find(u) === find(v)`.'
+      'In C, memory allocated with malloc() must be released with its counterpart.',
+      'The counterpart is free().'
     ],
-    explanation: 'Kruskal\'s sorts all E edges by weight. To form an MST without cycles, it iteratively picks the smallest available edge. It queries DSU: if `find(u) !== find(v)`, the edge connects two previously disjoint components; it is added to the MST and `union(u, v)` merges them. If they share a root, adding the edge would form a cycle.',
-    learningObjective: 'Synthesize greedy edge ordering with DSU cycle avoidance in Kruskal\'s algorithm.',
-    commonMistake: 'Assuming Kruskal\'s requires starting from an arbitrary root node like Prim\'s algorithm.',
-    tags: ['graphs', 'kruskal', 'mst', 'greedy']
-  },
-  {
-    id: 'c-70-prims-mst-cut-property',
-    squareId: 70,
-    title: 'Prim\'s Algorithm & The Cut Property',
-    topic: 'Graph Algorithms',
-    subtopic: 'Cut Property in Minimum Spanning Trees',
-    skillCategory: 'conceptual',
-    difficulty: 'hard',
-    type: 'conceptual_mcq',
-    prompt: 'The correctness of both Prim\'s and Kruskal\'s MST algorithms rests on the "Cut Property". What does the Cut Property state?',
-    options: [
-      'For any partition (cut) of vertices into two non-empty sets S and V-S, the minimum-weight edge crossing the cut must belong to some Minimum Spanning Tree',
-      'Cutting any vertex from a tree produces two equal-sized subtrees',
-      'The minimum spanning tree can be found by cutting the maximum weight cycle edge',
-      'A cut in a graph always contains an even number of edges'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Divide vertices into two sets: visited S, and unvisited V - S.',
-      'To connect these two sets, at least one crossing edge MUST be chosen.',
-      'A greedy choice of the cheapest crossing edge is guaranteed to be safe.'
-    ],
-    explanation: 'The Cut Property theorem states that for any cut (partition of vertices into S and V-S), the lightest edge crossing between S and V-S can be safely included in the MST. Prim\'s algorithm repeatedly expands a single cut (visited vs unvisited), picking the minimum crossing edge via a priority queue.',
-    learningObjective: 'Understand the mathematical Cut Property underpinning greedy MST algorithms.',
-    commonMistake: 'Confusing the Cut Property with the Cycle Property (which states the heaviest edge in a cycle is never in the MST).',
-    tags: ['graphs', 'mst', 'prims', 'theory']
+    explanation: 'In C, dynamically allocated heap memory from `malloc()` remains allocated until explicitly released using `free(ptr)`. Neglecting to call `free()` leads to heap memory leaks.',
+    tags: ['c_programming', 'free', 'memory_leak']
   }
 ];

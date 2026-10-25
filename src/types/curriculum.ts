@@ -1,19 +1,30 @@
 import { StageId, SquareType } from './game';
 
+export type CourseOutcome = 'CO1' | 'CO2' | 'CO3' | 'CO4';
+
+export interface CurriculumTopic {
+  id: string;
+  co: CourseOutcome;
+  title: string;
+  subtopics: string[];
+  boardRange: [number, number];
+}
+
 export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'expert';
 
 export type SquareColorCategory = 
-  | 'emerald' // Programming Foundations & Basic Arrays
-  | 'amber'   // Recursion & Math & Dynamic Programming
-  | 'purple'  // Linked Lists, Stacks, Queues, Strings
-  | 'blue'    // Searching, Sorting, Algorithms
-  | 'teal'    // Trees, BST, Heaps, Graph Theory
+  | 'emerald' // Mathematical foundations & Algorithm analysis
+  | 'amber'   // Recurrence relations, Master theorem, Queue
+  | 'purple'  // Stacks, Parentheses, Linked lists
+  | 'blue'    // Sorting, Searching, Complexity
+  | 'teal'    // Trees, BST, AVL
   | 'rose'    // Snakes / Debugging Edge Cases
-  | 'indigo'  // Advanced DSA (Trie, Segment Trees, DSU)
-  | 'gold';   // Milestones, Masteries, Checkpoints
+  | 'indigo'  // Graphs, Shortest path, MST, Huffman
+  | 'gold';   // Checkpoints, Milestones, Grandmaster
 
 export interface SquareMetadata {
   id: number;
+  co: CourseOutcome;
   title: string;
   topic: string;
   subtopic: string;
@@ -34,6 +45,7 @@ export interface SquareMetadata {
 export interface StageInfo {
   id: StageId;
   name: string;
+  co: CourseOutcome;
   range: [number, number];
   color: string;
   description: string;

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { CURRICULUM_100, SQUARE_MAP, STAGES } from '../data/curriculum100';
 import { CHALLENGES, ChallengeRegistry } from '../data/challenges';
+import { SNAKES_AND_LADDERS } from '../data/snakesAndLadders';
 
 describe('100-Square Curriculum & Challenge Bank', () => {
   it('contains exactly 100 uniquely numbered squares from 1 to 100', () => {
@@ -36,26 +37,28 @@ describe('100-Square Curriculum & Challenge Bank', () => {
     expect(uniqueChallengeIds.size).toBe(CHALLENGES.length);
   });
 
-  it('verifies optimization ladders have complete brute-force and optimal comparisons', () => {
-    const optimizationChallenges = CHALLENGES.filter(c => c.type === 'optimize_algorithm');
-    expect(optimizationChallenges.length).toBeGreaterThanOrEqual(5);
+  it('verifies curriculum ladders and snakes are mapped with pedagogical reasons', () => {
+    expect(SNAKES_AND_LADDERS.length).toBeGreaterThanOrEqual(10);
 
-    optimizationChallenges.forEach(opt => {
-      expect(opt.optimizationComparison).toBeDefined();
-      expect(opt.optimizationComparison?.bruteForce.timeComplexity).toBeDefined();
-      expect(opt.optimizationComparison?.optimal.timeComplexity).toBeDefined();
-      expect(opt.optimizationComparison?.whyOptimalWorks).toBeDefined();
+    SNAKES_AND_LADDERS.forEach(item => {
+      expect(item.pedagogicalReason).toBeDefined();
+      expect(item.pedagogicalReason.length).toBeGreaterThan(10);
+      expect(item.title).toBeDefined();
+      expect(item.description).toBeDefined();
     });
   });
 
-  it('verifies debugging snakes have bug diagnosis and error categories', () => {
-    const bugChallenges = CHALLENGES.filter(c => c.bugInfo !== undefined);
-    expect(bugChallenges.length).toBeGreaterThanOrEqual(4);
+  it('verifies debugging and code analysis challenges exist with explanations', () => {
+    const debugChallenges = CHALLENGES.filter(c => 
+      c.skillCategory === 'debugging' || 
+      c.skillCategory === 'dry_run' || 
+      c.codeSnippet !== undefined
+    );
+    expect(debugChallenges.length).toBeGreaterThanOrEqual(10);
 
-    bugChallenges.forEach(bug => {
-      expect(bug.bugInfo?.errorCategory).toBeDefined();
-      expect(bug.bugInfo?.buggyCode).toBeDefined();
-      expect(bug.bugInfo?.fixedCode).toBeDefined();
+    debugChallenges.forEach(ch => {
+      expect(ch.explanation).toBeDefined();
+      expect(ch.explanation.length).toBeGreaterThan(10);
     });
   });
 

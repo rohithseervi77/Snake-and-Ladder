@@ -1,4 +1,4 @@
-import { DifficultyLevel } from './curriculum';
+import { DifficultyLevel, CourseOutcome } from './curriculum';
 
 export type ChallengeType =
   | 'conceptual_mcq'
@@ -24,7 +24,10 @@ export type SkillCategory =
   | 'implementation'
   | 'complexity'
   | 'optimization'
-  | 'debugging';
+  | 'debugging'
+  | 'numerical'
+  | 'compare_approaches'
+  | 'code_trace';
 
 export interface CodeSnippet {
   language: 'typescript' | 'python' | 'cpp' | 'java';
@@ -51,6 +54,7 @@ export interface BugLocation {
 export interface Challenge {
   id: string;
   squareId: number;
+  co?: CourseOutcome;
   title: string;
   topic: string;
   subtopic: string;

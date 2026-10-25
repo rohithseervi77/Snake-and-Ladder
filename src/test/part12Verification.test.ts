@@ -124,18 +124,18 @@ describe('PART 12: Comprehensive Board Movement & Gameplay Verification', () => 
     });
 
     it('Verify snake movement downward', () => {
-      expect(SNAKE_MAP.has(14)).toBe(true);
-      const snake14 = SNAKE_MAP.get(14)!;
-      expect(snake14.to).toBe(7);
-      expect(snake14.to).toBeLessThan(snake14.from);
+      expect(SNAKE_MAP.has(18)).toBe(true);
+      const snake18 = SNAKE_MAP.get(18)!;
+      expect(snake18.to).toBe(8);
+      expect(snake18.to).toBeLessThan(snake18.from);
 
       expect(SNAKE_MAP.has(50)).toBe(true);
       const snake50 = SNAKE_MAP.get(50)!;
       expect(snake50.to).toBe(42);
 
-      expect(SNAKE_MAP.has(96)).toBe(true);
-      const snake96 = SNAKE_MAP.get(96)!;
-      expect(snake96.to).toBe(85);
+      expect(SNAKE_MAP.has(95)).toBe(true);
+      const snake95 = SNAKE_MAP.get(95)!;
+      expect(snake95.to).toBe(84);
     });
 
     it('Verify ladder movement upward', () => {

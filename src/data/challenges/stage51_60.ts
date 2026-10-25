@@ -2,314 +2,308 @@ import { Challenge } from '../../types/challenge';
 
 export const STAGE_51_60_CHALLENGES: Challenge[] = [
   {
-    id: 'c-51-heap-array-indexing',
+    id: 'q-51-queue-adt',
     squareId: 51,
-    title: 'Binary Heap Array Index Invariants',
-    topic: 'Heaps & Priority Queues',
-    subtopic: 'Array-Based Heap Representation',
+    co: 'CO2',
+    title: 'Linear Queue FIFO Principle',
+    topic: 'Array implementation of Queue',
+    subtopic: 'FIFO Principle with FRONT and REAR',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'In a 0-indexed array representation of a complete binary heap, given a node at index `i`, what are the exact formulas for its parent and children?',
+    prompt: 'In a standard array-based Linear Queue, which pointers are used to track insertions and deletions, and where do they occur?',
     options: [
-      'Parent: `Math.floor((i - 1) / 2)`, Left child: `2*i + 1`, Right child: `2*i + 2`',
-      'Parent: `i / 2`, Left child: `2*i`, Right child: `2*i + 1` (this is 1-indexed)',
-      'Parent: `i - 1`, Left child: `i + 1`, Right child: `i + 2`',
-      'Parent: `Math.floor(i / 2)`, Left child: `2*i + 2`, Right child: `2*i + 4`'
+      'Insertions occur at REAR; deletions occur at FRONT',
+      'Insertions occur at FRONT; deletions occur at REAR',
+      'Both insertions and deletions occur exclusively at TOP',
+      'Insertions occur at index 0; deletions occur at index MAX-1'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Root is at index 0. Its children are at indices 1 and 2.',
-      'Check if 2*0 + 1 = 1 and 2*0 + 2 = 2.',
-      'For node 1, parent is Math.floor((1 - 1)/2) = 0. For node 2, Math.floor((2 - 1)/2) = 0.'
+      'Think of a cafeteria or movie ticket queue.',
+      'New people join the rear of the line and leave from the front.'
     ],
-    explanation: 'For a 0-indexed complete binary tree array: root is at 0. Children of node i are at `2*i + 1` and `2*i + 2`. The parent of any node i > 0 is at `Math.floor((i - 1) / 2)`. This allows pointerless tree navigation with pure arithmetic.',
-    learningObjective: 'Master array index arithmetic for complete binary trees and binary heaps.',
-    commonMistake: 'Using 1-indexed formulas (2*i and 2*i + 1) in 0-indexed programming languages.',
-    tags: ['heaps', 'array-indexing', 'data-structures']
+    explanation: 'A Queue follows the FIFO (First-In, First-Out) discipline: new elements are enqueued at the REAR pointer, while elements are dequeued from the FRONT pointer.',
+    tags: ['queue', 'fifo', 'front_rear']
   },
   {
-    id: 'c-52-min-heap-property',
+    id: 'q-52-enqueue-dequeue',
     squareId: 52,
-    title: 'Min-Heap Structural & Ordering Invariant',
-    topic: 'Heaps & Priority Queues',
-    subtopic: 'Heap Invariants',
-    skillCategory: 'conceptual',
-    difficulty: 'easy',
-    type: 'conceptual_mcq',
-    prompt: 'What invariant must EVERY node `i` satisfy in a valid Min-Heap?',
-    options: [
-      'The value of node `i` must be less than or equal to the values of both of its children: `arr[i] <= arr[2*i + 1]` and `arr[i] <= arr[2*i + 2]`',
-      'The left child must always be strictly smaller than the right child',
-      'All leaf nodes must be sorted in strictly ascending order',
-      'The root node contains the maximum element in the collection'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Does a Min-Heap enforce any order between the left child and right child?',
-      'No! There is no relationship required between sibling nodes.',
-      'Only the parent must be <= both of its children.'
-    ],
-    explanation: 'In a Min-Heap, the parent key is less than or equal to the keys of its children. Unlike a Binary Search Tree, there is no ordering constraint between left and right siblings. As a result, the root node arr[0] is guaranteed to be the global minimum.',
-    learningObjective: 'Differentiate between BST ordering invariants and Heap ordering invariants.',
-    commonMistake: 'Assuming heaps enforce left-to-right sorting between sibling subtrees.',
-    tags: ['heaps', 'invariants']
-  },
-  {
-    id: 'c-53-build-heap-complexity',
-    squareId: 53,
-    title: 'Build-Heap Linear Time Complexity',
-    topic: 'Heaps & Priority Queues',
-    subtopic: 'Heapify & Floyd\'s Algorithm',
-    skillCategory: 'complexity',
-    difficulty: 'hard',
-    type: 'complexity_choice',
-    prompt: 'Building a binary heap from an unsorted array of size N using bottom-up `heapify` (sift-down from N/2 down to 0) takes O(N) time, NOT O(N log N). Why?',
-    options: [
-      'Most nodes are near the bottom of the tree where the sift-down height h is small; the summation of (N / 2^(h+1)) * O(h) converges to O(N)',
-      'Heapify sorts the array in-place using quicksort first',
-      'Nodes with two children are skipped during bottom-up heap construction',
-      'Memory caching in modern CPUs eliminates log N comparisons'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Half of the nodes in a complete binary tree are leaves with height 0 (0 sift-down cost).',
-      'A quarter have height 1, an eighth have height 2.',
-      'Work = sum from h=1 to log N of (N / 2^{h+1}) * h = N * sum(h / 2^{h+1}) = O(N).'
-    ],
-    explanation: 'Floyd\'s build-heap algorithm operates bottom-up. Half the nodes (N/2) require 0 work, N/4 require 1 step, N/8 require 2 steps. The arithmetic-geometric series sum(h / 2^h) converges to a constant (<= 2). Multiplying by N proves the entire build takes strictly O(N) time.',
-    learningObjective: 'Prove why bottom-up heapify runs in linear O(N) time using Taylor series convergence.',
-    commonMistake: 'Assuming inserting N elements one-by-one into an empty heap (O(N log N)) is the only way to build a heap.',
-    tags: ['heaps', 'heapify', 'complexity', 'math']
-  },
-  {
-    id: 'c-54-top-k-elements-min-heap',
-    squareId: 54,
-    title: 'Top-K Frequent Elements: Min-Heap of Size K',
-    topic: 'Heaps & Priority Queues',
-    subtopic: 'Top-K / Order Statistics',
-    skillCategory: 'conceptual',
-    difficulty: 'medium',
-    type: 'conceptual_mcq',
-    prompt: 'To find the K LARGEST elements in a dynamic data stream of N numbers, why do we maintain a MIN-HEAP of size K rather than a Max-Heap?',
-    options: [
-      'The root of a Min-Heap of size K holds the smallest of the top-K elements; if an incoming number is larger, it replaces the root in O(log K) time',
-      'A Max-Heap cannot store more than K elements in memory',
-      'Min-Heaps use less RAM per node than Max-Heaps',
-      'Max-Heaps do not support insertion operations'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'What do we want to evict when the heap size exceeds K?',
-      'We want to evict the smallest element among the current candidates.',
-      'In a Min-Heap, the smallest element is at the root (arr[0]), accessible in O(1) and evictable in O(log K).'
-    ],
-    explanation: 'A Min-Heap of size K maintains the K largest elements seen so far. Its root is the K-th largest (the threshold). Any incoming number larger than the root replaces it and sifts down in O(log K). At the end of N items, the heap contains the top-K in O(N log K) time and O(K) space.',
-    learningObjective: 'Select the optimal heap variant (Min vs Max) for bounded Top-K candidate filters.',
-    commonMistake: 'Using a Max-Heap of size N (O(N log N)) to extract K elements instead of a Min-Heap of size K (O(N log K)).',
-    tags: ['heaps', 'top-k', 'optimization']
-  },
-  {
-    id: 'c-55-median-finder-two-heaps',
-    squareId: 55,
-    title: 'Continuous Median Finder: Two-Heap Invariant',
-    topic: 'Heaps & Priority Queues',
-    subtopic: 'Dual Heap Pattern',
-    skillCategory: 'conceptual',
-    difficulty: 'hard',
-    type: 'conceptual_mcq',
-    prompt: 'In the Two-Heap algorithm for continuous running median (`leftMaxHeap` for smaller half, `rightMinHeap` for larger half), what two invariants must be maintained after every insertion?',
-    options: [
-      '1. Every element in leftMaxHeap <= every element in rightMinHeap; 2. The sizes differ by at most 1: `Math.abs(left.size - right.size) <= 1`',
-      '1. Both heaps must have identical sizes at all times; 2. All numbers must be positive integers',
-      '1. leftMaxHeap must be empty before rightMinHeap is filled; 2. Elements must be inserted in sorted order',
-      '1. The height of both heaps must equal log N; 2. Root values must sum to 0'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'The median divides data into two halves: lower half and upper half.',
-      'The maximum of the lower half (left.peek()) must not exceed the minimum of the upper half (right.peek()).',
-      'The balance condition ensures the median is either one of the roots or the average of both.'
-    ],
-    explanation: 'Dual-heap median: `leftMaxHeap` stores the lower half, `rightMinHeap` stores the upper half. Invariant 1: `left.peek() <= right.peek()`. Invariant 2: `0 <= left.size - right.size <= 1`. This allows O(log N) insertion and O(1) median retrieval (`left.peek()` or `(left.peek() + right.peek()) / 2`).',
-    learningObjective: 'Design multi-heap systems with strict partitioning and balance invariants.',
-    commonMistake: 'Letting one heap grow substantially larger than the other, losing O(1) median access.',
-    tags: ['heaps', 'median-finder', 'system-design']
-  },
-  {
-    id: 'c-56-backtracking-anatomy',
-    squareId: 56,
-    title: 'The Backtracking Canonical Blueprint',
-    topic: 'Backtracking',
-    subtopic: 'State Exploration & Restoration',
-    skillCategory: 'conceptual',
-    difficulty: 'easy',
-    type: 'conceptual_mcq',
-    prompt: 'What are the three mandatory steps executed inside the recursive loop of any classical backtracking algorithm?',
-    options: [
-      '1. Make a Choice (mutate state), 2. Recurse (explore subtree), 3. Undo Choice / Backtrack (restore state)',
-      '1. Sort the input, 2. Run binary search, 3. Print the output array',
-      '1. Allocate memory, 2. Garbage collect, 3. Return false',
-      '1. Push to stack, 2. Invert binary bits, 3. Catch stack overflow'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Backtracking explores a decision tree via depth-first search.',
-      'When returning from a branch to explore a sibling branch, the state must look like the branch was never taken.',
-      'This requires: Choose -> Recurse -> Unchoose.'
-    ],
-    explanation: 'Backtracking uses DFS on state-space trees: (1) Make choice: add candidate to path; (2) Recurse: search deeper branches; (3) Undo choice: remove candidate from path so the next sibling candidate can be evaluated from the clean parent state.',
-    learningObjective: 'Master the Choose-Explore-Unchoose template for state restoration in search trees.',
-    commonMistake: 'Modifying shared state without undoing the mutation, contaminating parallel search branches.',
-    tags: ['backtracking', 'invariants', 'recursion']
-  },
-  {
-    id: 'c-57-subsets-power-set',
-    squareId: 57,
-    title: 'Subsets & Power Set Decision Tree',
-    topic: 'Backtracking',
-    subtopic: 'Combinatorial Search',
-    skillCategory: 'complexity',
-    difficulty: 'medium',
-    type: 'complexity_choice',
-    prompt: 'For a set of N distinct elements, why does generating all subsets (the power set) require strictly O(N * 2^N) time complexity?',
-    options: [
-      'There are 2^N total subsets (each element is either included or excluded), and copying each subset takes up to O(N) time',
-      'Each element must be compared against all N^2 permutations',
-      'The call stack depth reaches 2^N simultaneous activation frames',
-      'Backtracking requires O(N!) passes over the array'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'How many subsets does a set with N elements have? (2 * 2 * ... * 2 = 2^N).',
-      'When a subset is completed, we clone it into the result array: `result.push([...path])`.',
-      'Cloning an array of length up to N takes O(N) operations.'
-    ],
-    explanation: 'Every element has 2 binary states: included or excluded. Thus, the decision tree has 2^N leaf nodes (subsets). At each leaf, copying the current path to the result takes up to O(N) time. The total time complexity is Theta(N * 2^N), with O(N) auxiliary stack space.',
-    learningObjective: 'Analyze asymptotic complexity of combinatorial subset generation.',
-    commonMistake: 'Forgetting the O(N) cost of deep copying/cloning the candidate path at each leaf.',
-    tags: ['backtracking', 'subsets', 'complexity']
-  },
-  {
-    id: 'c-58-permutations-backtracking',
-    squareId: 58,
-    title: 'Permutations: Visited Array Invariant',
-    topic: 'Backtracking',
-    subtopic: 'Permutations & State Pruning',
+    co: 'CO2',
+    title: 'Dry-Run Linear Queue Operations',
+    topic: 'Array implementation of Queue',
+    subtopic: 'Linear Queue State Updates',
     skillCategory: 'dry_run',
-    difficulty: 'medium',
-    type: 'code_trace',
-    codeSnippet: `function permute(nums) {
-  let res = [], used = new Array(nums.length).fill(false);
-  function backtrack(path) {
-    if (path.length === nums.length) {
-      res.push([...path]);
-      return;
-    }
-    for (let i = 0; i < nums.length; i++) {
-      if (used[i]) continue;
-      used[i] = true;
-      path.push(nums[i]);
-      backtrack(path);
-      path.pop();
-      used[i] = false; // RESTORE
-    }
-  }
-  backtrack([]);
-  return res;
-}`,
-    prompt: 'Given `nums = [1, 2, 3]`, what is the total number of times `res.push` is executed (i.e. number of unique permutations)?',
+    difficulty: 'easy',
+    type: 'dry_run_trace',
+    prompt: 'Given an empty linear queue of capacity 5:\n\nenqueue(10)\nenqueue(20)\ndequeue()\nenqueue(30)\nenqueue(40)\ndequeue()\n\nWhich elements remain in the queue, and what element is at FRONT?',
     options: [
-      '6 (3! = 3 * 2 * 1)',
-      '8 (2^3)',
-      '9 (3^2)',
-      '3'
+      'Elements: [30, 40] with 30 at FRONT',
+      'Elements: [10, 20] with 10 at FRONT',
+      'Elements: [20, 30] with 20 at FRONT',
+      'Elements: [40] with 40 at FRONT'
     ],
     correctOptionIndex: 0,
     hints: [
-      'First position has 3 choices, second has 2 choices, third has 1 choice.',
-      '3! = 3 * 2 * 1 = 6.',
-      'Each valid permutation path hits length 3 and pushes to res.'
+      'Enqueue adds to the back: 10, then 20 -> [10, 20].',
+      'First dequeue removes the first element (10), leaving [20].',
+      'Next enqueues add 30, 40 -> [20, 30, 40].',
+      'Second dequeue removes 20, leaving [30, 40].'
     ],
-    explanation: 'The number of permutations of N distinct items is N! (factorial). For N=3, 3! = 6 unique permutations: [1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], [3,2,1]. The backtracking algorithm visits each leaf exactly once.',
-    learningObjective: 'Trace factorial state expansion and visited flag restoration in permutation generators.',
-    commonMistake: 'Confusing subsets (2^N) with permutations (N!).',
-    tags: ['backtracking', 'permutations', 'dry-run']
+    explanation: 'Initial: []. Enqueue 10, 20 -> [10, 20]. Dequeue removes 10 -> [20]. Enqueue 30, 40 -> [20, 30, 40]. Dequeue removes 20 -> [30, 40]. The FRONT element is 30.',
+    tags: ['queue', 'dry_run', 'fifo']
   },
   {
-    id: 'c-59-nqueens-diagonal-formula',
-    squareId: 59,
-    title: 'N-Queens: O(1) Diagonal Conflict Formula',
-    topic: 'Backtracking',
-    subtopic: 'Constraint Satisfaction & Geometry',
+    id: 'q-53-fake-overflow',
+    squareId: 53,
+    co: 'CO2',
+    title: 'The Fake Overflow Problem',
+    topic: 'Circular Queue',
+    subtopic: 'Memory Wastage Problem in Linear Queues',
+    skillCategory: 'conceptual',
+    difficulty: 'medium',
+    type: 'conceptual_mcq',
+    prompt: 'A linear queue of capacity 5 has FRONT = 3 and REAR = 4. When a new enqueue is attempted, what happens and why is this termed "fake overflow"?',
+    options: [
+      'The queue reports Overflow because REAR == MAX - 1, even though slots 0, 1, and 2 are completely empty and wasted',
+      'The queue automatically reallocates memory in O(1) time',
+      'The queue overwrites slot 0 automatically without any error',
+      'The front pointer is reset to 0 by the hardware'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'In a linear queue, REAR has reached the last array slot (index 4).',
+      'Elements at indices 0, 1, 2 were already dequeued.'
+    ],
+    explanation: 'In a simple linear queue, REAR == MAX - 1 signals overflow even though earlier dequeues have emptied indices 0, 1, and 2. This memory wastage is called "fake overflow" and motivated the invention of Circular Queues.',
+    tags: ['fake_overflow', 'linear_queue', 'memory_wastage']
+  },
+  {
+    id: 'q-54-circular-queue-concept',
+    squareId: 54,
+    co: 'CO2',
+    title: 'Circular Queue Wrap-Around Formula',
+    topic: 'Circular Queue',
+    subtopic: 'Wrap-Around Indexing: (index + 1) % SIZE',
+    skillCategory: 'numerical',
+    difficulty: 'medium',
+    type: 'output_prediction',
+    prompt: 'In a Circular Queue of SIZE = 5, REAR is currently at index 4. If a valid enqueue operation is performed, what will be the new value of REAR?',
+    options: [
+      'REAR = 0, because (4 + 1) % 5 = 0',
+      'REAR = 5',
+      'REAR = -1',
+      'REAR remains at 4'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Apply the modulo formula: REAR = (REAR + 1) % SIZE.',
+      '(4 + 1) % 5 = 5 % 5 = ?'
+    ],
+    explanation: 'In a Circular Queue, pointers wrap around to the beginning using modulo arithmetic: REAR = (REAR + 1) % SIZE. When REAR is at 4, (4 + 1) % 5 = 0, wrapping around to reuse slot 0.',
+    tags: ['circular_queue', 'wrap_around', 'modulo']
+  },
+  {
+    id: 'q-55-circular-queue-conditions',
+    squareId: 55,
+    co: 'CO2',
+    title: 'Circular Queue Full Condition',
+    topic: 'Circular Queue',
+    subtopic: 'Boundary Equations in Circular Arrays',
     skillCategory: 'conceptual',
     difficulty: 'hard',
     type: 'conceptual_mcq',
-    prompt: 'When placing a queen at board cell `(row, col)`, which mathematical expressions uniquely identify its major and minor diagonals for O(1) conflict lookup?',
+    prompt: 'Which mathematical condition correctly detects that a Circular Queue of size N is completely FULL?',
     options: [
-      'Major diagonal: `row - col` (constant along top-left to bottom-right); Minor diagonal: `row + col` (constant along top-right to bottom-left)',
-      'Major diagonal: `row * col`; Minor diagonal: `row / col`',
-      'Major diagonal: `row + 2*col`; Minor diagonal: `2*row + col`',
-      'Major diagonal: `Math.abs(row)`; Minor diagonal: `Math.abs(col)`'
+      '(REAR + 1) % N == FRONT',
+      'REAR == N - 1',
+      'FRONT == REAR',
+      'FRONT == (REAR + 1)'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Along a main diagonal moving right and down, both row and col increase by 1, so row - col remains unchanged.',
-      'Along an anti-diagonal moving left and down, row increases by 1 while col decreases by 1, so row + col remains unchanged.',
-      'Storing these in Sets (`diag1.has(r - c)` and `diag2.has(r + c)`) gives O(1) conflict checks.'
+      'The queue is full when advancing REAR by one position hits the FRONT pointer.',
+      'Remember to wrap around with % N.'
     ],
-    explanation: 'Lines with slope +1 have constant `r - c`. Lines with slope -1 have constant `r + c`. By maintaining two HashSets or boolean arrays for `(r - c)` and `(r + c)` alongside column sets, queen attack conflicts are tested in O(1) time instead of scanning board diagonals in O(N).',
-    learningObjective: 'Model geometric constraints using invariant coordinate arithmetic for O(1) pruning.',
-    commonMistake: 'Scanning all diagonal board cells in O(N) time at every step instead of using invariant coordinate hashes.',
-    tags: ['backtracking', 'n-queens', 'geometry', 'optimization']
+    explanation: 'A Circular Queue is full when advancing the REAR index wraps around to land on the FRONT index: `(REAR + 1) % N == FRONT`. If `FRONT == REAR`, exactly one element is in the queue.',
+    tags: ['circular_queue', 'full_condition', 'boundary']
   },
   {
-    id: 'c-60-gateway-boss-word-search',
-    squareId: 60,
-    title: 'GATEWAY BOSS: The Word Search Invariant',
-    topic: 'Backtracking',
-    subtopic: '2D Grid DFS & In-Place Board Masking',
-    skillCategory: 'optimization',
-    difficulty: 'hard',
-    type: 'bug_hunt',
-    codeSnippet: `function exist(board, word) {
-  const R = board.length, C = board[0].length;
-  function dfs(r, c, idx) {
-    if (idx === word.length) return true;
-    if (r < 0 || r >= R || c < 0 || c >= C || board[r][c] !== word[idx]) return false;
-    
-    let temp = board[r][c];
-    board[r][c] = '#'; // Mark visited in-place
-    
-    let found = dfs(r+1, c, idx+1) || dfs(r-1, c, idx+1) ||
-                dfs(r, c+1, idx+1) || dfs(r, c-1, idx+1);
-                
-    board[r][c] = temp; // RESTORE
-    return found;
-  }
-  for (let i = 0; i < R; i++) {
-    for (let j = 0; j < C; j++) {
-      if (dfs(i, j, 0)) return true;
-    }
-  }
-  return false;
-}`,
-    prompt: 'Why is modifying `board[r][c] = \'#\'` and restoring it with `board[r][c] = temp` superior to passing a `Set<string>` of visited coordinates?',
+    id: 'q-56-deque-operations',
+    squareId: 56,
+    co: 'CO2',
+    title: 'Double-Ended Queue (Deque) Characteristics',
+    topic: 'Types of Queues',
+    subtopic: 'Input-Restricted & Output-Restricted Deques',
+    skillCategory: 'conceptual',
+    difficulty: 'medium',
+    type: 'conceptual_mcq',
+    prompt: 'What distinguishes an Input-Restricted Deque from an Output-Restricted Deque?',
     options: [
-      'It avoids allocating thousands of Set objects and string keys across recursive calls, achieving O(1) auxiliary space beyond recursion stack',
-      'JavaScript Sets cannot store coordinates greater than 10',
-      'Mutating the board makes the recursive calls run in parallel across CPU cores',
-      'The \'#\' character prevents JavaScript garbage collection from firing'
+      'Input-restricted allows insertions at only one end, but deletions from both ends; Output-restricted allows deletions at only one end, but insertions at both ends',
+      'Input-restricted only accepts positive integers',
+      'Output-restricted operates only in LIFO stack mode',
+      'There is no difference between the two'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Creating string keys like `"\${r},\${c}"` allocates memory on every step.',
-      'Adding and removing from a Set has hashing overhead.',
-      'Direct in-place array mutation is O(1) with zero heap allocation.'
+      'Focus on the name: "Input-Restricted" restricts the input (insertion) side.',
+      '"Output-Restricted" restricts the output (deletion) side.'
     ],
-    explanation: 'In grid backtracking, in-place character masking (`#`) uses the grid itself as the visited structure. Restoring `board[r][c] = temp` upon return ensures state integrity for subsequent searches. This eliminates string key creation and Set allocations, keeping auxiliary space bounded to O(L) recursion stack depth.',
-    learningObjective: 'Utilize in-place memory masking to optimize grid traversal search overhead.',
-    commonMistake: 'Allocating new Set or 2D boolean arrays on each search path, causing excessive GC pressure.',
-    tags: ['backtracking', 'grid-search', 'in-place', 'boss-battle']
+    explanation: 'An Input-Restricted Deque permits insertions at only one end (e.g. rear) but deletions at both ends. An Output-Restricted Deque permits deletions from only one end (e.g. front) but insertions at both ends.',
+    tags: ['deque', 'types_of_queues', 'double_ended']
+  },
+  {
+    id: 'q-57-priority-queue-intro',
+    squareId: 57,
+    co: 'CO2',
+    title: 'Priority Queue Dequeue Invariant',
+    topic: 'Types of Queues',
+    subtopic: 'Priority Ordering & Key Scheduling',
+    skillCategory: 'conceptual',
+    difficulty: 'easy',
+    type: 'conceptual_mcq',
+    prompt: 'How does an element extraction in a Priority Queue differ from a standard FIFO Queue?',
+    options: [
+      'The element with the highest priority key is dequeued first, regardless of when it arrived',
+      'Elements are dequeued in random order using a pseudo-random generator',
+      'The last element inserted is always dequeued first (LIFO)',
+      'Only the smallest integer value can be enqueued'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Think of an emergency triage room at a hospital.',
+      'Patients with highest urgency are treated first, not first-come-first-served.'
+    ],
+    explanation: 'In a Priority Queue, each item has an associated priority key. The dequeue operation extracts the element with the highest priority (or lowest in a Min-Priority Queue), rather than strictly adhering to arrival order.',
+    tags: ['priority_queue', 'types_of_queues']
+  },
+  {
+    id: 'q-58-queue-applications',
+    squareId: 58,
+    co: 'CO2',
+    title: 'Operating System Queue Applications',
+    topic: 'Applications of Queues',
+    subtopic: 'Round-Robin & OS Buffer Management',
+    skillCategory: 'conceptual',
+    difficulty: 'easy',
+    type: 'select_data_structure',
+    prompt: 'Which data structure is primarily utilized by the operating system kernel to maintain ready processes in Round-Robin CPU scheduling?',
+    options: [
+      'Circular Queue (FIFO with cyclic time slices)',
+      'Binary Search Tree',
+      'Stack (LIFO)',
+      'AVL Tree'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Processes must take turns in fair cyclic order.',
+      'When a process exhausts its time quantum, it is placed at the back of the queue.'
+    ],
+    explanation: 'Round-Robin CPU scheduling requires fair cyclic time-slicing among active processes. A Circular FIFO Queue allows expired processes to be placed at REAR while the next process is dispatched from FRONT in O(1) time.',
+    tags: ['applications_of_queues', 'round_robin', 'os_scheduling']
+  },
+  {
+    id: 'q-59-queue-bfs-concept',
+    squareId: 59,
+    co: 'CO2',
+    title: 'Why BFS Requires a Queue',
+    topic: 'Applications of Queues',
+    subtopic: 'Level-Order State Expansion',
+    skillCategory: 'conceptual',
+    difficulty: 'medium',
+    type: 'conceptual_mcq',
+    prompt: 'Why does Breadth-First Search (BFS) fundamentally require a Queue rather than a Stack?',
+    options: [
+      'A Queue enforces FIFO order, ensuring all vertices at distance d are visited and processed before any vertices at distance d + 1',
+      'A Queue uses less memory than a Stack on all machines',
+      'A Stack cannot store graph vertex numbers',
+      'Graphs can only be linked to Queue data types in C++'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'BFS explores level by level (concentric circles outward).',
+      'FIFO guarantees earliest discovered nodes are explored first.'
+    ],
+    explanation: 'BFS discovers vertices level by level. Because vertices discovered first must be expanded first, the FIFO property of a Queue guarantees that all nodes at distance d are explored before advancing to distance d+1.',
+    tags: ['bfs', 'queue_application', 'graph_search']
+  },
+  {
+    id: 'q-60-checkpoint-queues',
+    squareId: 60,
+    co: 'CO2',
+    title: 'Checkpoint 6: Circular Queue Lab Tracing',
+    topic: 'Circular Queue',
+    subtopic: 'Unit 6 Milestone Evaluation',
+    skillCategory: 'dry_run',
+    difficulty: 'hard',
+    type: 'dry_run_trace',
+    prompt: 'A circular queue has SIZE = 5. Initially FRONT = -1, REAR = -1.\n1. Enqueue 10, 20, 30, 40\n2. Dequeue two times\n3. Enqueue 50, 60, 70\nWhat are the final values of FRONT and REAR?',
+    options: [
+      'FRONT = 2, REAR = 1 (elements wrap around to indices 4, 0, 1)',
+      'FRONT = 0, REAR = 4',
+      'FRONT = 2, REAR = 4',
+      'FRONT = 1, REAR = 2'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Step 1: Enqueue 10(0), 20(1), 30(2), 40(3) -> FRONT=0, REAR=3.',
+      'Step 2: Dequeue twice removes 10, 20 -> FRONT advances to 2.',
+      'Step 3: Enqueue 50 at index 4 (REAR=4).',
+      'Enqueue 60 wraps around: (4+1)%5 = index 0 (REAR=0).',
+      'Enqueue 70: (0+1)%5 = index 1 (REAR=1).'
+    ],
+    explanation: 'Initial: F=-1, R=-1. Enqueue 4 items -> F=0, R=3. Dequeue twice -> F=2, R=3. Enqueue 50 -> R=4. Enqueue 60 -> R=(4+1)%5=0. Enqueue 70 -> R=(0+1)%5=1. Result: FRONT = 2, REAR = 1.',
+    tags: ['checkpoint', 'circular_queue_trace', 'exam_problem']
+  },
+  {
+    id: 'q-extra-51',
+    squareId: 51,
+    co: 'CO2',
+    title: 'Queue Underflow Condition',
+    topic: 'Array implementation of Queue',
+    subtopic: 'Queue Boundary Conditions',
+    skillCategory: 'conceptual',
+    difficulty: 'easy',
+    type: 'conceptual_mcq',
+    prompt: 'When does Queue Underflow occur during queue manipulation?',
+    options: [
+      'When attempting to dequeue an element from an empty queue',
+      'When enqueueing into a full queue',
+      'When REAR wraps around past 0',
+      'When FRONT equals REAR'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Underflow refers to removing from an empty collection.',
+      'Overflow refers to adding to a full collection.'
+    ],
+    explanation: 'Queue Underflow occurs when a dequeue operation is invoked on an empty queue (when FRONT == -1 or FRONT > REAR).',
+    tags: ['queue', 'underflow', 'boundary']
+  },
+  {
+    id: 'q-extra-54',
+    squareId: 54,
+    co: 'CO2',
+    title: 'Advancing Front Pointer in Circular Queue',
+    topic: 'Circular Queue',
+    subtopic: 'Circular Dequeue Formula',
+    skillCategory: 'numerical',
+    difficulty: 'medium',
+    type: 'output_prediction',
+    prompt: 'In a Circular Queue of SIZE = 6, FRONT is at index 5. If one element is dequeued (and other elements remain), what is the new FRONT index?',
+    options: [
+      'FRONT = 0, because (5 + 1) % 6 = 0',
+      'FRONT = 6',
+      'FRONT = -1',
+      'FRONT remains at 5'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'FRONT advances using the exact same modulo wrap-around: (FRONT + 1) % SIZE.',
+      '(5 + 1) % 6 = 6 % 6 = 0.'
+    ],
+    explanation: 'In a Circular Queue, FRONT wraps around to index 0 using `FRONT = (FRONT + 1) % SIZE`. For SIZE = 6 and FRONT = 5, (5 + 1) % 6 = 0.',
+    tags: ['circular_queue', 'front_pointer', 'modulo']
   }
 ];

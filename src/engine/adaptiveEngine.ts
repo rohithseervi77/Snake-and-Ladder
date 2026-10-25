@@ -9,7 +9,10 @@ const DEFAULT_SKILLS: Record<SkillCategory, SkillMasteryRecord> = {
   implementation: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
   complexity: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
   optimization: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
-  debugging: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' }
+  debugging: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
+  numerical: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
+  compare_approaches: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' },
+  code_trace: { attempts: 0, correct: 0, incorrect: 0, accuracy: 1, level: 'novice' }
 };
 
 export function createInitialLearnerProfile(userId: string = 'guest-dev', displayName: string = 'Developer'): LearnerProfile {

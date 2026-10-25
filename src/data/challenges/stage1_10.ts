@@ -2,294 +2,279 @@ import { Challenge } from '../../types/challenge';
 
 export const STAGE_1_10_CHALLENGES: Challenge[] = [
   {
-    id: 'c-1-arrays',
+    id: 'q-1-algo-role',
     squareId: 1,
-    title: 'Array Memory Invariant',
-    topic: 'Arrays',
-    subtopic: 'Contiguous Memory & Random Access',
+    co: 'CO1',
+    title: 'Algorithm Definition & Role',
+    topic: 'Mathematical Foundation',
+    subtopic: 'Role of Algorithms in Computing',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'In low-level systems, why does accessing array element arr[i] take strictly O(1) constant time regardless of array size?',
+    prompt: 'Which of the following is a mandatory characteristic of any valid algorithm?',
     options: [
-      'The CPU computes the exact memory address in one operation via base_address + (i * element_size)',
-      'The operating system searches for index i using an internal binary search tree',
-      'The CPU loads all previous elements (0 to i-1) in parallel before returning arr[i]',
-      'Arrays are dynamically linked in RAM via hardware pointer registers'
+      'It must terminate after a finite number of steps for any valid input',
+      'It must be written in an object-oriented programming language',
+      'It must run in linear O(n) time complexity',
+      'It must use at most 1 MB of memory'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Think about how RAM memory cells are physically addressed.',
-      'Remember that array elements are laid out back-to-back in a contiguous block.',
-      'Pointer arithmetic allows direct index multiplication: Base + i * Size.'
+      'Think about the formal criteria for an algorithm vs an infinite loop.',
+      'Finiteness is a fundamental requirement.'
     ],
-    explanation: 'Arrays allocate contiguous memory blocks. Element arr[i] resides at base_address + i * sizeof(type). A single addition and multiplication allows the CPU memory controller to jump directly to the target byte in O(1) time.',
-    learningObjective: 'Understand contiguous memory allocation and why random indexing is O(1).',
-    commonMistake: 'Confusing array index arithmetic with linked list sequential pointer traversal.',
-    tags: ['arrays', 'memory', 'complexity', 'foundations']
+    explanation: 'By formal definition, an algorithm must be well-defined, unambiguous, produce an output, and terminate after a finite number of steps for any valid input.',
+    tags: ['algorithm', 'definition', 'finiteness']
   },
   {
-    id: 'c-2-functions',
+    id: 'q-2-correctness',
     squareId: 2,
-    title: 'Call Stack & Stack Frames',
-    topic: 'Functions',
-    subtopic: 'Activation Records & Stack Memory',
+    co: 'CO1',
+    title: 'Total vs Partial Correctness',
+    topic: 'Mathematical Foundation',
+    subtopic: 'Correctness & Proofs',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'When function A() calls function B(), how does the runtime manage local variables and execution resumption?',
+    prompt: 'What is the key difference between partial correctness and total correctness of an algorithm?',
     options: [
-      'It pushes a new activation record (stack frame) for B() onto the call stack and restores A() upon return',
-      'It overwrites A()\'s variables with B()\'s variables in global heap memory',
-      'It spawns a background operating system thread for every function call',
-      'It converts both functions into static machine arrays before execution'
+      'Partial correctness does not require the algorithm to terminate; total correctness requires termination and correct output',
+      'Partial correctness applies to recursive functions; total correctness applies only to iterative loops',
+      'Partial correctness means the code passes half the test cases in the lab',
+      'Partial correctness applies to randomized algorithms only'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Think about LIFO (Last-In, First-Out) memory structures.',
-      'When B() finishes, which function should resume execution?',
-      'The call stack preserves return addresses and local variable scopes.'
+      'Consider what happens if an algorithm enters an infinite loop while computing.',
+      'Total correctness = Partial correctness + Termination.'
     ],
-    explanation: 'Function invocations use the runtime call stack. Calling B() pushes its frame containing parameters, local variables, and return address. When B() returns, its frame is popped, restoring A()\'s execution context.',
-    learningObjective: 'Master call stack mechanics, stack frames, and local scope isolation.',
-    commonMistake: 'Thinking local function variables persist globally across multiple calls.',
-    tags: ['functions', 'call-stack', 'memory']
+    explanation: 'An algorithm is partially correct if it produces the correct output whenever it halts. It is totally correct if it is partially correct AND guaranteed to terminate.',
+    tags: ['correctness', 'termination', 'proofs']
   },
   {
-    id: 'c-3-loops',
+    id: 'q-3-tradeoff',
     squareId: 3,
-    title: 'Loop Termination Invariants',
-    topic: 'Loops',
-    subtopic: 'Iteration Bounds & Guard Conditions',
-    skillCategory: 'debugging',
-    difficulty: 'easy',
-    type: 'find_bug',
-    prompt: 'Analyze this loop intended to process elements from N-1 down to 0:\n\nfor (unsigned int i = n - 1; i >= 0; i--) {\n  process(arr[i]);\n}\n\nWhy does this code cause a fatal bug in languages like C/C++?',
-    options: [
-      'An unsigned int can never be negative; when i is 0, i-- underflows to 4,294,967,295, creating an infinite loop',
-      'The loop condition i >= 0 fails to process the element at index 0',
-      'Unsigned integers cannot be used as array indices',
-      'The variable n is decremented automatically during each iteration'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Notice the data type of the loop variable: unsigned int.',
-      'What happens when an unsigned 0 is decremented by 1?',
-      'Unsigned numbers wrap around to their maximum value (2^32 - 1).'
-    ],
-    explanation: 'Unsigned integers are strictly non-negative (>= 0 is always true!). When i = 0, i-- underflows to 2^32 - 1, causing an out-of-bounds segfault or infinite loop. Loop counters with descending bounds should use signed types or while (i > 0).',
-    learningObjective: 'Identify unsigned type underflow traps in descending loops.',
-    commonMistake: 'Using unsigned integers for countdown loops that terminate at zero.',
-    tags: ['loops', 'debugging', 'underflow']
-  },
-  {
-    id: 'c-4-conditionals',
-    squareId: 4,
-    title: 'Short-Circuit Evaluation Defense',
-    topic: 'Conditionals',
-    subtopic: 'Boolean Short-Circuiting & Null Guards',
-    skillCategory: 'implementation',
-    difficulty: 'easy',
-    type: 'conceptual_mcq',
-    prompt: 'In expressions like if (ptr != null && ptr.val == target), why is the order of conditions critical to preventing runtime crashes?',
-    options: [
-      'Logical AND (&&) short-circuits: if ptr != null is false, the right operand is never evaluated, guarding against null pointer dereference',
-      'Logical AND evaluates right-to-left in modern compilers',
-      'The compiler executes both sides in separate hardware registers concurrently',
-      'The equality check (==) has higher operator precedence than logical AND'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'What happens if ptr is null and you attempt to access ptr.val?',
-      'Short-circuit evaluation skips evaluating subsequent operands once the outcome is decided.',
-      'Left-hand guards protect right-hand property dereferences.'
-    ],
-    explanation: 'Short-circuit evaluation guarantees that if the left operand of && is false, evaluation halts immediately. Placing the null check first guarantees ptr.val is never evaluated when ptr is null, eliminating null-pointer exceptions.',
-    learningObjective: 'Use boolean short-circuit evaluation for defensive null guarding.',
-    commonMistake: 'Placing the property access before the null check (e.g. ptr.val == 5 && ptr != null).',
-    tags: ['conditionals', 'null-safety', 'short-circuit']
-  },
-  {
-    id: 'c-5-strings',
-    squareId: 5,
-    title: 'String Immutability & StringBuilder',
-    topic: 'Strings',
-    subtopic: 'Heap Allocation & Quadratic Concatenation',
-    skillCategory: 'optimization',
-    difficulty: 'easy',
-    type: 'time_complexity',
-    prompt: 'In languages with immutable strings (Java, JavaScript, Python), what is the time complexity of repeatedly concatenating a character inside an N-iteration loop: s += char?',
-    options: [
-      'O(N²) because each concatenation allocates a new string copy of growing length 1 + 2 + ... + N',
-      'O(N) because characters are appended directly to the end of the existing memory buffer in O(1)',
-      'O(1) because modern runtimes optimize strings into circular queues automatically',
-      'O(N log N) because strings are re-balanced using rope trees on every append'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Remember that immutable means the existing string memory can never be altered.',
-      'Appending creates a brand new string copy each time: 1 + 2 + 3 + ... + N bytes.',
-      'The sum of 1 to N is N(N+1)/2, which is O(N²).'
-    ],
-    explanation: 'Immutable strings cannot be modified in place. Concatenating a character copies the entire existing string into a newly allocated buffer. Over N iterations, copying 1 + 2 + ... + N bytes takes O(N²) time. Use StringBuilder or array joins for linear O(N) performance.',
-    learningObjective: 'Recognize hidden O(N²) quadratic overhead in string concatenation.',
-    commonMistake: 'Assuming string += char operates in constant O(1) amortized time.',
-    tags: ['strings', 'immutability', 'optimization']
-  },
-  {
-    id: 'c-6-io',
-    squareId: 6,
-    title: 'Fast I/O & Buffer Streaming',
-    topic: 'I/O',
-    subtopic: 'Stream Buffering & System Call Overhead',
+    co: 'CO1',
+    title: 'Time-Space Trade-off in Computing',
+    topic: 'Mathematical Foundation',
+    subtopic: 'Computational Resource Models',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'Why does reading 100,000 integers using unbuffered I/O (like std::cin without sync_with_stdio(false) or single-byte reads) frequently cause Time Limit Exceeded (TLE)?',
+    prompt: 'In competitive programming and software design, what does the classic "time-space trade-off" refer to?',
     options: [
-      'Every unbuffered read triggers an expensive operating system kernel context switch; buffering aggregates thousands of bytes per system call',
-      'Input streams must encrypt each byte before transferring it to the user space buffer',
-      'Unbuffered streams execute a linear search across the entire input file for every number',
-      'Hard disks can only read numbers smaller than 256 without hardware decompression'
+      'Using extra auxiliary memory (space) to store precomputed data can reduce execution time',
+      'Memory access is always faster than arithmetic register operations',
+      'An algorithm that uses less memory always runs faster on all hardware',
+      'Disk space must equal RAM space to prevent CPU throttling'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Think about the cost of switching between user mode and OS kernel mode.',
-      'System calls are orders of magnitude slower than CPU memory operations.',
-      'A buffer reads large chunks of data once and serves subsequent requests from memory.'
+      'Think about lookup tables or frequency arrays.',
+      'Extra storage often avoids recomputing values.'
     ],
-    explanation: 'System calls require kernel context switches, which take thousands of CPU cycles. Unbuffered reads call the kernel for individual bytes. Buffered I/O reads 4KB-64KB chunks into memory at once, reducing system calls by orders of magnitude.',
-    learningObjective: 'Understand how I/O buffering minimizes kernel context switch penalties.',
-    commonMistake: 'Blaming algorithm time complexity when slow I/O is the true bottleneck.',
-    tags: ['io', 'buffering', 'performance']
+    explanation: 'The time-space trade-off describes the relationship where an algorithm can achieve faster execution time by storing precomputed values or tables in extra memory.',
+    tags: ['tradeoff', 'memory', 'time']
   },
   {
-    id: 'c-7-types',
-    squareId: 7,
-    title: 'Integer Overflow & Bit Limits',
-    topic: 'Data Types',
-    subtopic: '32-Bit Signed Integer Boundaries',
-    skillCategory: 'debugging',
+    id: 'q-4-instruction-count',
+    squareId: 4,
+    co: 'CO1',
+    title: 'Instruction Counting in Loops',
+    topic: 'Analysis Framework',
+    subtopic: 'Instruction Counting Model',
+    skillCategory: 'numerical',
     difficulty: 'easy',
     type: 'output_prediction',
-    codeSnippet: `let low = 2_000_000_000;\nlet high = 2_000_000_000;\n// In 32-bit signed integers (max: 2,147,483,647):\nlet mid = (low + high) / 2;`,
-    prompt: 'In languages using 32-bit signed arithmetic (like C++/Java), why does let mid = (low + high) / 2 produce a negative number in binary search?',
-    options: [
-      'low + high equals 4,000,000,000, exceeding 2³¹ - 1 and wrapping to a negative integer before division',
-      'Division by 2 inverts the sign bit of integers greater than 1 billion',
-      'Binary search cannot calculate midpoints using addition',
-      'The CPU switches to floating point notation and truncates the integer bits'
-    ],
+    prompt: 'Consider this C snippet:\n\nint count = 0;\nfor (int i = 0; i < n; i++) {\n    count += 2;\n}\n\nHow many times does the addition `count += 2` execute?',
+    options: ['n times', 'n + 1 times', '2n times', 'n - 1 times'],
     correctOptionIndex: 0,
     hints: [
-      'Maximum value of a 32-bit signed integer is 2,147,483,647.',
-      'What is 2,000,000,000 + 2,000,000,000?',
-      'Use mid = low + (high - low) / 2 to avoid overflow.'
+      'The loop counter i starts at 0 and increments up to n - 1.',
+      'Counting from 0 to n - 1 gives exactly n iterations.'
     ],
-    explanation: 'In 32-bit signed integers, max value is 2³¹ - 1 (≈ 2.14B). Summing 2B + 2B = 4B overflows the sign bit, wrapping to negative values. The safe idiom is mid = low + (high - low) / 2, which guarantees no sum exceeds high.',
-    learningObjective: 'Prevent arithmetic overflow bugs in midpoint and sum calculations.',
-    commonMistake: 'Writing (left + right) / 2 instead of left + (right - left) / 2.',
-    tags: ['data-types', 'overflow', 'binary-search']
+    explanation: 'The loop executes for i = 0, 1, 2, ..., n-1, which is exactly n iterations. Therefore, the body `count += 2` executes n times.',
+    tags: ['loops', 'counting', 'instructions']
   },
   {
-    id: 'c-8-operators',
-    squareId: 8,
-    title: 'Bitwise vs Logical Operators',
-    topic: 'Operators',
-    subtopic: 'Bitwise Masks & Logical Evaluation',
+    id: 'q-5-case-analysis',
+    squareId: 5,
+    co: 'CO1',
+    title: 'Worst vs Average Case Analysis',
+    topic: 'Analysis Framework',
+    subtopic: 'Input Distribution Analysis',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'What is the crucial difference between the bitwise AND operator (&) and the logical AND operator (&&)?',
+    prompt: 'Why do computer scientists prioritize worst-case time complexity over average-case in safety-critical systems?',
     options: [
-      '& computes bit-by-bit conjunction across all binary digits without short-circuiting; && evaluates boolean truth values and short-circuits',
-      '& is only used for pointers while && is used for numeric addition',
-      '&& reverses the order of bits while & shifts bits left by 1',
-      'There is no difference; modern compilers treat them as interchangeable aliases'
+      'Worst-case analysis provides an absolute upper bound guarantee that runtime will never exceed for any input',
+      'Worst-case complexity is always easier to compute using simple integrals',
+      'Average-case complexity is only defined for floating-point calculations',
+      'Worst-case analysis assumes all array elements are negative numbers'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Consider: 5 & 3 vs 5 && 3.',
-      '5 is 101 in binary, 3 is 011 in binary: 101 & 011 = 001 (1).',
-      '&& checks whether expressions are truthy and aborts early if false.'
+      'Consider what happens if an autonomous vehicle takes too long on an unexpected input.',
+      'A guarantee holds for all possible inputs.'
     ],
-    explanation: 'Bitwise & operates on individual bits of integer operands (e.g. 6 & 3 = 110 & 011 = 010 = 2) and always evaluates both sides. Logical && tests boolean conditions, returns true/false, and short-circuits if the left operand is false.',
-    learningObjective: 'Distinguish bitwise manipulation from logical boolean control flow.',
-    commonMistake: 'Accidentally typing & instead of && in conditional if statements.',
-    tags: ['operators', 'bitwise', 'boolean']
+    explanation: 'Worst-case analysis provides an upper bound guarantee for any input of size n, ensuring the system will not freeze or crash even under worst adversarial conditions.',
+    tags: ['worst_case', 'guarantee', 'analysis']
   },
   {
-    id: 'c-9-algorithms',
-    squareId: 9,
-    title: 'Asymptotic Growth Orders',
-    topic: 'Algorithms',
-    subtopic: 'Big-O Hierarchy & Scaling',
+    id: 'q-6-input-size',
+    squareId: 6,
+    co: 'CO1',
+    title: 'Input Size Dominance',
+    topic: 'Analysis Framework',
+    subtopic: 'Characterizing Input Size n',
     skillCategory: 'complexity',
-    difficulty: 'easy',
-    type: 'conceptual_mcq',
-    prompt: 'Which of the following correctly orders standard algorithmic complexities from fastest growing (slowest execution) to slowest growing (fastest execution) for large N?',
+    difficulty: 'medium',
+    type: 'time_complexity',
+    prompt: 'An algorithm has an exact operation count of T(n) = 3n^2 + 1000n + 50000. For very large n (e.g., n = 1,000,000), which term contributes the vast majority of the total running time?',
     options: [
-      'O(N!) > O(2ⁿ) > O(N²) > O(N log N) > O(N) > O(log N) > O(1)',
-      'O(1) > O(N) > O(N log N) > O(N²) > O(2ⁿ) > O(N!)',
-      'O(N²) > O(N log N) > O(N!) > O(2ⁿ) > O(log N) > O(1)',
-      'O(log N) > O(N) > O(N²) > O(N log N) > O(2ⁿ) > O(N!)'
+      'The 3n^2 term, because quadratic growth overwhelms linear and constant terms as n approaches infinity',
+      'The 50000 constant term, because 50000 is the largest coefficient',
+      'The 1000n term, because 1000 is larger than 3',
+      'All three terms contribute equally regardless of n'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Think about an input size of N = 100: what function explodes fastest?',
-      'Factorial N! grows faster than any exponential 2ⁿ.',
-      'Logarithmic O(log N) and constant O(1) are the most scalable.'
+      'Substitute n = 1,000,000 into 3n^2 vs 1000n.',
+      '3 * (10^6)^2 = 3 * 10^12 vs 1000 * 10^6 = 10^9.'
     ],
-    explanation: 'For large inputs, O(N!) (factorial) is the slowest feasible algorithm, followed by exponential O(2ⁿ), polynomial O(N²), linearithmic O(N log N), linear O(N), logarithmic O(log N), and constant O(1).',
-    learningObjective: 'Master the Big-O asymptotic complexity hierarchy.',
-    commonMistake: 'Thinking O(N log N) is slower than O(N²).',
-    tags: ['complexity', 'big-o', 'foundations']
+    explanation: 'For n = 10^6, 3n^2 is 3 * 10^12 operations (99.97% of the total), while 1000n is only 10^9 operations. The highest power term dominates asymptotic performance.',
+    tags: ['dominance', 'polynomial', 'growth']
   },
   {
-    id: 'c-10-opt',
-    squareId: 10,
-    title: 'Two-Sum: O(N²) Brute Force to O(N) Hash Map',
-    topic: 'Arrays',
-    subtopic: 'Optimization Ladder: Space-Time Tradeoff',
-    skillCategory: 'optimization',
-    difficulty: 'easy',
-    type: 'optimize_algorithm',
-    prompt: 'Given an array arr of size N, we must find two numbers that sum to Target T. Brute force uses nested loops in O(N²) time. How do we optimize this to O(N)?',
+    id: 'q-7-loop-invariant',
+    squareId: 7,
+    co: 'CO1',
+    title: 'Three Steps of Loop Invariants',
+    topic: 'Analysis Framework',
+    subtopic: 'Initialization, Maintenance & Termination',
+    skillCategory: 'conceptual',
+    difficulty: 'medium',
+    type: 'conceptual_mcq',
+    prompt: 'Proving algorithm correctness using a loop invariant requires establishing three properties. What are they?',
     options: [
-      'Store each visited element in a Hash Map; for each element x, check if complement (T - x) exists in O(1) lookup time',
-      'Run binary search on the unsorted array for each element in O(N log N)',
-      'Recursively split the array into halves until single elements remain in O(log N)',
-      'Compute the sum of all elements and divide by 2 in O(1)'
+      'Initialization, Maintenance, and Termination',
+      'Input, Processing, and Output',
+      'Base Case, Recursive Step, and Memory Deallocation',
+      'Compilation, Execution, and Garbage Collection'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Instead of looking ahead through all remaining elements, look back at what you have already seen.',
-      'If you need complement T - x, what data structure provides O(1) membership checks?',
-      'A hash map trades O(N) auxiliary space to slash time from quadratic O(N²) to linear O(N).'
+      'Think about mathematical induction.',
+      'Check before the loop, during the loop, and when the loop terminates.'
     ],
-    explanation: 'By storing each number and its index in a hash map as we iterate, we can query whether target - arr[i] has already been seen in average O(1) time. This reduces the total runtime from O(N²) to O(N) with O(N) extra space.',
-    optimizationComparison: {
-      bruteForce: {
-        approachTitle: 'Brute-Force Nested Pair Loops',
-        timeComplexity: 'O(N²)',
-        spaceComplexity: 'O(1)',
-        codeSnippet: `for (let i = 0; i < n; i++) {\n  for (let j = i + 1; j < n; j++) {\n    if (arr[i] + arr[j] === target) return [i, j];\n  }\n}`,
-        explanation: 'Inspects all N(N-1)/2 pairs exhaustively.',
-        isOptimal: false
-      },
-      optimal: {
-        approachTitle: 'Hash Map Complement Lookup',
-        timeComplexity: 'O(N)',
-        spaceComplexity: 'O(N)',
-        codeSnippet: `const map = new Map();\nfor (let i = 0; i < n; i++) {\n  const diff = target - arr[i];\n  if (map.has(diff)) return [map.get(diff), i];\n  map.set(arr[i], i);\n}`,
-        explanation: 'Trading O(N) memory gives instantaneous O(1) complement checks.',
-        isOptimal: true
-      },
-      whyOptimalWorks: 'A single pass records elements in a hash map, trading O(N) auxiliary space to avoid nested quadratic scanning.',
-      tradeOffSummary: 'Trades O(N) memory for O(N) linear time, replacing nested O(N²) scanning.'
-    },
-    learningObjective: 'Apply hash map complement lookups to optimize O(N²) search to O(N).',
-    commonMistake: 'Sorting the array first when original indices must be preserved.',
-    tags: ['arrays', 'hash-map', 'optimization', 'ladder']
+    explanation: 'A loop invariant proof requires: 1) Initialization (true before first iteration), 2) Maintenance (if true before an iteration, remains true before next), and 3) Termination (gives useful correctness property when loop halts).',
+    tags: ['loop_invariant', 'correctness', 'induction']
+  },
+  {
+    id: 'q-8-nested-loops',
+    squareId: 8,
+    co: 'CO1',
+    title: 'Nested Loop Tracing & Summation',
+    topic: 'Analysis Framework',
+    subtopic: 'Nested Loop Complexity',
+    skillCategory: 'tracing',
+    difficulty: 'medium',
+    type: 'code_trace',
+    prompt: 'Trace the following nested loop:\n\nint counter = 0;\nfor (int i = 1; i <= 4; i++) {\n    for (int j = 1; j <= i; j++) {\n        counter++;\n    }\n}\n\nWhat is the final value of counter?',
+    options: ['10', '16', '8', '12'],
+    correctOptionIndex: 0,
+    hints: [
+      'When i = 1: j runs 1 time.',
+      'When i = 2: j runs 2 times.',
+      'Sum the values: 1 + 2 + 3 + 4.'
+    ],
+    explanation: 'The inner loop runs i times for each i from 1 to 4. Total executions = 1 + 2 + 3 + 4 = 10. For general n, this is n(n+1)/2 = O(n^2).',
+    tags: ['nested_loops', 'arithmetic_series', 'tracing']
+  },
+  {
+    id: 'q-9-experimental-vs-theory',
+    squareId: 9,
+    co: 'CO1',
+    title: 'Benchmarking vs Asymptotics',
+    topic: 'Analysis Framework',
+    subtopic: 'Experimental vs Theoretical Analysis',
+    skillCategory: 'conceptual',
+    difficulty: 'medium',
+    type: 'compare_approaches',
+    prompt: 'A student benchmarks an O(n^2) algorithm and an O(n log n) algorithm on their laptop for n = 50. The O(n^2) algorithm runs in 0.02ms while O(n log n) takes 0.05ms. Why is this possible?',
+    options: [
+      'For very small n, constant factors and lower-order setup overhead can make an O(n^2) algorithm faster than O(n log n)',
+      'The theoretical complexity formulas are fundamentally wrong for sorting',
+      'O(n^2) is asymptotically faster than O(n log n)',
+      'The compiler automatically converts O(n^2) to O(1) in release mode'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Remember that Big-O hides constant factors c.',
+      'For small n, c1*n^2 may be smaller than c2*n*log(n) if c2 is large.'
+    ],
+    explanation: 'Asymptotic notation describes growth as n approaches infinity. For small inputs (n = 50), an algorithm with high constant overhead (like recursive call allocations in merge sort) may take more wall-clock time than a simple quadratic loop.',
+    tags: ['constants', 'asymptotic', 'benchmarking']
+  },
+  {
+    id: 'q-10-checkpoint-analysis',
+    squareId: 10,
+    co: 'CO1',
+    title: 'Checkpoint 1: Loop Complexity Dry Run',
+    topic: 'Analysis Framework',
+    subtopic: 'Unit 1 Milestone Evaluation',
+    skillCategory: 'dry_run',
+    difficulty: 'medium',
+    type: 'dry_run_trace',
+    prompt: 'Dry-run the following function and determine its exact Big-O time complexity:\n\nvoid solve(int n) {\n    for (int i = 1; i < n; i *= 2) {\n        for (int j = 0; j < n; j++) {\n            printf("*");\n        }\n    }\n}',
+    options: ['O(n log n)', 'O(n^2)', 'O(n)', 'O(log n)'],
+    correctOptionIndex: 0,
+    hints: [
+      'Look at the outer loop: i doubles on every iteration (i = 1, 2, 4, 8, ...). How many times does it run?',
+      'Look at the inner loop: j runs from 0 to n - 1 (n times).'
+    ],
+    explanation: 'The outer loop variable i doubles each step (1, 2, 4, ..., n), executing log2(n) times. The inner loop executes n times for each outer iteration. Total operations = n * log2(n) = O(n log n).',
+    tags: ['checkpoint', 'dry_run', 'log_loop']
+  },
+  {
+    id: 'q-extra-1',
+    squareId: 4,
+    co: 'CO1',
+    title: 'Step Counting with Step Size 2',
+    topic: 'Analysis Framework',
+    subtopic: 'Loop Stride Analysis',
+    skillCategory: 'numerical',
+    difficulty: 'easy',
+    type: 'output_prediction',
+    prompt: 'How many times does the body of this loop execute?\n\nfor (int i = 0; i < 20; i += 2) {\n    printf("%d", i);\n}',
+    options: ['10 times', '20 times', '9 times', '11 times'],
+    correctOptionIndex: 0,
+    hints: [
+      'i takes values 0, 2, 4, 6, 8, 10, 12, 14, 16, 18.',
+      'Count the number of even numbers strictly less than 20.'
+    ],
+    explanation: 'i increments by 2 each step, taking values 0, 2, 4, 6, 8, 10, 12, 14, 16, 18. This gives exactly 20 / 2 = 10 iterations.',
+    tags: ['loop_stride', 'counting']
+  },
+  {
+    id: 'q-extra-2',
+    squareId: 8,
+    co: 'CO1',
+    title: 'Independent vs Dependent Nested Loops',
+    topic: 'Analysis Framework',
+    subtopic: 'Nested Loop Variations',
+    skillCategory: 'complexity',
+    difficulty: 'medium',
+    type: 'time_complexity',
+    prompt: 'What is the time complexity of the following code?\n\nfor (int i = 0; i < n; i++) {\n    for (int j = 0; j < 100; j++) {\n        doConstantWork();\n    }\n}',
+    options: ['O(n)', 'O(n^2)', 'O(100n^2)', 'O(n log n)'],
+    correctOptionIndex: 0,
+    hints: [
+      'Does the inner loop bound depend on n?',
+      'The inner loop always runs a fixed 100 times regardless of n.'
+    ],
+    explanation: 'The inner loop runs exactly 100 times (a constant). The outer loop runs n times. Total work = 100 * n = O(n). Constants are dropped in asymptotic notation.',
+    tags: ['constants', 'independent_loops']
   }
 ];

@@ -25,11 +25,11 @@ describe('Board Viewport & 100-Level Accessibility Tests', () => {
 
     expect(tile1).toBeDefined();
     expect(tile1?.id).toBe(1);
-    expect(tile1?.stage).toBe('foundations');
+    expect(tile1?.stage).toBe('co1_math_analysis');
 
     expect(tile100).toBeDefined();
     expect(tile100?.id).toBe(100);
-    expect(tile100?.stage).toBe('mastery');
+    expect(tile100?.stage).toBe('co4_graphs_algorithms');
   });
 
   it('verifies serpentine 10x10 grid coordinates for all 100 levels without overlapping coordinates', () => {

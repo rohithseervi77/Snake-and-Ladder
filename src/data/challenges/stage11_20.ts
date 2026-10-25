@@ -2,323 +2,300 @@ import { Challenge } from '../../types/challenge';
 
 export const STAGE_11_20_CHALLENGES: Challenge[] = [
   {
-    id: 'c-11-two-pointers',
+    id: 'q-11-big-o-def',
     squareId: 11,
-    title: 'Two Pointers: Target Sum Invariant',
-    topic: 'Arrays',
-    subtopic: 'Two Pointers Technique',
+    co: 'CO1',
+    title: 'Formal Definition of Big-O',
+    topic: 'Asymptotic Notations',
+    subtopic: 'Formal Definition of O(g(n))',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'In a sorted array `nums`, why does the two-pointer approach (starting at indices `0` and `n-1`) guarantee finding two numbers that sum to target in O(n) without missing any candidates?',
+    prompt: 'Which mathematical statement accurately defines f(n) = O(g(n))?',
     options: [
-      'If sum < target, increasing left pointer is the only way to increase sum; if sum > target, decreasing right is the only way to decrease sum',
-      'The array is partitioned around the median on each comparison like quickselect',
-      'Both pointers jump exponentially by powers of two towards each other',
-      'It tests all n * (n - 1) / 2 combinations simultaneously via SIMD parallelism'
+      'There exist positive constants c and n0 such that 0 <= f(n) <= c * g(n) for all n >= n0',
+      'f(n) >= c * g(n) for all n >= 0',
+      'f(n) equals g(n) for all n >= n0',
+      'The limit of f(n)/g(n) as n -> infinity must equal 0'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Think about monotonic properties of sorted arrays.',
-      'If nums[L] + nums[R] < target, can any index with R produce the target with nums[L]?',
-      'Because all elements to the left of R are smaller, nums[L] cannot pair with anything else; hence L must increment.'
+      'Big-O represents an asymptotic upper bound.',
+      'Look for the inequality with f(n) bounded from above by c * g(n).'
     ],
-    explanation: 'Monotonicity invariant: Because the array is sorted, if nums[L] + nums[R] < target, pairing nums[L] with any element smaller than nums[R] would yield an even smaller sum. Thus nums[L] can never participate in a valid pair, allowing us to safely discard L in O(1).',
-    learningObjective: 'Understand the monotonicity invariant behind the two-pointer technique on sorted arrays.',
-    commonMistake: 'Applying the two-pointer opposite-ends technique to an unsorted array without sorting first.',
-    tags: ['arrays', 'two-pointers', 'invariants']
+    explanation: 'By formal definition, f(n) = O(g(n)) iff there exist positive constants c and n0 such that 0 <= f(n) <= c*g(n) for all n >= n0.',
+    tags: ['big_o', 'definition', 'upper_bound']
   },
   {
-    id: 'c-12-sliding-window',
+    id: 'q-12-big-omega-def',
     squareId: 12,
-    title: 'Sliding Window: Max Sum of Size K',
-    topic: 'Arrays',
-    subtopic: 'Fixed-Size Sliding Window',
-    skillCategory: 'complexity',
-    difficulty: 'easy',
-    type: 'complexity_choice',
-    prompt: 'Given an array of size N, what is the optimal time complexity to find the maximum sum of any contiguous subarray of size K?',
+    co: 'CO1',
+    title: 'Big-Omega Witness Pair',
+    topic: 'Asymptotic Notations',
+    subtopic: 'Formal Definition of Omega(g(n))',
+    skillCategory: 'numerical',
+    difficulty: 'medium',
+    type: 'conceptual_mcq',
+    prompt: 'For f(n) = 3n^2 + 5, which witness pair (c, n0) proves that f(n) = Omega(n^2)?',
     options: [
-      'O(N) time and O(1) auxiliary space by subtracting the outgoing element and adding the incoming element',
-      'O(N * K) time by recalculating the sum of all K elements at each step',
-      'O(N log N) time by sorting the subarrays in a max-heap',
-      'O(K) time because we only inspect K total elements'
+      'c = 3 and n0 = 1, because 3n^2 + 5 >= 3 * n^2 for all n >= 1',
+      'c = 10 and n0 = 1',
+      'c = 0 and n0 = 100',
+      'c = -1 and n0 = 0'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Avoid recomputing the entire sum of K elements from scratch at each step.',
-      'When window moves from [i, i+k-1] to [i+1, i+k], what changes in the sum?',
-      'New Sum = Old Sum - arr[i] + arr[i+k]. That is an O(1) update per window.'
+      'We need f(n) >= c * n^2 for all n >= n0.',
+      'Since 3n^2 + 5 >= 3n^2 for all n >= 1, c = 3 works directly.'
     ],
-    explanation: 'With a sliding window, the next window sum is obtained in O(1) time by adding the incoming element arr[i] and subtracting the outgoing element arr[i-k]. Doing this across N elements gives O(N) total time.',
-    learningObjective: 'Identify when overlapping computations can be updated incrementally in O(1).',
-    commonMistake: 'Recalculating the inner sum inside a nested loop, degrading complexity to O(N * K).',
-    tags: ['arrays', 'sliding-window', 'optimization']
+    explanation: 'For all n >= 1, 3n^2 + 5 is strictly greater than or equal to 3n^2. Thus, c = 3 and n0 = 1 satisfy the Big-Omega definition f(n) >= c*g(n).',
+    tags: ['big_omega', 'witness', 'lower_bound']
   },
   {
-    id: 'c-13-prefix-sum',
+    id: 'q-13-big-theta-def',
     squareId: 13,
-    title: 'Range Sum Query via Prefix Sum',
-    topic: 'Arrays',
-    subtopic: 'Prefix Sum Arrays',
-    skillCategory: 'dry_run',
+    co: 'CO1',
+    title: 'Big-Theta Sandwiched Bound',
+    topic: 'Asymptotic Notations',
+    subtopic: 'Asymptotically Tight Bounds',
+    skillCategory: 'conceptual',
     difficulty: 'easy',
-    type: 'code_trace',
-    codeSnippet: `const nums = [3, 1, 4, 1, 5, 9];
-const P = [0];
-for (let x of nums) P.push(P[P.length - 1] + x);
-// Query sum of range [2, 4] (0-indexed: nums[2]+nums[3]+nums[4])
-const ans = P[5] - P[2];`,
-    prompt: 'What value does `ans` hold after executing the prefix sum range query?',
+    type: 'conceptual_mcq',
+    prompt: 'If f(n) = O(n^2) and f(n) = Omega(n^2), what can we conclusively state about f(n)?',
     options: [
-      '10',
-      '14',
-      '6',
-      '9'
+      'f(n) = Theta(n^2), meaning it is asymptotically tightly bound by n^2',
+      'f(n) = o(n^2)',
+      'f(n) = O(n log n)',
+      'f(n) must equal exactly n^2 for all values of n'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Compute the prefix array P: P[0]=0, P[1]=3, P[2]=4, P[3]=8, P[4]=9, P[5]=14, P[6]=23.',
-      'Check the elements at indices 2, 3, and 4: 4 + 1 + 5.',
-      'P[5] - P[2] = 14 - 4 = 10.'
+      'When an upper bound and a lower bound match, what is the resulting notation?',
+      'Theta represents the intersection of O and Omega.'
     ],
-    explanation: 'Sum of nums[L...R] is given by P[R+1] - P[L]. Here L=2, R=4: P[5] is 3+1+4+1+5=14, and P[2] is 3+1=4. Thus 14 - 4 = 10, which matches nums[2] + nums[3] + nums[4] = 4 + 1 + 5 = 10.',
-    learningObjective: 'Master 1-indexed prefix sum array range queries in O(1) time.',
-    commonMistake: 'Off-by-one errors when subtracting P[L] instead of P[L] or confusing 0-indexed bounds.',
-    tags: ['arrays', 'prefix-sum', 'range-queries']
+    explanation: 'By the sandwich theorem of asymptotic notations, f(n) = Theta(g(n)) if and only if f(n) = O(g(n)) and f(n) = Omega(g(n)).',
+    tags: ['big_theta', 'tight_bound']
   },
   {
-    id: 'c-14-kadane',
+    id: 'q-14-little-o-omega',
     squareId: 14,
-    title: 'Kadane\'s Algorithm Invariant',
-    topic: 'Arrays',
-    subtopic: 'Dynamic Programming / Greedy on Arrays',
+    co: 'CO1',
+    title: 'Strict Asymptotic Bounds: Little-o vs Big-O',
+    topic: 'Asymptotic Notations',
+    subtopic: 'Strict Asymptotic Bounds',
     skillCategory: 'conceptual',
     difficulty: 'medium',
-    type: 'conceptual_mcq',
-    prompt: 'In Kadane\'s algorithm for the Maximum Subarray problem, what is the core state transition for `current_max` at index `i`?',
+    type: 'compare_approaches',
+    prompt: 'Which of the following statements is mathematically TRUE regarding Little-o notation?',
     options: [
-      'current_max = Math.max(nums[i], current_max + nums[i])',
-      'current_max = Math.max(0, current_max) + Math.abs(nums[i])',
-      'current_max = current_max * nums[i]',
-      'current_max = Math.min(nums[i], current_max - nums[i])'
+      '2n = o(n^2) is true, but 2n^2 = o(n^2) is false',
+      '2n^2 = o(n^2) is true because the constant 2 can be dropped',
+      'Little-o allows the functions to be asymptotically equal up to a constant',
+      'If f(n) = O(g(n)), then f(n) is always o(g(n))'
     ],
     correctOptionIndex: 0,
     hints: [
-      'At each index, do you extend the previous subarray or start a new one?',
-      'If current_max before nums[i] is negative, adding it makes things worse than starting fresh.',
-      'Math.max(nums[i], current_max + nums[i]) captures this exact decision.'
+      'Little-o requires lim(n->inf) [f(n)/g(n)] = 0.',
+      'lim 2n/n^2 = 0 (true), but lim 2n^2/n^2 = 2 != 0 (false).'
     ],
-    explanation: 'At index i, the maximum subarray ending at i either extends the previous subarray (current_max + nums[i]) or starts fresh at nums[i] if the prior sum was negative and detrimental. Hence current_max = max(nums[i], current_max + nums[i]).',
-    learningObjective: 'Understand Kadane\'s local optimal subarray choice in O(n) time and O(1) space.',
-    commonMistake: 'Resetting current_max to 0 without considering arrays that contain entirely negative numbers.',
-    tags: ['arrays', 'kadane', 'dynamic-programming']
+    explanation: 'Little-o is a strict upper bound: lim n->inf f(n)/g(n) must equal 0. 2n/n^2 -> 0, so 2n = o(n^2). However, 2n^2/n^2 -> 2 != 0, so 2n^2 = O(n^2) is true but 2n^2 = o(n^2) is false.',
+    tags: ['little_o', 'strict_bound']
   },
   {
-    id: 'c-15-dutch-flag',
+    id: 'q-15-dominance-rules',
     squareId: 15,
-    title: 'Dutch National Flag Partitioning',
-    topic: 'Arrays',
-    subtopic: 'Three-way Partitioning',
-    skillCategory: 'debugging',
+    co: 'CO1',
+    title: 'Ranking Asymptotic Growth Rates',
+    topic: 'Growth Rate of Functions',
+    subtopic: 'Hierarchy of Standard Growth Rates',
+    skillCategory: 'conceptual',
     difficulty: 'medium',
-    type: 'bug_hunt',
-    codeSnippet: `function sort012(arr) {
-  let low = 0, mid = 0, high = arr.length - 1;
-  while (mid <= high) {
-    if (arr[mid] === 0) {
-      [arr[low], arr[mid]] = [arr[mid], arr[low]];
-      low++; mid++;
-    } else if (arr[mid] === 1) {
-      mid++;
-    } else { // arr[mid] === 2
-      [arr[mid], arr[high]] = [arr[high], arr[mid]];
-      high--;
-      mid++; // BUG HERE?
-    }
-  }
-}`,
-    prompt: 'Why is incrementing `mid++` immediately after swapping with `high` a critical bug in 3-way partitioning?',
+    type: 'conceptual_mcq',
+    prompt: 'Which list correctly orders the standard growth rates from slowest growing to fastest growing?',
     options: [
-      'The element swapped from `high` has not been inspected yet; it could be a 0 or 2, so `mid` must not advance until evaluated',
-      'It causes `high` to become negative on small arrays',
-      'Array indices in JavaScript cannot be swapped using destructuring assignment',
-      'The algorithm requires allocating a secondary bucket array of size 3'
+      'O(1) < O(log n) < O(n) < O(n log n) < O(n^2) < O(2^n)',
+      'O(1) < O(n) < O(log n) < O(n^2) < O(n log n) < O(2^n)',
+      'O(log n) < O(1) < O(n) < O(n log n) < O(2^n) < O(n^2)',
+      'O(1) < O(log n) < O(n log n) < O(n) < O(n^2) < O(2^n)'
     ],
     correctOptionIndex: 0,
     hints: [
-      'When you swap arr[mid] with arr[low], you know arr[low] was previously 1 or 0 (since mid >= low).',
-      'What do you know about the element that was at arr[high] before the swap?',
-      'Nothing! It was unexamined. If you advance mid, you skip examining that element.'
+      'Constant O(1) is slowest, exponential O(2^n) is fastest.',
+      'Does n grow faster or slower than n log n?'
     ],
-    explanation: 'Elements above high are guaranteed to be 2. When arr[mid] === 2, we swap it with arr[high] and decrement high. But the element brought from high has not yet been processed; it could be 0, 1, or 2. Advancing mid would leave that value uninspected in the middle section.',
-    learningObjective: 'Master loop invariants in Dijkstra\'s Dutch National Flag 3-pointer algorithm.',
-    commonMistake: 'Advancing the inspection pointer mid after swapping with an uninspected element.',
-    tags: ['arrays', 'three-way-partition', 'invariants', 'debugging']
+    explanation: 'The standard asymptotic hierarchy is: Constant < Logarithmic < Linear < Linearithmic < Quadratic < Cubic < Exponential < Factorial.',
+    tags: ['dominance', 'ranking', 'growth_rates']
   },
   {
-    id: 'c-16-string-anagram',
+    id: 'q-16-log-linear',
     squareId: 16,
-    title: 'Valid Anagram Frequency Counting',
-    topic: 'Strings',
-    subtopic: 'Hash Maps & Character Arrays',
-    skillCategory: 'complexity',
-    difficulty: 'easy',
-    type: 'complexity_choice',
-    prompt: 'What is the optimal time and space complexity to determine if string s and string t (both lowercase English letters of length N) are anagrams?',
+    co: 'CO1',
+    title: 'Logarithm Base Invariance in Big-O',
+    topic: 'Growth Rate of Functions',
+    subtopic: 'Sublinear vs Linear Growth',
+    skillCategory: 'conceptual',
+    difficulty: 'medium',
+    type: 'conceptual_mcq',
+    prompt: 'Why do we typically write O(log n) without specifying the base of the logarithm in Big-O notation?',
     options: [
-      'O(N) time and O(1) space (fixed 26-element frequency array)',
-      'O(N log N) time and O(N) space via sorting',
-      'O(N^2) time and O(1) space via character-by-character search and delete',
-      'O(2^N) time via recursive permutation generation'
+      'Changing the log base simply multiplies by a constant factor: log_a(n) = log_b(n) / log_b(a), and Big-O ignores constant factors',
+      'All computers internally compute logarithms only in base e',
+      'Logarithms with base > 10 are undefined in computer science',
+      'Base 2 and Base 10 logarithms produce identical values for integers'
     ],
     correctOptionIndex: 0,
     hints: [
-      'How many distinct lowercase English alphabet characters exist?',
-      'Since alphabet size is constant (26), an array of 26 integers is O(1) auxiliary space.',
-      'One pass to increment counts for s and one pass to decrement for t takes O(N) time.'
+      'Recall the change-of-base formula from high school math.',
+      '1 / log_b(a) is just a fixed constant number.'
     ],
-    explanation: 'Using an array of size 26, we increment counts for characters in s and decrement for t. Since alphabet size is bounded (26 letters), the space complexity is O(26) = O(1), and we process both strings in a single O(N) pass.',
-    learningObjective: 'Leverage bounded alphabet sizes to achieve O(1) auxiliary space in string problems.',
-    commonMistake: 'Sorting strings (O(N log N)) when direct O(N) frequency counting is faster and cleaner.',
-    tags: ['strings', 'hash-map', 'complexity']
+    explanation: 'By the change of base formula, log_a(n) = log_b(n) / log_b(a). Since 1/log_b(a) is a constant, log_a(n) = Theta(log_b(n)) for any valid bases a, b > 1.',
+    tags: ['logarithms', 'base_invariance']
   },
   {
-    id: 'c-17-string-palindrome',
+    id: 'q-17-poly-growth',
     squareId: 17,
-    title: 'Longest Palindromic Substring: Expand from Center',
-    topic: 'Strings',
-    subtopic: 'Palindromes & Center Expansion',
-    skillCategory: 'conceptual',
+    co: 'CO1',
+    title: 'Comparing Polynomial Powers',
+    topic: 'Growth Rate of Functions',
+    subtopic: 'n log n vs n^k Comparisons',
+    skillCategory: 'complexity',
     difficulty: 'medium',
-    type: 'conceptual_mcq',
-    prompt: 'For a string of length N, how many potential centers must be checked when using the "expand around center" algorithm for palindromic substrings?',
+    type: 'time_complexity',
+    prompt: 'Which function grows asymptotically faster as n -> infinity: f(n) = 100 * n * log2(n) or g(n) = n^1.5?',
     options: [
-      '2N - 1 centers (N single-character centers and N - 1 two-character centers)',
-      'N centers (only single characters can be centers)',
-      'N^2 centers (every pair of indices)',
-      'N / 2 centers (only characters in the first half)'
+      'g(n) = n^1.5 grows faster, because n^0.5 outgrows log2(n)',
+      'f(n) grows faster because the constant 100 multiplies it',
+      'They grow at the exact same rate because both contain n',
+      'f(n) grows faster because logarithmic functions outgrow fractional powers'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Palindromes can be odd-length (like "aba") or even-length (like "abba").',
-      'An odd palindrome centers on a single character arr[i] (N choices).',
-      'An even palindrome centers between two adjacent characters arr[i] and arr[i+1] (N-1 choices).'
+      'Divide both functions by n: we are comparing 100 * log2(n) against n^0.5.',
+      'Any positive polynomial power n^eps outgrows any logarithm (log n)^k.'
     ],
-    explanation: 'Palindromes can have odd lengths (e.g. "racecar", center at \'e\') or even lengths (e.g. "noon", center between \'o\' and \'o\'). There are N odd centers and N-1 even centers, giving a total of 2N - 1 centers. Each expansion takes up to O(N) time, yielding O(N^2) total.',
-    learningObjective: 'Understand odd vs even symmetry centers in string palindrome algorithms.',
-    commonMistake: 'Only expanding around single character centers, completely missing even-length palindromes.',
-    tags: ['strings', 'palindromes', 'two-pointers']
+    explanation: 'Dividing both by n leaves 100 * log2(n) vs n^0.5. By limit analysis, lim n->inf [log2(n) / n^0.5] = 0. Any positive power of n, even n^0.01, eventually outgrows any power of log n.',
+    tags: ['polynomial_growth', 'log_vs_poly']
   },
   {
-    id: 'c-18-in-place-reversal',
+    id: 'q-18-exponential-growth',
     squareId: 18,
-    title: 'In-Place Word Reversal Algorithm',
-    topic: 'Strings',
-    subtopic: 'In-Place Array Manipulation',
-    skillCategory: 'dry_run',
-    difficulty: 'medium',
-    type: 'code_trace',
-    codeSnippet: `// Reverse words in a character array: "the sky is blue"
-// Step 1: Reverse entire array -> "eulb si yks eht"
-// Step 2: Reverse each individual word delimited by space
-// What does word 1 ("eulb") become after Step 2?`,
-    prompt: 'What is the final state of the string after reversing the entire array and then reversing each individual word?',
+    co: 'CO1',
+    title: 'Polynomial vs Exponential Growth',
+    topic: 'Growth Rate of Functions',
+    subtopic: '2^n, 3^n and n! Explosions',
+    skillCategory: 'numerical',
+    difficulty: 'hard',
+    type: 'compare_approaches',
+    prompt: 'Consider Algorithm A with T(n) = n^5 and Algorithm B with T(n) = 2^n. For what value of n does Algorithm B decisively surpass Algorithm A in operation count?',
     options: [
-      '"blue is sky the"',
-      '"the sky is blue"',
-      '"eulb si yks eht"',
-      '"blue sky is the"'
+      'Around n = 23 (2^23 > 23^5)',
+      'Only when n exceeds 1,000,000',
+      'Algorithm A is always slower for all n >= 2',
+      'Algorithm B is always faster for all positive integers'
     ],
     correctOptionIndex: 0,
     hints: [
-      'The entire array is flipped backwards first: last word becomes first word, but with its letters reversed.',
-      'Reversing each word restores the correct letter ordering within each word.',
-      'Result: words appear in reverse order while characters inside each word are in forward order.'
+      'For small n: 2^4 = 16 < 4^5 = 1024.',
+      'For n = 25: 2^25 = 33,554,432 while 25^5 = 9,765,625.'
     ],
-    explanation: 'The double reversal pattern reverses the order of words in O(N) time and O(1) space. Reversing the whole string places "blue" at the front as "eulb". Reversing the characters of each individual word then restores "blue", giving "blue is sky the".',
-    learningObjective: 'Apply the 2-step in-place reversal pattern to rotate or reorder word sequences.',
-    commonMistake: 'Allocating temporary word arrays or string splits, violating the O(1) auxiliary space constraint.',
-    tags: ['strings', 'two-pointers', 'in-place']
+    explanation: 'For small inputs (n < 23), n^5 is larger than 2^n. But at n = 23, 2^23 = 8,388,608 while 23^5 = 6,436,343. Exponential growth accelerates dramatically and forever dwarfs polynomial growth.',
+    tags: ['exponential', 'polynomial_comparison']
   },
   {
-    id: 'c-19-string-compression',
+    id: 'q-19-limits-hopital',
     squareId: 19,
-    title: 'Run-Length String Compression',
-    topic: 'Strings',
-    subtopic: 'Run-Length Encoding & Two Pointers',
-    skillCategory: 'conceptual',
+    co: 'CO1',
+    title: "L'Hopital's Rule for Asymptotic Comparison",
+    topic: 'Growth Rate of Functions',
+    subtopic: "L'Hopital's Rule for Asymptotics",
+    skillCategory: 'numerical',
+    difficulty: 'hard',
+    type: 'time_complexity',
+    prompt: "Evaluate lim(n -> inf) [ln(n) / sqrt(n)] using L'Hopital's rule to determine the asymptotic relationship between ln(n) and sqrt(n):",
+    options: [
+      'The limit is 0, proving that ln(n) = o(sqrt(n))',
+      'The limit is 1, proving that ln(n) = Theta(sqrt(n))',
+      'The limit is infinity, proving that ln(n) = Omega(sqrt(n))',
+      "L'Hopital's rule cannot be applied to logarithms"
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Derivative of ln(n) is 1/n.',
+      'Derivative of sqrt(n) is 1 / (2 * sqrt(n)).',
+      'Compute (1/n) / (1 / (2*sqrt(n))) = 2 / sqrt(n).'
+    ],
+    explanation: "Differentiating numerator and denominator yields lim (1/n) / (1/(2*sqrt(n))) = lim 2/sqrt(n) = 0. Since the limit is 0, ln(n) is strictly Little-o of sqrt(n).",
+    tags: ['hopital', 'limits', 'proof']
+  },
+  {
+    id: 'q-20-checkpoint-asymptotic',
+    squareId: 20,
+    co: 'CO1',
+    title: 'Checkpoint 2: Asymptotic Classification',
+    topic: 'Growth Rate of Functions',
+    subtopic: 'Unit 2 Milestone Evaluation',
+    skillCategory: 'complexity',
     difficulty: 'medium',
     type: 'conceptual_mcq',
-    prompt: 'When compressing an array of characters `[\'a\',\'a\',\'b\',\'b\',\'c\',\'c\',\'c\']` in-place, how do we write multi-digit counts (e.g. 12 repetitions) using O(1) extra space?',
+    prompt: 'You have five functions: f1 = n^2, f2 = 2^n, f3 = n log n, f4 = n!, f5 = log n. Which of the following lists them in strictly increasing order of asymptotic growth?',
     options: [
-      'Convert the count to characters (e.g. \'1\', \'2\') and write each digit into consecutive array cells',
-      'Cast the integer 12 into a single 32-bit character code byte',
-      'Allocate a new dynamic hash table to store overflow digits',
-      'Skip counts greater than 9 because run-length encoding only supports single digits'
+      'f5 < f3 < f1 < f2 < f4',
+      'f5 < f1 < f3 < f2 < f4',
+      'f3 < f5 < f1 < f4 < f2',
+      'f1 < f3 < f5 < f2 < f4'
     ],
     correctOptionIndex: 0,
     hints: [
-      'The problem statement specifies in-place modification of character array.',
-      'A count of 12 consists of characters \'1\' followed by \'2\'.',
-      'Write the character first, then write each character of String(count).'
+      'Smallest is log n (f5).',
+      'Largest is factorial n! (f4).',
+      'n log n (f3) is strictly smaller than n^2 (f1).'
     ],
-    explanation: 'To write count >= 10 in-place into a character array, we convert the count to its decimal string representation and write each digit sequentially (`[\'a\', \'1\', \'2\']`). This modifies the array in-place with O(1) extra space.',
-    learningObjective: 'Handle variable-length numeric encodings in in-place string algorithms.',
-    commonMistake: 'Storing the integer directly or failing to handle multi-digit counts properly.',
-    tags: ['strings', 'in-place', 'two-pointers']
+    explanation: 'Correct order: log n (f5) < n log n (f3) < n^2 (f1) < 2^n (f2) < n! (f4). This verifies full competence in asymptotic function ordering.',
+    tags: ['checkpoint', 'classification', 'growth_ordering']
   },
   {
-    id: 'c-20-boss-arrays-strings',
-    squareId: 20,
-    title: 'GATEWAY BOSS: The Substring Sentinel',
-    topic: 'Strings',
-    subtopic: 'Sliding Window with Dynamic Hash Counter',
-    skillCategory: 'optimization',
-    difficulty: 'hard',
-    type: 'bug_hunt',
-    codeSnippet: `// Minimum Window Substring: find smallest s-window containing all chars of t
-function minWindow(s, t) {
-  let need = new Map(), window = new Map();
-  for (let c of t) need.set(c, (need.get(c) || 0) + 1);
-  let left = 0, right = 0, valid = 0;
-  let start = 0, minLen = Infinity;
-  
-  while (right < s.length) {
-    let c = s[right]; right++;
-    if (need.has(c)) {
-      window.set(c, (window.get(c) || 0) + 1);
-      if (window.get(c) === need.get(c)) valid++;
-    }
-    while (valid === need.size) {
-      if (right - left < minLen) {
-        start = left; minLen = right - left;
-      }
-      let d = s[left]; left++;
-      if (need.has(d)) {
-        if (window.get(d) === need.get(d)) valid--;
-        window.set(d, window.get(d) - 1);
-      }
-    }
-  }
-  return minLen === Infinity ? "" : s.substring(start, start + minLen);
-}`,
-    prompt: 'Why is this sliding window implementation optimal at O(S + T) time complexity?',
+    id: 'q-extra-11',
+    squareId: 11,
+    co: 'CO1',
+    title: 'Transitivity of Big-O',
+    topic: 'Asymptotic Notations',
+    subtopic: 'Asymptotic Properties',
+    skillCategory: 'conceptual',
+    difficulty: 'easy',
+    type: 'conceptual_mcq',
+    prompt: 'If f(n) = O(g(n)) and g(n) = O(h(n)), which property guarantees that f(n) = O(h(n))?',
     options: [
-      'Both `left` and `right` pointers traverse each index of string S at most once, and Map lookups are O(1)',
-      'The inner while loop runs S times for every single step of right, yielding O(S * T)',
-      'It sorts both strings in O(S log S + T log T) before windowing',
-      'String slicing inside the inner loop is executed unconditionally on every character'
+      'Transitivity of asymptotic bounds',
+      'Reflexivity of Big-O',
+      'Symmetry of Theta',
+      'Associativity of additions'
     ],
     correctOptionIndex: 0,
     hints: [
-      'How many times does the right pointer increment?',
-      'How many times does the left pointer increment across the entire execution?',
-      'Both pointers advance strictly from 0 to S.length, so the total inner loop iterations cannot exceed S.'
+      'If A <= B and B <= C, then A <= C.',
+      'This is the transitivity property.'
     ],
-    explanation: 'Although there is a nested while loop, the `left` pointer only moves forward and never resets. Each character in S is visited at most once by `right` and at most once by `left`. Therefore, the amortized cost across the entire string is 2 * |S| operations, giving O(|S| + |T|) total time.',
-    learningObjective: 'Master amortized two-pointer sliding window complexity analysis for hard interview problems.',
-    commonMistake: 'Assuming nested while loops automatically imply O(N^2) complexity without analyzing pointer bounds.',
-    tags: ['strings', 'sliding-window', 'hard', 'boss-battle']
+    explanation: 'Transitivity states that if f(n) = O(g(n)) and g(n) = O(h(n)), then f(n) = O(h(n)). This holds for O, Omega, Theta, o, and omega.',
+    tags: ['transitivity', 'properties']
+  },
+  {
+    id: 'q-extra-13',
+    squareId: 13,
+    co: 'CO1',
+    title: 'Big-Theta of Linear Function',
+    topic: 'Asymptotic Notations',
+    subtopic: 'Simple Polynomial Theta',
+    skillCategory: 'numerical',
+    difficulty: 'easy',
+    type: 'time_complexity',
+    prompt: 'Given f(n) = 5n + 20, what is its tightest Big-Theta complexity?',
+    options: ['Theta(n)', 'Theta(n^2)', 'Theta(1)', 'Theta(5n)'],
+    correctOptionIndex: 0,
+    hints: [
+      'Drop the constant multiplier (5) and the additive constant (20).',
+      'The leading term is n.'
+    ],
+    explanation: 'For all n >= 5, 5n <= 5n + 20 <= 9n. Therefore, f(n) = Theta(n).',
+    tags: ['linear', 'theta']
   }
 ];

@@ -18,7 +18,7 @@ const COMPLEXITY_CLASSES = [
     color: 'emerald',
     badgeClass: 'bg-[var(--color-emerald-light)] text-[var(--color-emerald)] border-[var(--color-emerald-border)]',
     barClass: 'bg-[var(--color-emerald)]',
-    example: 'Hash map lookup, array indexing arr[i], push/pop stack',
+    example: 'Hash table lookup, array indexing arr[i], stack push/pop, circular queue enqueue',
     calculateOps: (_n: number) => 1,
     timeEstimate: 'Instant (< 1 ns)',
     rating: 'Optimal'
@@ -29,7 +29,7 @@ const COMPLEXITY_CLASSES = [
     color: 'teal',
     badgeClass: 'bg-[var(--color-cyan-light)] text-[var(--color-cyan)] border-[var(--color-cyan-border)]',
     barClass: 'bg-[var(--color-cyan)]',
-    example: 'Binary search, balanced BST search, heap insert/delete',
+    example: 'Binary Search, balanced BST search, AVL tree search and rotations',
     calculateOps: (n: number) => Math.max(1, Math.round(Math.log2(n))),
     timeEstimate: 'Lightning (< 1 μs)',
     rating: 'Near-Optimal'
@@ -40,7 +40,7 @@ const COMPLEXITY_CLASSES = [
     color: 'cyan',
     badgeClass: 'bg-[var(--color-indigo-light)] text-[var(--color-indigo)] border-[var(--color-indigo-border)]',
     barClass: 'bg-[var(--color-indigo)]',
-    example: 'Linear array scan, BFS/DFS traversal, counting elements',
+    example: 'Linear Search, Singly/Doubly Linked List traversal, Counting Sort (k=O(n)), Polynomial Addition',
     calculateOps: (n: number) => n,
     timeEstimate: '< 1 ms at 100K',
     rating: 'Scalable'
@@ -51,7 +51,7 @@ const COMPLEXITY_CLASSES = [
     color: 'blue',
     badgeClass: 'bg-[var(--color-violet-light)] text-[var(--color-violet)] border-[var(--color-violet-border)]',
     barClass: 'bg-[var(--color-violet)]',
-    example: 'Merge Sort, Quick Sort (avg), Heap Sort, divide-and-conquer',
+    example: 'Merge Sort, Quick Sort (average), Heap Sort, Huffman Coding frequency build',
     calculateOps: (n: number) => Math.round(n * Math.max(1, Math.log2(n))),
     timeEstimate: '~ 5 ms at 100K',
     rating: 'Standard'
@@ -62,7 +62,7 @@ const COMPLEXITY_CLASSES = [
     color: 'amber',
     badgeClass: 'bg-[var(--color-amber-light)] text-[var(--color-amber)] border-[var(--color-amber-border)]',
     barClass: 'bg-[var(--color-amber)]',
-    example: 'Nested loops, Bubble Sort, pairwise matrix comparison',
+    example: 'Insertion Sort, Quick Sort (worst-case), Prim / Dijkstra with Adjacency Matrix',
     calculateOps: (n: number) => (n > 100000 ? 1e10 : n * n),
     timeEstimate: '> 10 seconds at 100K',
     rating: 'Bottleneck'
@@ -73,7 +73,7 @@ const COMPLEXITY_CLASSES = [
     color: 'rose',
     badgeClass: 'bg-[var(--color-rose-light)] text-[var(--color-rose)] border-[var(--color-rose-border)]',
     barClass: 'bg-[var(--color-rose)]',
-    example: 'Recursive Fibonacci without memoization, generating all subsets',
+    example: 'Naive recursive Fibonacci T(n) = T(n-1) + T(n-2), brute-force matrix paren grouping',
     calculateOps: (n: number) => (n > 30 ? 1e12 : Math.pow(2, n)),
     timeEstimate: 'Freezes CPU / Exceeds Universe Life',
     rating: 'Intractable'

@@ -89,15 +89,23 @@ export const BoardCell: React.FC<BoardCellProps> = ({
 
   const getStageIcon = () => {
     switch (square.stage) {
-      case 'foundations': return <Code className="w-3.5 h-3.5 text-[var(--color-emerald)] shrink-0" />;
-      case 'arrays_strings': return <Layers className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
-      case 'linear_structures': return <GitBranch className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
-      case 'search_sort': return <Search className="w-3.5 h-3.5 text-[var(--color-indigo)] shrink-0" />;
-      case 'trees_heaps': return <FolderTree className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
-      case 'hashing_recursion': return <Hash className="w-3.5 h-3.5 text-[var(--color-amber)] shrink-0" />;
-      case 'graphs': return <Network className="w-3.5 h-3.5 text-[var(--color-violet)] shrink-0" />;
-      case 'greedy_dp': return <Clock className="w-3.5 h-3.5 text-[var(--color-violet)] shrink-0" />;
-      default: return <Sparkles className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
+      case 'co1_math_analysis': 
+      case 'co1_asymptotic': 
+      case 'co1_recurrence_sub': 
+      case 'co1_master_tree': 
+        return <Code className="w-3.5 h-3.5 text-[var(--color-emerald)] shrink-0" />;
+      case 'co2_stacks': 
+      case 'co2_queues': 
+      case 'co2_linked_lists': 
+        return <Layers className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
+      case 'co3_sorting_searching': 
+        return <Search className="w-3.5 h-3.5 text-[var(--color-indigo)] shrink-0" />;
+      case 'co4_trees': 
+        return <FolderTree className="w-3.5 h-3.5 text-[var(--color-violet)] shrink-0" />;
+      case 'co4_graphs_algorithms': 
+        return <Network className="w-3.5 h-3.5 text-[var(--color-violet)] shrink-0" />;
+      default: 
+        return <Sparkles className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />;
     }
   };
 

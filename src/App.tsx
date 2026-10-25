@@ -14,6 +14,12 @@ import { RevisionModal } from './components/Dashboard/RevisionModal';
 import { AdaptiveModal } from './components/Dashboard/AdaptiveModal';
 import { SettingsModal } from './components/Dashboard/SettingsModal';
 import { VictoryModal } from './components/Dashboard/VictoryModal';
+import { SyllabusModal } from './components/Dashboard/SyllabusModal';
+import { PracticeModeModal } from './components/Dashboard/PracticeModeModal';
+import { ExamModeModal } from './components/Dashboard/ExamModeModal';
+import { DSALabModal } from './components/Dashboard/DSALabModal';
+import { AlgorithmCardsModal } from './components/Dashboard/AlgorithmCardsModal';
+import { MistakeLogModal } from './components/Dashboard/MistakeLogModal';
 import { ShopModal } from './components/Shop/ShopModal';
 import { AchievementsModal } from './components/Achievements/AchievementsModal';
 import { MovementToast } from './components/Common/MovementToast';
@@ -85,6 +91,8 @@ export const App: React.FC = () => {
     setAutoplaySpeed,
     handleResetGame,
     updateSettings,
+    handleAwardReward,
+    handleRecordPracticeMistake,
     dismissNotification,
 
     // Evolution actions
@@ -126,6 +134,14 @@ export const App: React.FC = () => {
   const [isKnowledgeGraphOpen, setIsKnowledgeGraphOpen] = useState<boolean>(false);
   const [isDecisionLabOpen, setIsDecisionLabOpen] = useState<boolean>(false);
 
+  // Student Academic Modals State
+  const [isSyllabusOpen, setIsSyllabusOpen] = useState<boolean>(false);
+  const [isPracticeModeOpen, setIsPracticeModeOpen] = useState<boolean>(false);
+  const [isExamModeOpen, setIsExamModeOpen] = useState<boolean>(false);
+  const [isDSALabOpen, setIsDSALabOpen] = useState<boolean>(false);
+  const [isAlgorithmCardsOpen, setIsAlgorithmCardsOpen] = useState<boolean>(false);
+  const [isMistakeLogOpen, setIsMistakeLogOpen] = useState<boolean>(false);
+
   const currentSquare = useMemo(() => {
     return SQUARE_MAP.get(displayedPosition) || CURRICULUM_100[0];
   }, [displayedPosition]);
@@ -146,13 +162,13 @@ export const App: React.FC = () => {
         onOpenReset={() => setIsResetModalOpen(true)}
         onOpenShop={() => setIsShopModalOpen(true)}
         onOpenAchievements={() => setIsAchievementsModalOpen(true)}
-        onOpenMasteryMatrix={() => setIsMasteryModalOpen(true)}
-        onOpenBugBotDuel={() => triggerBugBotDuel()}
-        onOpenKnowledgeGraph={() => setIsKnowledgeGraphOpen(true)}
+        onOpenSyllabus={() => setIsSyllabusOpen(true)}
+        onOpenPracticeMode={() => setIsPracticeModeOpen(true)}
+        onOpenExamMode={() => setIsExamModeOpen(true)}
+        onOpenDSALab={() => setIsDSALabOpen(true)}
+        onOpenAlgorithmCards={() => setIsAlgorithmCardsOpen(true)}
+        onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
         onOpenComplexityMeter={() => setIsComplexityMeterOpen(true)}
-        onOpenWhatIfSimulator={() => setIsWhatIfOpen(true)}
-        onOpenErrorDNA={() => setIsErrorDnaOpen(true)}
-        onOpenDecisionLab={() => setIsDecisionLabOpen(true)}
       />
 
       {/* Floating Movement Reward / Penalty / Level-Up Toast */}
@@ -485,6 +501,53 @@ export const App: React.FC = () => {
       <DecisionLabModal
         isOpen={isDecisionLabOpen}
         onClose={() => setIsDecisionLabOpen(false)}
+      />
+
+      {/* Student Syllabus Tracker Modal */}
+      <SyllabusModal
+        isOpen={isSyllabusOpen}
+        onClose={() => setIsSyllabusOpen(false)}
+        completedSquares={gameState.completedSquares}
+        onSelectRange={([start]) => handleOpenSquareChallenge(start)}
+      />
+
+      {/* Practice Mode (10 Questions per Outcome with Explanations) */}
+      <PracticeModeModal
+        isOpen={isPracticeModeOpen}
+        onClose={() => setIsPracticeModeOpen(false)}
+        onRecordResult={handleAwardReward}
+        onRecordMistake={handleRecordPracticeMistake}
+      />
+
+      {/* Exam Mode (20 Questions Timed Mock Test) */}
+      <ExamModeModal
+        isOpen={isExamModeOpen}
+        onClose={() => setIsExamModeOpen(false)}
+        onRecordResult={handleAwardReward}
+      />
+
+      {/* DSA Interactive Mechanics Laboratory (10 Visual Simulations) */}
+      <DSALabModal
+        isOpen={isDSALabOpen}
+        onClose={() => setIsDSALabOpen(false)}
+        onAwardReward={handleAwardReward}
+      />
+
+      {/* Algorithm Study Flashcards */}
+      <AlgorithmCardsModal
+        isOpen={isAlgorithmCardsOpen}
+        onClose={() => setIsAlgorithmCardsOpen(false)}
+      />
+
+      {/* Academic Mistake Log & Concept Remediation */}
+      <MistakeLogModal
+        isOpen={isMistakeLogOpen}
+        onClose={() => setIsMistakeLogOpen(false)}
+        learnerProfile={gameState.learnerProfile}
+        onRetryChallenge={(challenge) => {
+          setIsMistakeLogOpen(false);
+          handleOpenSquareChallenge(challenge.squareId);
+        }}
       />
     </div>
   );

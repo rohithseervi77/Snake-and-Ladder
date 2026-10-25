@@ -1191,6 +1191,36 @@ export function useGameState() {
     setIsBugBotModalOpen(true);
   }, []);
 
+  const handleAwardReward = useCallback((xp: number, coins: number) => {
+    sound.playSuccess();
+    setGameState(prev => ({
+      ...prev,
+      totalScore: prev.totalScore + xp,
+      coins: prev.coins + coins
+    }));
+  }, []);
+
+  const handleRecordPracticeMistake = useCallback((topic: string, question: string, _yourAnswer: string, _correctAnswer: string) => {
+    setGameState(prev => {
+      const historyItem = {
+        challengeId: `practice-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        topic,
+        squareId: prev.currentPosition,
+        isCorrect: false,
+        timestamp: Date.now(),
+        skillCategory: 'conceptual' as const
+      };
+      return {
+        ...prev,
+        learnerProfile: {
+          ...prev.learnerProfile,
+          totalAttempts: prev.learnerProfile.totalAttempts + 1,
+          attemptHistory: [...prev.learnerProfile.attemptHistory, historyItem]
+        }
+      };
+    });
+  }, []);
+
   return {
     gameState,
     displayedPosition,
@@ -1240,6 +1270,8 @@ export function useGameState() {
     setAutoplaySpeed,
     handleResetGame,
     updateSettings,
+    handleAwardReward,
+    handleRecordPracticeMistake,
     dismissNotification: () => setCurrentNotification(null),
 
     // Evolution actions

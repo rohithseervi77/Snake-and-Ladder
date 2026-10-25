@@ -1,14 +1,14 @@
 export type StageId = 
-  | 'foundations'
-  | 'arrays_strings'
-  | 'linear_structures'
-  | 'search_sort'
-  | 'trees_heaps'
-  | 'hashing_recursion'
-  | 'graphs'
-  | 'greedy_dp'
-  | 'advanced_dsa'
-  | 'mastery';
+  | 'co1_math_analysis'
+  | 'co1_asymptotic'
+  | 'co1_recurrence_sub'
+  | 'co1_master_tree'
+  | 'co2_stacks'
+  | 'co2_queues'
+  | 'co2_linked_lists'
+  | 'co3_sorting_searching'
+  | 'co4_trees'
+  | 'co4_graphs_algorithms';
 
 export type SquareType = 'normal' | 'checkpoint' | 'ladder_start' | 'ladder_end' | 'snake_head' | 'snake_tail' | 'start' | 'finish';
 

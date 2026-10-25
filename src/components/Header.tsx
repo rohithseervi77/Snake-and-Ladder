@@ -10,15 +10,15 @@ import {
   Trophy,
   Flame,
   Coins,
-  Award,
-  Bot,
-  Network,
+  BookOpen,
+  GraduationCap,
+  Clock,
+  FlaskConical,
+  FileQuestion,
   Gauge,
-  Sliders,
-  Dna,
-  Workflow,
   Sun,
-  Moon
+  Moon,
+  AlertCircle
 } from 'lucide-react';
 import { LearnerProfile } from '../types/learner';
 import { GameSettings } from '../types/game';
@@ -33,18 +33,18 @@ interface HeaderProps {
   settings: GameSettings;
   onToggleSound: () => void;
   onOpenSettings: () => void;
-  onOpenAdaptive: () => void;
+  onOpenAdaptive?: () => void;
   onOpenRevision: () => void;
   onOpenReset: () => void;
   onOpenShop: () => void;
   onOpenAchievements: () => void;
-  onOpenMasteryMatrix?: () => void;
-  onOpenBugBotDuel?: () => void;
-  onOpenKnowledgeGraph?: () => void;
+  onOpenSyllabus?: () => void;
+  onOpenPracticeMode?: () => void;
+  onOpenExamMode?: () => void;
+  onOpenDSALab?: () => void;
+  onOpenAlgorithmCards?: () => void;
+  onOpenMistakeLog?: () => void;
   onOpenComplexityMeter?: () => void;
-  onOpenWhatIfSimulator?: () => void;
-  onOpenErrorDNA?: () => void;
-  onOpenDecisionLab?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -55,22 +55,22 @@ export const Header: React.FC<HeaderProps> = ({
   settings,
   onToggleSound,
   onOpenSettings,
-  onOpenAdaptive: _onOpenAdaptive,
   onOpenRevision,
   onOpenReset,
   onOpenShop,
   onOpenAchievements,
-  onOpenMasteryMatrix,
-  onOpenBugBotDuel,
-  onOpenKnowledgeGraph,
-  onOpenComplexityMeter,
-  onOpenWhatIfSimulator,
-  onOpenErrorDNA,
-  onOpenDecisionLab
+  onOpenSyllabus,
+  onOpenPracticeMode,
+  onOpenExamMode,
+  onOpenDSALab,
+  onOpenAlgorithmCards,
+  onOpenMistakeLog,
+  onOpenComplexityMeter
 }) => {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
   const dueRevisionCount = learnerProfile.revisionQueue.filter(r => r.isDue).length;
+  const mistakeCount = learnerProfile.attemptHistory.filter(h => !h.isCorrect).length;
   const levelInfo = calculateLevelInfo(totalXp);
 
   return (
@@ -86,32 +86,32 @@ export const Header: React.FC<HeaderProps> = ({
               Code & Ladders
             </h1>
             <span className="hidden sm:inline-block px-1.5 py-0.5 text-[8.5px] uppercase font-bold tracking-wider bg-[var(--color-indigo-light)] text-[var(--color-indigo)] border border-[var(--color-indigo-border)] rounded-md">
-              DSA Adventure
+              DSA Academic Project
             </span>
           </div>
           <p className="text-[9.5px] sm:text-[10px] text-[var(--text-secondary)] font-medium m-0 mt-0.5 hidden md:block">
-            Learn Data Structures &bull; Roll &bull; Solve &bull; Level Up
+            University Syllabus (CO1–CO4) &bull; Visual Learning &bull; Exam Prep
           </p>
         </div>
       </div>
 
       {/* Center: Progression, Coins, Streak */}
       <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-        {/* Streak Counter (Orange Accent) */}
+        {/* Streak Counter */}
         <div 
           className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[var(--card-bg)] border border-[var(--color-orange-border)] text-[var(--color-orange)] font-bold text-xs shadow-sm"
-          title={`Current Streak: ${streak} correct in a row`}
+          title={`Current Accuracy Streak: ${streak} correct answers in a row`}
         >
           <Flame className="w-4 h-4 fill-[var(--color-orange)] text-[var(--color-orange)] animate-pulse" />
           <span className="font-mono">{streak}</span>
           <span className="hidden md:inline text-[10px] uppercase font-semibold opacity-90">Streak</span>
         </div>
 
-        {/* Coin Balance (Amber Accent) */}
+        {/* Coin Balance */}
         <button
           onClick={onOpenShop}
           className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-amber-border)] text-[var(--color-amber)] font-bold text-xs transition shadow-sm cursor-pointer active:scale-95"
-          title="Open Cosmetic Shop"
+          title="Open Reward Shop (Cosmetics & Themes)"
         >
           <Coins className="w-4 h-4 text-[var(--color-amber)]" />
           <span className="font-mono">{coinBalance}</span>
@@ -139,41 +139,82 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Right: Action Buttons & Theme Toggle */}
+      {/* Right: Academic Modules & Controls */}
       <div className="flex items-center gap-1.5 sm:gap-2">
-        {/* Topic Mastery Matrix Button */}
-        {onOpenMasteryMatrix && (
+        {/* Syllabus Tracker Button */}
+        {onOpenSyllabus && (
           <button
-            onClick={onOpenMasteryMatrix}
-            title="Cognitive Mastery Matrix (11 Topics)"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-violet-border)] text-[var(--color-violet)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
+            onClick={onOpenSyllabus}
+            title="View Course Outcomes (CO1–CO4) Syllabus Progress"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-indigo-border)] text-[var(--color-indigo)] text-xs font-bold transition cursor-pointer shadow-sm active:scale-95"
           >
-            <Award className="w-3.5 h-3.5 text-[var(--color-violet)]" />
-            <span className="hidden sm:inline">Mastery</span>
+            <BookOpen className="w-3.5 h-3.5 text-[var(--color-indigo)]" />
+            <span className="hidden sm:inline">Syllabus</span>
           </button>
         )}
 
-        {/* BugBot Duel Button */}
-        {onOpenBugBotDuel && (
+        {/* Practice Mode Button */}
+        {onOpenPracticeMode && (
           <button
-            onClick={onOpenBugBotDuel}
-            title="Duel Rival BugBot"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-pink-border)] text-[var(--color-pink)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
+            onClick={onOpenPracticeMode}
+            title="Practice Mode (10 Questions per Unit with Explanations)"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-cyan-border)] text-[var(--color-cyan)] text-xs font-bold transition cursor-pointer shadow-sm active:scale-95"
           >
-            <Bot className="w-3.5 h-3.5 text-[var(--color-pink)]" />
-            <span className="hidden sm:inline">Rival Duel</span>
+            <GraduationCap className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
+            <span className="hidden sm:inline">Practice</span>
           </button>
         )}
 
-        {/* Knowledge Graph Roadmap Button */}
-        {onOpenKnowledgeGraph && (
+        {/* Exam Mode Button */}
+        {onOpenExamMode && (
           <button
-            onClick={onOpenKnowledgeGraph}
-            title="DSA Curriculum Knowledge Graph Roadmap"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-cyan-border)] text-[var(--color-cyan)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
+            onClick={onOpenExamMode}
+            title="Exam Mode (20 Questions, 20-Minute Timed Mock Test)"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-rose-border)] text-[var(--color-rose)] text-xs font-bold transition cursor-pointer shadow-sm active:scale-95"
           >
-            <Network className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
-            <span className="hidden xl:inline">Graph</span>
+            <Clock className="w-3.5 h-3.5 text-[var(--color-rose)]" />
+            <span className="hidden sm:inline">Exam Mode</span>
+          </button>
+        )}
+
+        {/* DSA Interactive Lab Button */}
+        {onOpenDSALab && (
+          <button
+            onClick={onOpenDSALab}
+            title="DSA Interactive Mechanics Lab (10 Simulations: Stacks, Queues, BST, AVL, Graphs, Sorting)"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-violet-border)] text-[var(--color-violet)] text-xs font-bold transition cursor-pointer shadow-sm active:scale-95"
+          >
+            <FlaskConical className="w-3.5 h-3.5 text-[var(--color-violet)]" />
+            <span className="hidden sm:inline">DSA Lab</span>
+          </button>
+        )}
+
+        {/* Algorithm Flashcards */}
+        {onOpenAlgorithmCards && (
+          <button
+            onClick={onOpenAlgorithmCards}
+            title="Algorithm Reference Study Cards"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-emerald-border)] text-[var(--color-emerald)] text-xs font-bold transition cursor-pointer shadow-sm active:scale-95"
+          >
+            <FileQuestion className="w-3.5 h-3.5 text-[var(--color-emerald)]" />
+            <span className="hidden xl:inline">Cards</span>
+          </button>
+        )}
+
+        {/* Mistake Log Button */}
+        {onOpenMistakeLog && (
+          <button
+            onClick={onOpenMistakeLog}
+            title="Academic Mistake Log & Concept Remediation"
+            className="relative flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-rose-border)] text-[var(--color-rose)] text-xs font-bold transition cursor-pointer shadow-sm active:scale-95"
+          >
+            <AlertCircle className="w-3.5 h-3.5 text-[var(--color-rose)]" />
+            <span className="hidden xl:inline">Mistakes</span>
+            {mistakeCount > 0 && (
+              <span className="px-1.5 py-0.2 bg-[var(--color-rose)] text-white text-[9px] font-black rounded-full">
+                {mistakeCount}
+              </span>
+            )}
           </button>
         )}
 
@@ -181,83 +222,45 @@ export const Header: React.FC<HeaderProps> = ({
         {onOpenComplexityMeter && (
           <button
             onClick={onOpenComplexityMeter}
-            title="Asymptotic Complexity Meter & Big-O Benchmark"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-emerald-border)] text-[var(--color-emerald)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
+            title="Asymptotic Big-O Complexity Meter"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-amber-border)] text-[var(--color-amber)] text-xs font-bold transition cursor-pointer shadow-sm active:scale-95"
           >
-            <Gauge className="w-3.5 h-3.5 text-[var(--color-emerald)]" />
+            <Gauge className="w-3.5 h-3.5 text-[var(--color-amber)]" />
             <span className="hidden xl:inline">Big-O</span>
           </button>
         )}
-
-        {/* What-If Structural Simulator Button */}
-        {onOpenWhatIfSimulator && (
-          <button
-            onClick={onOpenWhatIfSimulator}
-            title="What-If Structural Sandbox & Edge Case Simulator"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-violet-border)] text-[var(--color-violet)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
-          >
-            <Sliders className="w-3.5 h-3.5 text-[var(--color-violet)]" />
-            <span className="hidden xl:inline">What-If</span>
-          </button>
-        )}
-
-        {/* Error DNA Button */}
-        {onOpenErrorDNA && (
-          <button
-            onClick={onOpenErrorDNA}
-            title="Cognitive Error DNA & Learning Debt Diagnostics"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-rose-border)] text-[var(--color-rose)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
-          >
-            <Dna className="w-3.5 h-3.5 text-[var(--color-rose)]" />
-            <span className="hidden xl:inline">Error DNA</span>
-          </button>
-        )}
-
-        {/* Algorithm Decision Lab Button */}
-        {onOpenDecisionLab && (
-          <button
-            onClick={onOpenDecisionLab}
-            title="Algorithm Decision Lab: Production Scale Scenarios"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-indigo-border)] text-[var(--color-indigo)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
-          >
-            <Workflow className="w-3.5 h-3.5 text-[var(--color-indigo)]" />
-            <span className="hidden xl:inline">Decision</span>
-          </button>
-        )}
-
-        {/* Shop Button */}
-        <button
-          onClick={onOpenShop}
-          title="Cosmetics Shop"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-amber-border)] text-[var(--color-amber)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
-        >
-          <ShoppingBag className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Shop</span>
-        </button>
-
-        {/* Achievements Button */}
-        <button
-          onClick={onOpenAchievements}
-          title="DSA Achievements"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-amber-border)] text-[var(--color-amber)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
-        >
-          <Trophy className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Badges</span>
-        </button>
 
         {/* Spaced Revision Pill */}
         <button
           onClick={onOpenRevision}
           title="Spaced Repetition Review Queue"
-          className="relative flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--color-emerald-border)] text-[var(--color-emerald)] text-xs font-medium transition cursor-pointer shadow-sm active:scale-95"
+          className="relative flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-medium transition cursor-pointer shadow-sm active:scale-95"
         >
-          <Sparkles className="w-3.5 h-3.5 text-[var(--color-emerald)]" />
+          <Sparkles className="w-3.5 h-3.5 text-[var(--color-indigo)]" />
           <span className="hidden lg:inline">Review</span>
           {dueRevisionCount > 0 && (
-            <span className="px-1.5 py-0.2 bg-[var(--color-emerald)] text-white text-[9px] font-black rounded-full">
+            <span className="px-1.5 py-0.2 bg-[var(--color-indigo)] text-white text-[9px] font-black rounded-full">
               {dueRevisionCount}
             </span>
           )}
+        </button>
+
+        {/* Shop Button */}
+        <button
+          onClick={onOpenShop}
+          title="Cosmetics & Themes Shop"
+          className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
+        >
+          <ShoppingBag className="w-3.5 h-3.5" />
+        </button>
+
+        {/* Badges Button */}
+        <button
+          onClick={onOpenAchievements}
+          title="Badges & Milestones"
+          className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
+        >
+          <Trophy className="w-3.5 h-3.5" />
         </button>
 
         {/* Light / Dark Mode Toggle Button */}
@@ -265,7 +268,7 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={toggleTheme}
           title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
           aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-strong)] text-[var(--text-primary)] text-xs font-bold transition shadow-sm cursor-pointer active:scale-95"
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-strong)] text-[var(--text-primary)] text-xs font-bold transition shadow-sm cursor-pointer active:scale-95"
         >
           {isDark ? (
             <>

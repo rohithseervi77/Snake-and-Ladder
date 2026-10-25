@@ -2,293 +2,291 @@ import { Challenge } from '../../types/challenge';
 
 export const STAGE_41_50_CHALLENGES: Challenge[] = [
   {
-    id: 'c-41-tree-inorder-bst',
+    id: 'q-41-stack-adt',
     squareId: 41,
-    title: 'BST Inorder Traversal Monotonicity',
-    topic: 'Trees',
-    subtopic: 'Binary Tree Traversals',
+    co: 'CO2',
+    title: 'Stack Array Implementation Basics',
+    topic: 'Array implementation of Stack',
+    subtopic: 'LIFO Principle & Top Index Pointer',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'Why does an Inorder traversal (Left, Root, Right) of a valid Binary Search Tree (BST) visit the nodes in strictly non-decreasing order?',
-    options: [
-      'By definition of a BST, every key in the left subtree is < root, and every key in the right subtree is > root, matching Left-Root-Right order',
-      'The CPU sorts the nodes in memory before running the recursive calls',
-      'The call stack sorts memory addresses in increasing pointer order',
-      'Inorder traversal automatically balances the tree during traversal'
-    ],
+    prompt: 'In a 0-indexed array implementation of a Stack of capacity MAX, what is the initial value of the `top` pointer when the stack is empty?',
+    options: ['-1', '0', '1', 'MAX - 1'],
     correctOptionIndex: 0,
     hints: [
-      'Recall the BST property: all left descendants < root < all right descendants.',
-      'Inorder visits: all left descendants, then root, then all right descendants.',
-      'Applying this recursively across every subtree produces an ascending sequence.'
+      'Index 0 would mean an element is already present at array[0].',
+      'An empty stack must point before the first valid array index.'
     ],
-    explanation: 'The BST invariant guarantees that all values in leftSubtree < root.val < rightSubtree. Visiting leftSubtree first, then root.val, then rightSubtree means elements are yielded in strictly increasing order. Inorder traversal of a BST is effectively an O(N) sorted enumeration.',
-    learningObjective: 'Understand the direct relationship between BST invariant structure and inorder traversal order.',
-    commonMistake: 'Assuming preorder or postorder traversal also yields sorted elements.',
-    tags: ['trees', 'bst', 'traversal']
+    explanation: 'When the array stack is empty, `top` is initialized to -1. When the first item is pushed, `top` is incremented to 0, placing the item at array[0].',
+    tags: ['stack', 'top_pointer', 'array_stack']
   },
   {
-    id: 'c-42-tree-bfs-level-order',
+    id: 'q-42-stack-overflow-underflow',
     squareId: 42,
-    title: 'Level Order Traversal via FIFO Queue',
-    topic: 'Trees',
-    subtopic: 'Breadth-First Search on Trees',
-    skillCategory: 'dry_run',
+    co: 'CO2',
+    title: 'Stack Overflow and Underflow Conditions',
+    topic: 'Array implementation of Stack',
+    subtopic: 'Boundary Conditions & Guard Checks',
+    skillCategory: 'conceptual',
     difficulty: 'easy',
-    type: 'code_trace',
-    codeSnippet: `// Level order traversal using Queue:
-// Tree: Root=1, Left=2, Right=3. Node 2 has Left=4, Right=5.
-// Queue initially: [1]
-// Pop 1, push children: Queue = [2, 3]
-// Pop 2, push children: Queue = [3, 4, 5]
-// What node is popped next from the queue?`,
-    prompt: 'Following standard FIFO queue mechanics, which node is popped next after node 2?',
+    type: 'conceptual_mcq',
+    prompt: 'For an array stack of capacity 5, which conditions correctly signal Stack Overflow and Stack Underflow?',
     options: [
-      'Node 3 (the other node on the same level as node 2)',
-      'Node 4 (the left child of node 2)',
-      'Node 5 (the right child of node 2)',
-      'Node 1 (re-enqueued for cycle detection)'
+      'Overflow: top == 4 (MAX - 1); Underflow: top == -1',
+      'Overflow: top == 5; Underflow: top == 0',
+      'Overflow: top == -1; Underflow: top == 5',
+      'Overflow: top == 0; Underflow: top == -1'
     ],
     correctOptionIndex: 0,
     hints: [
-      'A Queue is First-In, First-Out (FIFO).',
-      'Look at the queue state: [3, 4, 5].',
-      'The element at the front of the queue is 3.'
+      'For capacity 5, valid 0-based indices are 0, 1, 2, 3, 4.',
+      'If top reaches 4, all 5 slots are occupied.'
     ],
-    explanation: 'Breadth-First Search processes nodes level by level using a FIFO queue. Since node 3 was enqueued alongside node 2 (level 1), it sits ahead of node 2\'s children (4 and 5 on level 2) in the queue. Thus node 3 is popped next.',
-    learningObjective: 'Trace FIFO queue state transitions in tree level-order traversals.',
-    commonMistake: 'Popping the newest child immediately (LIFO stack behavior) instead of the oldest queued element.',
-    tags: ['trees', 'bfs', 'queue']
+    explanation: 'With 0-based indexing and MAX = 5, the last valid slot is index 4 (MAX - 1). If top == 4, pushing will cause Stack Overflow. If top == -1, popping causes Stack Underflow.',
+    tags: ['stack', 'overflow', 'underflow']
   },
   {
-    id: 'c-43-max-depth-tree',
+    id: 'q-43-stack-operations',
     squareId: 43,
-    title: 'Maximum Depth via Post-Order Recurrence',
-    topic: 'Trees',
-    subtopic: 'Tree Height & Depth Recursion',
-    skillCategory: 'conceptual',
+    co: 'CO2',
+    title: 'Dry-Run Stack Operations',
+    topic: 'Array implementation of Stack',
+    subtopic: 'Trace Stack State Transitions',
+    skillCategory: 'dry_run',
     difficulty: 'easy',
-    type: 'conceptual_mcq',
-    prompt: 'What is the recurrence relation for finding the maximum depth (height) of a binary tree node?',
-    options: [
-      'maxDepth(node) = 1 + Math.max(maxDepth(node.left), maxDepth(node.right)) (with base case 0 for null)',
-      'maxDepth(node) = maxDepth(node.left) + maxDepth(node.right)',
-      'maxDepth(node) = 1 + Math.min(maxDepth(node.left), maxDepth(node.right))',
-      'maxDepth(node) = maxDepth(node.parent) - 1'
-    ],
+    type: 'dry_run_trace',
+    prompt: 'An initially empty stack undergoes the following operations:\n\npush(10)\npush(20)\npush(30)\npop()\npush(40)\n\nWhat is the value returned by peek() (or top)?',
+    options: ['40', '20', '30', '10'],
     correctOptionIndex: 0,
     hints: [
-      'The height of a node depends on the taller of its two children.',
-      'The current node itself contributes 1 to the depth.',
-      'Base case: A null node has depth 0.'
+      'Track the stack from bottom to top: [10], then [10, 20], then [10, 20, 30].',
+      'pop() removes 30.',
+      'push(40) adds 40.'
     ],
-    explanation: 'A tree\'s depth from any node is 1 (for the node itself) plus the maximum depth of its subtrees: `1 + Math.max(depth(left), depth(right))`. When `node === null`, depth is 0. This post-order traversal computes height bottom-up in O(N) time.',
-    learningObjective: 'Formulate bottom-up divide-and-conquer recurrences on tree nodes.',
-    commonMistake: 'Summing left and right heights instead of taking their maximum.',
-    tags: ['trees', 'recursion', 'depth']
+    explanation: 'Operations: 1) push 10 -> [10]; 2) push 20 -> [10, 20]; 3) push 30 -> [10, 20, 30]; 4) pop removes 30 -> [10, 20]; 5) push 40 -> [10, 20, 40]. The top element is 40.',
+    tags: ['stack', 'dry_run', 'peek']
   },
   {
-    id: 'c-44-validate-bst-bounds',
+    id: 'q-44-balanced-parentheses',
     squareId: 44,
-    title: 'Validating BST: The Ancestor Range Invariant',
-    topic: 'Trees',
-    subtopic: 'Binary Search Tree Validation',
-    skillCategory: 'debugging',
-    difficulty: 'medium',
-    type: 'bug_hunt',
-    codeSnippet: `function isValidBST(root) {
-  if (!root) return true;
-  // FLAWED LOCAL CHECK:
-  if (root.left && root.left.val >= root.val) return false;
-  if (root.right && root.right.val <= root.val) return false;
-  return isValidBST(root.left) && isValidBST(root.right);
-}`,
-    prompt: 'Why does only checking immediate children fail for tree `[10, 5, 15, null, null, 6, 20]`?',
-    options: [
-      'Node 6 is greater than its parent (5) but less than its ancestor root (10), violating the BST property across ancestors',
-      'The function fails to check if root is null',
-      'Binary search trees do not allow leaf nodes with value 20',
-      'The recursion does not return a boolean value'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Inspect node 6: it is the left child of 15, so 6 < 15 is locally valid.',
-      'Where does node 6 sit relative to the root 10? In root\'s right subtree!',
-      'All nodes in the right subtree of 10 MUST be > 10. Node 6 violates this global invariant.'
-    ],
-    explanation: 'The BST property applies to ALL descendants, not just immediate children. In `[10, 5, 15, null, null, 6, 20]`, node 6 is in the right subtree of 10, so it must be > 10. However, 6 < 10. To validate correctly, we must pass down allowable value intervals: `(minBound, maxBound)`.',
-    learningObjective: 'Maintain global ancestor interval constraints `(low, high)` when validating BSTs.',
-    commonMistake: 'Only checking immediate left < root < right and missing ancestor boundary violations.',
-    tags: ['trees', 'bst', 'debugging', 'invariants']
-  },
-  {
-    id: 'c-45-lca-bst',
-    squareId: 45,
-    title: 'Lowest Common Ancestor in a BST',
-    topic: 'Trees',
-    subtopic: 'Lowest Common Ancestor (LCA)',
-    skillCategory: 'conceptual',
-    difficulty: 'medium',
-    type: 'conceptual_mcq',
-    prompt: 'In a BST, given two nodes p and q with p.val < q.val, at what point does node `curr` represent their Lowest Common Ancestor (LCA)?',
-    options: [
-      'The moment p.val <= curr.val <= q.val (the values split across curr or one equals curr)',
-      'When curr is the deepest leaf in the tree',
-      'When curr.left === null and curr.right === null',
-      'Only when curr.val === (p.val + q.val) / 2'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'If both p and q are smaller than curr.val, where must their LCA lie? In curr.left.',
-      'If both are greater than curr.val, where must their LCA lie? In curr.right.',
-      'What happens when one is on the left and the other on the right?'
-    ],
-    explanation: 'Because a BST is ordered, if both p and q are less than curr, LCA must be in the left subtree. If both are greater, LCA must be in the right subtree. The first node where p and q split (or where curr equals p or q) is guaranteed to be their lowest common ancestor, runnable in O(H) time and O(1) space.',
-    learningObjective: 'Leverage BST ordering properties to find Lowest Common Ancestors in O(H) time without storing paths.',
-    commonMistake: 'Treating a BST LCA like a general binary tree LCA and doing full O(N) post-order traversals.',
-    tags: ['trees', 'bst', 'lca']
-  },
-  {
-    id: 'c-46-lca-binary-tree',
-    squareId: 46,
-    title: 'Lowest Common Ancestor in General Binary Tree',
-    topic: 'Trees',
-    subtopic: 'General LCA Post-Order Propagation',
+    co: 'CO2',
+    title: 'Balanced Parentheses Checking',
+    topic: 'Balanced Parentheses',
+    subtopic: 'Matching (), {}, [] with Stack',
     skillCategory: 'dry_run',
     difficulty: 'medium',
-    type: 'code_trace',
-    codeSnippet: `function lowestCommonAncestor(root, p, q) {
-  if (!root || root === p || root === q) return root;
-  let left = lowestCommonAncestor(root.left, p, q);
-  let right = lowestCommonAncestor(root.right, p, q);
-  if (left && right) return root;
-  return left ? left : right;
-}`,
-    prompt: 'What condition indicates that `root` is the Lowest Common Ancestor of nodes `p` and `q`?',
+    type: 'dry_run_trace',
+    prompt: 'Which of the following bracket sequences is BALANCED according to the stack algorithm?',
     options: [
-      'Both `left` and `right` recursive calls return non-null, meaning p was found in one subtree and q in the other',
-      'Both `left` and `right` return null',
-      'root.val equals p.val + q.val',
-      'The call stack depth exceeds the tree height'
+      '{ [ ( ) ] ( ) }',
+      '{ [ ( ] ) }',
+      '( ( [ ] )',
+      '{ [ } ]'
     ],
     correctOptionIndex: 0,
     hints: [
-      'If p is found in the left subtree, left is non-null.',
-      'If q is found in the right subtree, right is non-null.',
-      'If both subtrees return a match, root is where the paths diverge.'
+      'Every closing bracket must match the most recently pushed opening bracket on the stack.',
+      'In { [ ( ] ) }, the ] attempts to close while ( is still on top of the stack (mismatch).'
     ],
-    explanation: 'In a general binary tree without order invariants, we search bottom-up. If `lowestCommonAncestor` returns non-null from both left and right subtrees, then p and q reside in different branches of root. Therefore, root is their Lowest Common Ancestor and bubbles up to the caller.',
-    learningObjective: 'Trace post-order bubble-up semantics for lowest common ancestors in arbitrary trees.',
-    commonMistake: 'Assuming a binary tree has BST ordering properties.',
-    tags: ['trees', 'lca', 'recursion']
+    explanation: 'In "{ [ ( ) ] ( ) }", every opening bracket is matched by its corresponding closing bracket in strict LIFO order, and the stack is empty at the end. In { [ ( ] ) }, `]` encounters `(` on top, which is invalid.',
+    tags: ['balanced_parentheses', 'stack_application']
   },
   {
-    id: 'c-47-diameter-binary-tree',
-    squareId: 47,
-    title: 'Diameter of a Binary Tree Invariant',
-    topic: 'Trees',
-    subtopic: 'Tree Diameter & Longest Path',
-    skillCategory: 'conceptual',
-    difficulty: 'medium',
-    type: 'conceptual_mcq',
-    prompt: 'Why does the longest path between any two nodes in a binary tree (diameter) NOT necessarily pass through the root of the tree?',
-    options: [
-      'The longest path may exist entirely within a deeply nested subtree (e.g. left child has massive left and right subtrees)',
-      'Diameter is only defined for leaf nodes',
-      'The root node cannot have edges connected to it in a directed acyclic tree',
-      'Binary tree diameter is always equal to 2 * height(root)'
-    ],
-    correctOptionIndex: 0,
-    hints: [
-      'Can one child of root have a very deep left branch and a very deep right branch?',
-      'If root\'s other child is null, the deepest path will stay entirely within that first child.',
-      'Hence, we must compute `leftHeight + rightHeight` at EVERY node and track the global maximum.'
-    ],
-    explanation: 'A common misconception is that the diameter always passes through the global root. If the root\'s right subtree is tiny while its left subtree is huge with long left and right branches, the maximum path never touches the global root. We must update `maxDiameter = Math.max(maxDiameter, leftH + rightH)` at every node.',
-    learningObjective: 'Distinguish between global root paths and localized subtree diameter invariants.',
-    commonMistake: 'Computing only `leftHeight(root) + rightHeight(root)` and assuming it is the maximum diameter.',
-    tags: ['trees', 'diameter', 'recursion']
-  },
-  {
-    id: 'c-48-path-sum-root-leaf',
-    squareId: 48,
-    title: 'Path Sum: Root-to-Leaf Backtracking',
-    topic: 'Trees',
-    subtopic: 'Path Accumulation & Backtracking',
+    id: 'q-45-expression-types',
+    squareId: 45,
+    co: 'CO2',
+    title: 'Infix, Prefix and Postfix Identifications',
+    topic: 'Infix to Postfix and Prefix',
+    subtopic: 'Operator Placements & Polish Notations',
     skillCategory: 'conceptual',
     difficulty: 'easy',
     type: 'conceptual_mcq',
-    prompt: 'In the Path Sum problem (finding if a root-to-leaf path sums to target), what defines a valid "leaf" node?',
+    prompt: 'Which expression is in valid Postfix (Reverse Polish) notation for the arithmetic operation (A + B) * C?',
     options: [
-      'A node with strictly `node.left === null && node.right === null`',
-      'Any node whose value is equal to targetSum',
-      'A node with at least one null child pointer',
-      'A node that has no parent pointer'
+      'A B + C *',
+      '* + A B C',
+      'A + B * C',
+      'A B C + *'
     ],
     correctOptionIndex: 0,
     hints: [
-      'What is the definition of a leaf in graph theory and binary trees?',
-      'A node with degree 1 in an undirected tree, or 0 children in a directed rooted tree.',
-      'Both left AND right must be null.'
+      'In postfix, the operator immediately follows its two operands.',
+      'First (A + B) becomes A B +.',
+      'Then multiplying by C places * at the very end.'
     ],
-    explanation: 'A leaf node is strictly defined as a node with zero children (`!node.left && !node.right`). If a node has a null left child but a non-null right child, it is an internal node; the path cannot terminate there.',
-    learningObjective: 'Accurately distinguish internal branch nodes with one child from true terminal leaf nodes.',
-    commonMistake: 'Terminating path evaluation when encountering a single null child on an internal node.',
-    tags: ['trees', 'dfs', 'path-sum']
+    explanation: '(A + B) converts to postfix as "A B +". Then multiplying by C: (A B +) * C becomes "A B + C *". Prefix would be "* + A B C".',
+    tags: ['postfix', 'infix', 'rpn']
   },
   {
-    id: 'c-49-balanced-avl-condition',
-    squareId: 49,
-    title: 'Balanced Binary Tree: AVL Invariant',
-    topic: 'Trees',
-    subtopic: 'Balanced Trees & AVL Invariant',
-    skillCategory: 'complexity',
+    id: 'q-46-infix-to-postfix',
+    squareId: 46,
+    co: 'CO2',
+    title: 'Infix to Postfix Operator Precedence',
+    topic: 'Infix to Postfix and Prefix',
+    subtopic: 'Shunting-Yard Stack Algorithm',
+    skillCategory: 'numerical',
+    difficulty: 'hard',
+    type: 'output_prediction',
+    prompt: 'Convert the following infix expression to postfix using a stack:\n\nA + B * C - D\n\nWhat is the resulting postfix expression?',
+    options: [
+      'A B C * + D -',
+      'A B + C * D -',
+      'A B C * D - +',
+      '+ A * B C - D'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      '* has higher precedence than +.',
+      'B * C must be evaluated before adding A.',
+      '+ and - have equal precedence and associate left to right.'
+    ],
+    explanation: '* has higher precedence than +: B and C are combined first as "B C *". Next, the + is resolved with A as "A B C * +". Finally, when - is processed, the remaining operator is popped: "A B C * + D -".',
+    tags: ['shunting_yard', 'precedence', 'infix_to_postfix']
+  },
+  {
+    id: 'q-47-infix-to-prefix',
+    squareId: 47,
+    co: 'CO2',
+    title: 'Infix to Prefix Conversion Steps',
+    topic: 'Infix to Postfix and Prefix',
+    subtopic: 'Reversal Method for Polish Notation',
+    skillCategory: 'numerical',
+    difficulty: 'hard',
+    type: 'output_prediction',
+    prompt: 'What is the prefix notation for the infix expression: (A - B / C) * (D * E - F)?',
+    options: [
+      '* - A / B C - * D E F',
+      '- / A B C * - * D E F',
+      '* - A B / C - D * E F',
+      'A B C / - D E * F - *'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'In prefix, operators precede their operands.',
+      'Outer operator is * between two bracketed sub-expressions.',
+      'Left sub-expression: - A / B C. Right sub-expression: - * D E F.'
+    ],
+    explanation: 'Left expression (A - B/C) in prefix is "- A / B C". Right expression (D*E - F) in prefix is "- * D E F". Combining with outer multiplication * yields: "* - A / B C - * D E F".',
+    tags: ['prefix', 'polish_notation']
+  },
+  {
+    id: 'q-48-eval-postfix',
+    squareId: 48,
+    co: 'CO2',
+    title: 'Postfix Expression Numerical Evaluation',
+    topic: 'Evaluation of Postfix and Prefix',
+    subtopic: 'Single-Pass Numerical Evaluation',
+    skillCategory: 'numerical',
     difficulty: 'medium',
-    type: 'complexity_choice',
-    prompt: 'What condition must hold for a binary tree to be considered "height-balanced" (like an AVL tree)?',
+    type: 'output_prediction',
+    prompt: 'Evaluate the postfix expression using a stack:\n\n6 2 3 + * 4 /\n\nWhat is the final computed numerical result?',
     options: [
-      'For every node in the tree, the height difference between its left and right subtrees is at most 1: `Math.abs(hL - hR) <= 1`',
-      'The total number of left nodes must equal the total number of right nodes',
-      'All leaf nodes must be at the exact same depth',
-      'Every node must have either 0 or 2 children'
+      '7',
+      '12',
+      '15',
+      '30'
     ],
     correctOptionIndex: 0,
     hints: [
-      'Look at the balance factor definition in AVL trees.',
-      'Balance factor = height(left) - height(right).',
-      'Permissible values are strictly -1, 0, or +1 at every node.'
+      'Push 6, 2, 3.',
+      '+ pops 3 and 2: compute 2 + 3 = 5, push 5.',
+      '* pops 5 and 6: compute 6 * 5 = 30, push 30.',
+      'Push 4; / pops 4 and 30: compute 30 / 4 (integer division).'
     ],
-    explanation: 'A binary tree is height-balanced if and only if for EVERY node in the tree, `|height(left) - height(right)| <= 1`, and both left and right subtrees are also height-balanced. This guarantees O(log N) maximum tree depth.',
-    learningObjective: 'Master the formal definition of height-balanced trees and bottom-up O(N) validation.',
-    commonMistake: 'Confusing a complete/perfect binary tree with a height-balanced tree.',
-    tags: ['trees', 'avl', 'balanced-tree']
+    explanation: '1) Push 6, 2, 3. 2) On "+": pop 3, pop 2 -> 2 + 3 = 5, push 5 (stack: [6, 5]). 3) On "*": pop 5, pop 6 -> 6 * 5 = 30, push 30 (stack: [30]). 4) Push 4 (stack: [30, 4]). 5) On "/": pop 4, pop 30 -> 30 / 4 = 7 (integer division). Final result = 7.',
+    tags: ['postfix_eval', 'stack_arithmetic']
   },
   {
-    id: 'c-50-tree-right-side-view',
-    squareId: 50,
-    title: 'Binary Tree Right Side View',
-    topic: 'Trees',
-    subtopic: 'Level-by-Level Observation',
+    id: 'q-49-call-stack-recursion',
+    squareId: 49,
+    co: 'CO2',
+    title: 'Function Call Stack & Memory Frames',
+    topic: 'Recursion',
+    subtopic: 'Activation Records & Call Stack Unwinding',
     skillCategory: 'conceptual',
     difficulty: 'medium',
     type: 'conceptual_mcq',
-    prompt: 'When generating the Right Side View of a binary tree (the visible nodes when looking from the right side), which node is visible at each depth level?',
+    prompt: 'What happens to the operating system call stack during execution of a recursive function that lacks a valid base case?',
     options: [
-      'The last node visited at each depth level in standard left-to-right BFS, or the first node visited in Root-Right-Left DFS',
-      'Only nodes that are right children of their parents',
-      'The node with the maximum numeric value on that level',
-      'Only leaf nodes'
+      'Stack frames accumulate continuously until memory is exhausted, triggering a Stack Overflow error',
+      'The compiler automatically restarts the function from the beginning',
+      'The call stack converts into a circular buffer',
+      'The function returns 0 automatically after 100 iterations'
     ],
     correctOptionIndex: 0,
     hints: [
-      'If a node on level 3 has no right sibling, its left cousin may be visible from the right side.',
-      'So it is not just right children!',
-      'It is simply the rightmost node existing on each vertical level.'
+      'Each function call allocates an activation record in stack RAM.',
+      'Without a base case, calls keep allocating indefinitely.'
     ],
-    explanation: 'The right side view consists of the rightmost node at each depth level. If a level only has nodes on the far left, that leftmost node is still visible from the right. In BFS, it is the last element of each level queue. In DFS with order (Root -> Right -> Left), it is the first node encountered at depth == result.length.',
-    learningObjective: 'Derive perspective projection views of hierarchical structures using BFS queue boundaries.',
-    commonMistake: 'Assuming the right side view only consists of nodes accessed via `.right` pointers.',
-    tags: ['trees', 'bfs', 'dfs']
+    explanation: 'Every recursive call pushes an activation record (return address, parameters, local variables) onto the call stack. Without a terminating base case, the stack grows until stack memory is exhausted, throwing a Stack Overflow runtime exception.',
+    tags: ['recursion', 'stack_overflow', 'call_frames']
+  },
+  {
+    id: 'q-50-checkpoint-stacks',
+    squareId: 50,
+    co: 'CO2',
+    title: 'Checkpoint 5: Stack Expression Evaluation',
+    topic: 'Array implementation of Stack',
+    subtopic: 'Unit 5 Milestone Evaluation',
+    skillCategory: 'dry_run',
+    difficulty: 'hard',
+    type: 'output_prediction',
+    prompt: 'Evaluate the following postfix expression using a stack:\n\n5 3 2 * + 4 2 / -\n\nWhat is the final answer?',
+    options: [
+      '9',
+      '11',
+      '7',
+      '13'
+    ],
+    correctOptionIndex: 0,
+    hints: [
+      'Push 5, 3, 2.',
+      '* computes 3 * 2 = 6; + computes 5 + 6 = 11.',
+      'Push 4, 2; / computes 4 / 2 = 2.',
+      'Final - computes 11 - 2.'
+    ],
+    explanation: '1) Push 5, 3, 2. 2) "*": 3 * 2 = 6, push 6 (stack: [5, 6]). 3) "+": 5 + 6 = 11, push 11 (stack: [11]). 4) Push 4, 2 (stack: [11, 4, 2]). 5) "/": 4 / 2 = 2, push 2 (stack: [11, 2]). 6) "-": 11 - 2 = 9. Final result = 9.',
+    tags: ['checkpoint', 'postfix_evaluation', 'exam_problem']
+  },
+  {
+    id: 'q-extra-41',
+    squareId: 41,
+    co: 'CO2',
+    title: 'Time Complexity of Stack Push',
+    topic: 'Array implementation of Stack',
+    subtopic: 'Stack Operation Complexity',
+    skillCategory: 'complexity',
+    difficulty: 'easy',
+    type: 'time_complexity',
+    prompt: 'What is the time complexity of pushing an element onto an array-based stack of fixed capacity?',
+    options: ['O(1)', 'O(n)', 'O(log n)', 'O(top)'],
+    correctOptionIndex: 0,
+    hints: [
+      'Push increments top and assigns to array[top].',
+      'No loops are involved.'
+    ],
+    explanation: 'Push performs: `arr[++top] = val`. This consists of a single increment and direct array index write, executing in O(1) constant time.',
+    tags: ['stack', 'complexity', 'constant_time']
+  },
+  {
+    id: 'q-extra-44',
+    squareId: 44,
+    co: 'CO2',
+    title: 'Stack Choice for Syntax Parsing',
+    topic: 'Balanced Parentheses',
+    subtopic: 'Identify the Data Structure',
+    skillCategory: 'conceptual',
+    difficulty: 'easy',
+    type: 'select_data_structure',
+    prompt: 'Which data structure is the standard and most efficient choice for compiler syntax parsers to check balanced parentheses?',
+    options: ['Stack', 'Queue', 'Binary Search Tree', 'Hash Table'],
+    correctOptionIndex: 0,
+    hints: [
+      'The most recently opened parenthesis must be closed first (LIFO).',
+      'Last In, First Out is the defining property of a Stack.'
+    ],
+    explanation: 'Parentheses nesting requires that the most recently opened bracket must be the first one closed. This strict LIFO (Last-In, First-Out) matching makes a Stack the optimal and standard data structure.',
+    tags: ['data_structure_choice', 'stack', 'parentheses']
   }
 ];
