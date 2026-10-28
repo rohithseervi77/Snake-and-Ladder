@@ -3,21 +3,29 @@ import { SquareMetadata } from '../../types/curriculum';
 import { SQUARE_MAP } from '../../data/curriculum100';
 import { BoardCell } from './BoardCell';
 import { SnakeLadderSvg } from './SnakeLadderSvg';
+import { TopicMasteryScore } from '../../types/evolution';
+import { normalizeDsaTopic } from '../../engine/masteryEngine';
 
 interface BoardGridProps {
   currentPosition: number;
-  selectedSquareId?: number | null;
   completedSquares: number[];
   equippedMarker?: string;
+  boardTheme?: string;
+  topicMasteryMap?: Record<string, TopicMasteryScore>;
   onSelectSquare: (square: SquareMetadata) => void;
+  tileWidth?: number;
+  tileHeight?: number;
 }
 
 export const BoardGrid: React.FC<BoardGridProps> = ({
   currentPosition,
-  selectedSquareId,
   completedSquares,
   equippedMarker,
-  onSelectSquare
+  boardTheme = 'theme-obsidian-navy',
+  topicMasteryMap,
+  onSelectSquare,
+  tileWidth = 138,
+  tileHeight = 118
 }) => {
   const orderedSquares = useMemo(() => {
     const list: SquareMetadata[] = [];
@@ -36,25 +44,62 @@ export const BoardGrid: React.FC<BoardGridProps> = ({
 
   const completedSet = useMemo(() => new Set(completedSquares), [completedSquares]);
 
+  const getThemeClass = () => {
+    switch (boardTheme) {
+      case 'theme-cyberpunk-indigo':
+        return 'bg-[#111827] border-[#8B5CF6]/60 shadow-[0_0_30px_rgba(139,92,246,0.15)]';
+      case 'theme-emerald-matrix':
+        return 'bg-[#111827] border-[#10B981]/60 shadow-[0_0_30px_rgba(16,185,129,0.15)]';
+      case 'theme-solar-amber':
+        return 'bg-[#111827] border-[#F59E0B]/60 shadow-[0_0_30px_rgba(245,158,11,0.15)]';
+      case 'theme-obsidian-navy':
+      default:
+        return 'bg-[#111827] border-[#263449] shadow-2xl';
+    }
+  };
+
   return (
-    <div className="relative w-full max-w-[min(100%,calc(100vh-210px))] aspect-square mx-auto p-1.5 sm:p-2.5 rounded-2xl bg-[var(--board-bg)] border-2 border-[var(--border-subtle)] shadow-xl flex items-center justify-center">
+    <div 
+      className={`relative mx-auto p-4 rounded-3xl border-2 shadow-2xl transition-colors duration-500 shrink-0 ${getThemeClass()}`}
+      style={{
+        '--tile-width': `${tileWidth}px`,
+        '--tile-height': `${tileHeight}px`,
+        '--tile-gap': '10px',
+        width: `calc(10 * var(--tile-width) + 9 * var(--tile-gap) + 32px)`,
+        height: `calc(10 * var(--tile-height) + 9 * var(--tile-gap) + 32px)`,
+        minWidth: `calc(10 * var(--tile-width) + 9 * var(--tile-gap) + 32px)`,
+        minHeight: `calc(10 * var(--tile-height) + 9 * var(--tile-gap) + 32px)`,
+      } as React.CSSProperties}
+    >
       {/* 10x10 Serpentine Grid Container */}
-      <div className="relative w-full h-full grid grid-cols-10 grid-rows-10 gap-1 sm:gap-1.5">
-        {/* Layer 1: SVG Snakes & Ladders */}
+      <div 
+        className="relative grid grid-cols-10 grid-rows-10"
+        style={{
+          gap: 'var(--tile-gap, 10px)',
+          width: 'calc(10 * var(--tile-width) + 9 * var(--tile-gap))',
+          height: 'calc(10 * var(--tile-height) + 9 * var(--tile-gap))',
+        }}
+      >
+        {/* Layer 1: SVG Snakes & Ladders Paths behind cards (z-0) */}
         <SnakeLadderSvg />
 
-        {/* Layer 2: 100 Board Cells */}
-        {orderedSquares.map(square => (
-          <BoardCell
-            key={square.id}
-            square={square}
-            isCurrent={square.id === currentPosition}
-            isCompleted={completedSet.has(square.id)}
-            isSelected={selectedSquareId === square.id}
-            equippedMarker={equippedMarker}
-            onSelect={onSelectSquare}
-          />
-        ))}
+        {/* Layer 2: 100 Clear, Readable Level Cards (z-10) with Mastered Tile Evolution */}
+        {orderedSquares.map(square => {
+          const canonical = normalizeDsaTopic(square.topic);
+          const tm = topicMasteryMap?.[canonical];
+          return (
+            <BoardCell
+              key={`cell-${square.id}`}
+              square={square}
+              isCurrent={square.id === currentPosition}
+              isCompleted={completedSet.has(square.id)}
+              equippedMarker={equippedMarker}
+              masteryScore={tm?.score}
+              masteryLevel={tm?.level}
+              onSelect={onSelectSquare}
+            />
+          );
+        })}
       </div>
     </div>
   );

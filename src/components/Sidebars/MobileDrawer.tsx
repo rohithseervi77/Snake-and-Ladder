@@ -7,21 +7,33 @@ import { ActivityRecord } from '../../types/game';
 
 interface MobileDrawerProps {
   currentSquare: SquareMetadata;
+  completedCount: number;
   totalAttempts: number;
   totalCorrect: number;
   accuracy: number;
   streak: number;
+  recoveryStreak: number;
+  laddersClimbed: number;
+  snakesEncountered: number;
   totalScore: number;
+  coinBalance: number;
+  recentActivities: ActivityRecord[];
   onStartChallenge: (squareId: number) => void;
 }
 
 export const MobileDrawer: React.FC<MobileDrawerProps> = ({
   currentSquare,
+  completedCount,
   totalAttempts,
   totalCorrect,
   accuracy,
   streak,
+  recoveryStreak,
+  laddersClimbed,
+  snakesEncountered,
   totalScore,
+  coinBalance,
+  recentActivities,
   onStartChallenge
 }) => {
   const [activeTab, setActiveTab] = useState<'none' | 'rules' | 'progress'>('none');
@@ -83,11 +95,17 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
           ) : (
             <RightSidebar
               currentSquare={currentSquare}
+              completedCount={completedCount}
               totalAttempts={totalAttempts}
               totalCorrect={totalCorrect}
               accuracy={accuracy}
               streak={streak}
+              recoveryStreak={recoveryStreak}
+              laddersClimbed={laddersClimbed}
+              snakesEncountered={snakesEncountered}
               totalScore={totalScore}
+              coinBalance={coinBalance}
+              recentActivities={recentActivities}
               onStartChallenge={(sq) => {
                 setActiveTab('none');
                 onStartChallenge(sq);

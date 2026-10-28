@@ -1,143 +1,285 @@
 import React from 'react';
-import { Play, CheckCircle2, Flame, Award, HelpCircle } from 'lucide-react';
+import { 
+  Play, 
+  CheckCircle2, 
+  Circle, 
+  Flame, 
+  Target,
+  AlertCircle,
+  Activity,
+  Network,
+  Gauge,
+  Sliders,
+  Workflow,
+  ArrowUpRight
+} from 'lucide-react';
 import { SquareMetadata } from '../../types/curriculum';
-import { SQUARE_CHALLENGES_MAP } from '../../data/challenges';
+import { ActivityRecord } from '../../types/game';
+import { TopicMasteryScore, MisconceptionRecord } from '../../types/evolution';
+import { calculateLearningDebt } from '../../engine/errorDnaEngine';
 
 interface RightSidebarProps {
   currentSquare: SquareMetadata;
+  completedCount: number;
   totalAttempts: number;
   totalCorrect: number;
   accuracy: number;
   streak: number;
+  recoveryStreak: number;
+  laddersClimbed: number;
+  snakesEncountered: number;
   totalScore: number;
+  coinBalance: number;
+  recentActivities: ActivityRecord[];
   onStartChallenge: (squareId: number) => void;
+  topicMasteryMap?: Record<string, TopicMasteryScore>;
+  misconceptions?: MisconceptionRecord[];
+  onOpenErrorDNA?: () => void;
+  onOpenDecisionLab?: () => void;
+  onOpenComplexityMeter?: () => void;
+  onOpenWhatIfSimulator?: () => void;
+  onOpenKnowledgeGraph?: () => void;
 }
 
 export const RightSidebar: React.FC<RightSidebarProps> = ({
   currentSquare,
+  completedCount: _completedCount,
   totalAttempts,
   totalCorrect,
   accuracy,
   streak,
-  totalScore,
-  onStartChallenge
+  recoveryStreak: _recoveryStreak,
+  laddersClimbed: _laddersClimbed,
+  snakesEncountered: _snakesEncountered,
+  totalScore: _totalScore,
+  coinBalance: _coinBalance,
+  recentActivities: _recentActivities,
+  onStartChallenge,
+  topicMasteryMap = {},
+  misconceptions = [],
+  onOpenErrorDNA,
+  onOpenDecisionLab,
+  onOpenComplexityMeter,
+  onOpenWhatIfSimulator,
+  onOpenKnowledgeGraph
 }) => {
-  // Look up challenge for current square
-  const challenges = SQUARE_CHALLENGES_MAP.get(currentSquare.id) || [];
-  const currentChallenge = challenges[0];
+  const incorrectCount = Math.max(0, totalAttempts - totalCorrect);
+  const debt = calculateLearningDebt(topicMasteryMap, misconceptions);
 
-  const accuracyPercent = totalAttempts > 0 
-    ? Math.round((totalCorrect / totalAttempts) * 100) 
-    : 100;
+  const getHealthBadge = () => {
+    if (accuracy >= 0.8 && debt.debtPercentage <= 30) {
+      return { 
+        label: 'On Track', 
+        color: 'text-[var(--color-emerald)] bg-[var(--color-emerald-light)] border-[var(--color-emerald-border)]' 
+      };
+    }
+    if (accuracy >= 0.5 && debt.debtPercentage <= 60) {
+      return { 
+        label: 'In Progress', 
+        color: 'text-[var(--color-cyan)] bg-[var(--color-cyan-light)] border-[var(--color-cyan-border)]' 
+      };
+    }
+    return { 
+      label: 'Needs Review', 
+      color: 'text-[var(--color-rose)] bg-[var(--color-rose-light)] border-[var(--color-rose-border)]' 
+    };
+  };
+
+  const health = getHealthBadge();
 
   return (
-    <aside className="w-full flex flex-col gap-3 text-[var(--text-secondary)]">
-      {/* 1. Current Tile & Challenge Card */}
-      <div className="bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl p-4 shadow-sm flex flex-col gap-3">
-        {/* Header: Tile Number & CO Tag */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-[var(--color-indigo)] text-white font-mono font-black text-sm flex items-center justify-center shadow-sm">
-              {currentSquare.id}
-            </span>
-            <span className="text-xs font-bold text-[var(--text-primary)]">
-              Tile {currentSquare.id} of 100
-            </span>
-          </div>
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[var(--color-indigo-light)] text-[var(--color-indigo)] border border-[var(--color-indigo-border)]">
-            {currentSquare.co}
-          </span>
+    <aside className="w-full flex flex-col gap-2.5 text-[var(--text-secondary)]">
+      {/* Card 1: Current Tile */}
+      <div className="bg-[var(--sidebar-bg)] border border-[var(--border-subtle)] rounded-2xl p-3.5 shadow-sm transition-colors duration-200">
+        <div className="text-[11px] font-semibold text-[var(--text-muted)] mb-1.5">
+          Current Tile
         </div>
 
-        {/* Title & Topic */}
-        <div>
-          <h3 className="text-sm font-black text-[var(--text-primary)] leading-tight m-0">
-            {currentSquare.title}
-          </h3>
-          <p className="text-[11px] text-[var(--text-secondary)] mt-1 line-clamp-2 leading-relaxed">
-            {currentSquare.summary || currentSquare.subtopic}
-          </p>
+        {/* Square Title Header */}
+        <div className="flex items-start gap-2.5 mb-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#4F46E5] text-white flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
+            {currentSquare.id}
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-xs font-bold text-[var(--text-primary)] leading-tight truncate">
+              {currentSquare.title}
+            </h3>
+            <p className="text-[10.5px] text-[var(--text-secondary)] mt-0.5 line-clamp-1 font-normal">
+              {currentSquare.summary}
+            </p>
+          </div>
         </div>
 
-        {/* Question Prompt Preview or Code Snippet */}
-        {currentChallenge && (
-          <div className="p-3 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-xs text-[var(--text-secondary)] flex flex-col gap-2">
-            <div className="flex items-start gap-1.5 font-medium text-[var(--text-primary)]">
-              <HelpCircle className="w-3.5 h-3.5 text-[var(--color-indigo)] shrink-0 mt-0.5" />
-              <span>{currentChallenge.prompt}</span>
-            </div>
-
-            {currentChallenge.codeSnippet && (
-              <pre className="p-2 rounded-lg bg-[var(--board-bg)] border border-[var(--border-subtle)] font-mono text-[10.5px] text-[var(--text-secondary)] overflow-x-auto m-0 leading-tight">
-                {currentChallenge.codeSnippet}
-              </pre>
-            )}
+        {/* Checkpoint Checklist */}
+        <div className="mb-2.5 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl p-2.5 shadow-sm">
+          <div className="text-[10px] font-semibold text-[var(--color-cyan)] mb-1 flex items-center gap-1">
+            <CheckCircle2 className="w-3 h-3 text-[var(--color-cyan)]" />
+            Checkpoint Criteria
           </div>
-        )}
+          <div className="flex flex-col gap-1">
+            {currentSquare.checkpointTasks.slice(0, 3).map((task, idx) => (
+              <div key={idx} className="flex items-start gap-1 text-[10.5px] text-[var(--text-primary)]">
+                <Circle className="w-2 h-2 text-[var(--text-muted)] mt-1 shrink-0" />
+                <span className="leading-snug truncate font-normal">{task}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        {/* Solve Challenge Action Button */}
+        {/* Start Challenge CTA (Primary Button: Indigo) */}
         <button
           onClick={() => onStartChallenge(currentSquare.id)}
-          className="w-full py-2.5 px-4 rounded-xl bg-[var(--color-indigo)] hover:bg-[var(--color-indigo-hover)] text-white font-bold text-xs tracking-wide shadow-sm transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#4F46E5] hover:to-[#4338CA] text-white font-bold text-xs tracking-wide shadow-md shadow-[#6366F1]/20 transition-all transform active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
         >
-          <Play className="w-4 h-4 fill-current" />
-          <span>Solve Challenge</span>
+          <Play className="w-3.5 h-3.5 fill-white" />
+          Solve Challenge & Move
         </button>
       </div>
 
-      {/* 2. Your Progress / Stats Card */}
-      <div className="bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl p-4 shadow-sm flex flex-col gap-3">
-        <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider flex items-center justify-between m-0">
-          <span>Your Progress</span>
-          <Award className="w-4 h-4 text-[var(--color-indigo)]" />
+      {/* Card 2: Player Statistics Panel */}
+      <div className="bg-[var(--sidebar-bg)] border border-[var(--border-subtle)] rounded-2xl p-3.5 shadow-sm transition-colors duration-200">
+        <h3 className="text-xs font-bold text-[var(--text-primary)] mb-2 flex items-center justify-between">
+          <span>Player Statistics</span>
+          <Target className="w-3.5 h-3.5 text-[var(--color-indigo)]" />
         </h3>
 
         <div className="grid grid-cols-2 gap-2 text-xs">
-          {/* Position */}
-          <div className="p-2.5 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] flex flex-col">
-            <span className="text-[10px] text-[var(--text-secondary)] font-medium">Position</span>
-            <span className="font-mono font-bold text-[var(--text-primary)] text-sm mt-0.5">
-              {currentSquare.id} / 100
-            </span>
-          </div>
-
-          {/* Score */}
-          <div className="p-2.5 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] flex flex-col">
-            <span className="text-[10px] text-[var(--text-secondary)] font-medium">Total Score</span>
-            <span className="font-mono font-bold text-[var(--color-indigo)] text-sm mt-0.5">
-              {totalScore} XP
-            </span>
-          </div>
-
-          {/* Solved Questions */}
-          <div className="p-2.5 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] flex flex-col">
-            <span className="text-[10px] text-[var(--text-secondary)] font-medium">Questions Solved</span>
-            <span className="font-mono font-bold text-[var(--color-emerald)] text-sm mt-0.5">
-              {totalCorrect}
+          {/* Tile Position */}
+          <div className="p-2.5 rounded-xl bg-[var(--card-bg)] border border-[var(--border-subtle)] flex flex-col shadow-sm">
+            <span className="text-[10px] text-[var(--text-muted)] font-medium">Position</span>
+            <span className="font-mono font-bold text-[var(--color-indigo)] text-xs mt-0.5">
+              Tile {currentSquare.id} of 100
             </span>
           </div>
 
           {/* Accuracy */}
-          <div className="p-2.5 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] flex flex-col">
-            <span className="text-[10px] text-[var(--text-secondary)] font-medium">Accuracy</span>
-            <span className="font-mono font-bold text-[var(--text-primary)] text-sm mt-0.5">
-              {accuracyPercent}%
+          <div className="p-2.5 rounded-xl bg-[var(--card-bg)] border border-[var(--border-subtle)] flex flex-col shadow-sm">
+            <span className="text-[10px] text-[var(--text-muted)] font-medium">Accuracy</span>
+            <span className="font-mono font-bold text-[var(--color-emerald)] text-xs mt-0.5">
+              {(accuracy * 100).toFixed(0)}%
+            </span>
+          </div>
+
+          {/* Solved vs Failed */}
+          <div className="p-2.5 rounded-xl bg-[var(--card-bg)] border border-[var(--border-subtle)] flex flex-col shadow-sm">
+            <span className="text-[10px] text-[var(--text-muted)] font-medium">Solved / Failed</span>
+            <span className="font-mono font-bold text-[var(--text-primary)] text-[11px] mt-0.5">
+              <span className="text-[var(--color-emerald)]">{totalCorrect}</span> / <span className="text-[var(--color-rose)]">{incorrectCount}</span>
+            </span>
+          </div>
+
+          {/* Active Streak */}
+          <div className="p-2.5 rounded-xl bg-[var(--card-bg)] border border-[var(--border-subtle)] flex flex-col shadow-sm">
+            <span className="text-[10px] text-[var(--text-muted)] font-medium">Current Streak</span>
+            <span className="font-mono font-bold text-[var(--color-orange)] text-[11px] mt-0.5 flex items-center gap-1">
+              <Flame className="w-3 h-3 fill-[var(--color-orange)]" /> {streak}
             </span>
           </div>
         </div>
+      </div>
 
-        {/* Streak Indicator */}
-        {streak > 0 && (
-          <div className="p-2 rounded-xl bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] flex items-center justify-between text-xs">
-            <span className="text-[var(--text-secondary)] font-medium flex items-center gap-1.5">
-              <Flame className="w-4 h-4 fill-[var(--color-amber)] text-[var(--color-amber)]" />
-              <span>Current Streak</span>
+      {/* Card 3: Topics to Review & Readiness */}
+      <div className="bg-[var(--sidebar-bg)] border border-[var(--border-subtle)] rounded-2xl p-3.5 shadow-sm flex flex-col gap-2 transition-colors duration-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+            <Activity className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
+            <span>Topics to Review</span>
+          </div>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${health.color}`}>
+            {health.label}
+          </span>
+        </div>
+
+        {/* Learning Review Gauge */}
+        <div className="bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl p-2.5 flex flex-col gap-1.5 shadow-sm">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[var(--text-secondary)] font-medium flex items-center gap-1">
+              <AlertCircle className="w-3 h-3 text-[var(--color-rose)]" /> Review Needed
             </span>
-            <span className="font-mono font-bold text-[var(--color-amber)]">
-              {streak} in a row
+            <span className="font-mono font-bold text-[var(--color-rose)]">
+              {debt.totalMisconceptions > 0 ? `${debt.totalMisconceptions} items` : 'None'}
             </span>
           </div>
-        )}
+
+          <div className="w-full bg-[var(--board-bg)] rounded-full h-1.5 overflow-hidden border border-[var(--border-subtle)]">
+            <div 
+              className={`h-full transition-all duration-300 ${
+                debt.debtPercentage < 30 ? 'bg-[var(--color-emerald)]' :
+                debt.debtPercentage < 60 ? 'bg-[var(--color-amber)]' : 'bg-[var(--color-rose)]'
+              }`}
+              style={{ width: `${Math.min(100, Math.max(5, debt.debtPercentage))}%` }}
+            />
+          </div>
+
+          <div className="flex items-center justify-between text-[10px] text-[var(--text-secondary)] mt-0.5">
+            <span>{debt.totalMisconceptions} concepts to review</span>
+            {onOpenErrorDNA && (
+              <button 
+                onClick={onOpenErrorDNA}
+                className="text-[var(--color-cyan)] hover:text-[var(--color-indigo)] font-medium flex items-center gap-0.5 cursor-pointer"
+              >
+                Review mistakes <ArrowUpRight className="w-2.5 h-2.5" />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Card 4: Study & Exploration Tools */}
+      <div className="bg-[var(--sidebar-bg)] border border-[var(--border-subtle)] rounded-2xl p-3 shadow-sm flex flex-col gap-2 transition-colors duration-200">
+        <div className="text-[11px] font-bold text-[var(--text-primary)] px-1">
+          Study Tools
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {onOpenKnowledgeGraph && (
+            <button
+              onClick={onOpenKnowledgeGraph}
+              className="p-2 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-left transition cursor-pointer flex flex-col gap-0.5 shadow-sm active:scale-95"
+            >
+              <div className="flex items-center gap-1 text-[11px] font-medium text-[var(--text-primary)]">
+                <Network className="w-3 h-3 text-[var(--color-cyan)]" /> Graph Map
+              </div>
+              <span className="text-[9.5px] text-[var(--text-muted)] leading-tight">Curriculum Map</span>
+            </button>
+          )}
+
+          {onOpenComplexityMeter && (
+            <button
+              onClick={onOpenComplexityMeter}
+              className="p-2 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-left transition cursor-pointer flex flex-col gap-0.5 shadow-sm active:scale-95"
+            >
+              <div className="flex items-center gap-1 text-[11px] font-medium text-[var(--text-primary)]">
+                <Gauge className="w-3 h-3 text-[var(--color-amber)]" /> Big-O Meter
+              </div>
+              <span className="text-[9.5px] text-[var(--text-muted)] leading-tight">Complexity Scale</span>
+            </button>
+          )}
+
+          {onOpenWhatIfSimulator && (
+            <button
+              onClick={onOpenWhatIfSimulator}
+              className="p-2 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-left transition cursor-pointer flex flex-col gap-0.5 shadow-sm active:scale-95"
+            >
+              <div className="flex items-center gap-1 text-[11px] font-medium text-[var(--text-primary)]">
+                <Sliders className="w-3 h-3 text-[var(--color-violet)]" /> What-If
+              </div>
+              <span className="text-[9.5px] text-[var(--text-muted)] leading-tight">Structural Sandbox</span>
+            </button>
+          )}
+
+          {onOpenDecisionLab && (
+            <button
+              onClick={onOpenDecisionLab}
+              className="p-2 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-left transition cursor-pointer flex flex-col gap-0.5 shadow-sm active:scale-95"
+            >
+              <div className="flex items-center gap-1 text-[11px] font-medium text-[var(--text-primary)]">
+                <Workflow className="w-3 h-3 text-[var(--color-indigo)]" /> Decision
+              </div>
+              <span className="text-[9.5px] text-[var(--text-muted)] leading-tight">Problem Scenarios</span>
+            </button>
+          )}
+        </div>
       </div>
     </aside>
   );

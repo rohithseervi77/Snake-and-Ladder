@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { 
+  ZoomIn, 
+  ZoomOut, 
+  RotateCcw, 
+  Crosshair, 
+  ChevronLeft, 
+  ChevronRight, 
+  ChevronUp, 
+  ChevronDown,
+  Compass, 
+  ArrowRight,
+  Eye
+} from 'lucide-react';
 import { BoardGrid } from './BoardGrid';
 import { SquareMetadata } from '../../types/curriculum';
 import { TopicMasteryScore } from '../../types/evolution';
 
 interface BoardViewportProps {
   currentPosition: number;
-  selectedSquareId?: number | null;
   completedSquares: number[];
   equippedMarker?: string;
   boardTheme?: string;
@@ -13,22 +25,366 @@ interface BoardViewportProps {
   topicMasteryMap?: Record<string, TopicMasteryScore>;
 }
 
+const ZOOM_STEPS = [0.75, 0.85, 1.0, 1.15, 1.3];
+const BASE_TILE_WIDTH = 138;
+const BASE_TILE_HEIGHT = 118;
+
+const ROW_SECTIONS = [
+  { label: '1–10', center: 5, min: 1, max: 10 },
+  { label: '11–20', center: 15, min: 11, max: 20 },
+  { label: '21–30', center: 25, min: 21, max: 30 },
+  { label: '31–40', center: 35, min: 31, max: 40 },
+  { label: '41–50', center: 45, min: 41, max: 50 },
+  { label: '51–60', center: 55, min: 51, max: 60 },
+  { label: '61–70', center: 65, min: 61, max: 70 },
+  { label: '71–80', center: 75, min: 71, max: 80 },
+  { label: '81–90', center: 85, min: 81, max: 90 },
+  { label: '91–100', center: 95, min: 91, max: 100 },
+];
+
 export const BoardViewport: React.FC<BoardViewportProps> = ({
   currentPosition,
-  selectedSquareId,
   completedSquares,
   equippedMarker,
-  onSelectSquare
+  boardTheme,
+  onSelectSquare,
+  topicMasteryMap
 }) => {
+  const [zoomIndex, setZoomIndex] = useState(() => {
+    const saved = localStorage.getItem('board_zoom_level');
+    if (saved) {
+      const idx = ZOOM_STEPS.indexOf(parseFloat(saved));
+      if (idx !== -1) return idx;
+    }
+    return 2; // index 2 is 1.0 (100%)
+  });
+
+  const zoom = ZOOM_STEPS[zoomIndex];
+  const viewportRef = useRef<HTMLDivElement>(null);
+
+  // Jump input state
+  const [jumpInput, setJumpInput] = useState<string>('');
+  const [jumpError, setJumpError] = useState<boolean>(false);
+
+  // Scroll visibility cues state
+  const [canScrollUp, setCanScrollUp] = useState<boolean>(false);
+  const [canScrollDown, setCanScrollDown] = useState<boolean>(false);
+  const [visibleRangeText, setVisibleRangeText] = useState<string>('Levels 1–100');
+
+  // Save zoom preference
+  useEffect(() => {
+    localStorage.setItem('board_zoom_level', zoom.toString());
+  }, [zoom]);
+
+  const handleZoomIn = () => {
+    if (zoomIndex < ZOOM_STEPS.length - 1) {
+      setZoomIndex(prev => prev + 1);
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (zoomIndex > 0) {
+      setZoomIndex(prev => prev - 1);
+    }
+  };
+
+  const handleResetZoom = () => {
+    setZoomIndex(2); // 1.0
+  };
+
+  // Robust geometric centering to any tile inside the viewport container
+  const scrollToTile = useCallback((tileId: number, highlight = true) => {
+    const container = viewportRef.current;
+    if (!container) return;
+
+    const clampedId = Math.max(1, Math.min(100, Math.round(tileId)));
+    const el = document.getElementById(`cell-${clampedId}`);
+    if (!el) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+
+    const currentScrollTop = container.scrollTop;
+    const currentScrollLeft = container.scrollLeft;
+
+    const deltaY = (elRect.top - containerRect.top) - (containerRect.height / 2) + (elRect.height / 2);
+    const deltaX = (elRect.left - containerRect.left) - (containerRect.width / 2) + (elRect.width / 2);
+
+    container.scrollTo({
+      top: Math.max(0, currentScrollTop + deltaY),
+      left: Math.max(0, currentScrollLeft + deltaX),
+      behavior: 'smooth'
+    });
+
+    if (highlight) {
+      // Remove any existing highlight first
+      document.querySelectorAll('.tile-focus-pulse').forEach(node => {
+        node.classList.remove('tile-focus-pulse');
+      });
+
+      el.classList.add('tile-focus-pulse');
+      setTimeout(() => {
+        el.classList.remove('tile-focus-pulse');
+      }, 2000);
+    }
+  }, []);
+
+  // Update visible range and scroll cues on scroll
+  const handleScroll = useCallback(() => {
+    const container = viewportRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    setCanScrollUp(scrollTop > 40);
+    setCanScrollDown(scrollTop + clientHeight < scrollHeight - 40);
+
+    // Calculate approximate visible levels based on row geometry
+    // In our 10x10 board:
+    // Row 0 is Top (levels 91-100)
+    // Row 9 is Bottom (levels 1-10)
+    const containerRect = container.getBoundingClientRect();
+    let minId = 100;
+    let maxId = 1;
+    let anyFound = false;
+
+    // Check sample tile samples to locate bounding levels in view
+    for (let id = 1; id <= 100; id += 2) {
+      const el = document.getElementById(`cell-${id}`);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.bottom > containerRect.top && rect.top < containerRect.bottom) {
+          anyFound = true;
+          if (id < minId) minId = id;
+          if (id > maxId) maxId = id;
+        }
+      }
+    }
+
+    if (anyFound) {
+      setVisibleRangeText(`Levels ${minId}–${maxId} of 100`);
+    }
+  }, []);
+
+  // Initial scroll to player's current tile on mount or when currentPosition moves
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToTile(currentPosition, false);
+      handleScroll();
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [currentPosition, scrollToTile, handleScroll]);
+
+  // Jump to Level handler
+  const handleJumpSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const num = parseInt(jumpInput.trim(), 10);
+    if (!isNaN(num) && num >= 1 && num <= 100) {
+      setJumpError(false);
+      scrollToTile(num, true);
+      setJumpInput('');
+    } else {
+      setJumpError(true);
+      setTimeout(() => setJumpError(false), 2000);
+    }
+  };
+
+  // Scroll page up/down buttons
+  const scrollPage = (direction: 'up' | 'down') => {
+    const container = viewportRef.current;
+    if (!container) return;
+    const delta = direction === 'up' ? -container.clientHeight * 0.75 : container.clientHeight * 0.75;
+    container.scrollBy({ top: delta, behavior: 'smooth' });
+  };
+
+  const tileWidth = Math.round(BASE_TILE_WIDTH * zoom);
+  const tileHeight = Math.round(BASE_TILE_HEIGHT * zoom);
+
   return (
-    <div className="w-full h-full flex items-center justify-center overflow-auto p-1 sm:p-2 scrollbar-none">
-      <BoardGrid
-        currentPosition={currentPosition}
-        selectedSquareId={selectedSquareId}
-        completedSquares={completedSquares}
-        equippedMarker={equippedMarker}
-        onSelectSquare={onSelectSquare}
-      />
+    <div className="flex flex-col w-full h-full bg-[var(--board-bg)] rounded-2xl border border-[var(--border-subtle)] shadow-md overflow-hidden relative transition-colors duration-200">
+      {/* 1. TOP VIEWPORT TOOLBAR */}
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-2 bg-[var(--header-bg)] border-b border-[var(--border-subtle)] z-30 backdrop-blur-md shrink-0">
+        {/* Left: Focus & Stepper Navigation */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+          {/* Focus You Button */}
+          <button
+            onClick={() => scrollToTile(currentPosition, true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--color-indigo-light)] hover:bg-[var(--color-indigo-border)] border border-[var(--color-indigo)] text-[var(--color-indigo)] text-xs font-black transition-all shadow-sm active:scale-95 cursor-pointer"
+            title="Smoothly center and highlight your current position"
+          >
+            <Crosshair className="w-3.5 h-3.5 text-[var(--color-indigo)] animate-spin-slow" />
+            <span>Focus You (Lvl {currentPosition})</span>
+          </button>
+
+          {/* Previous / Next Level Stepper */}
+          <div className="flex items-center bg-[var(--card-secondary-bg)] rounded-xl border border-[var(--border-subtle)] p-0.5 shadow-inner">
+            <button
+              onClick={() => scrollToTile(currentPosition - 1, true)}
+              disabled={currentPosition <= 1}
+              className="flex items-center gap-0.5 px-2 py-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition rounded-lg cursor-pointer"
+              title={`View previous level (${currentPosition - 1})`}
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Lvl {currentPosition - 1}</span>
+            </button>
+
+            <span className="text-[10px] text-[var(--text-muted)] px-1 font-mono">|</span>
+
+            <button
+              onClick={() => scrollToTile(currentPosition + 1, true)}
+              disabled={currentPosition >= 100}
+              className="flex items-center gap-0.5 px-2 py-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition rounded-lg cursor-pointer"
+              title={`View next level (${currentPosition + 1})`}
+            >
+              <span className="hidden sm:inline">Lvl {currentPosition + 1}</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Jump to Level Input */}
+          <form onSubmit={handleJumpSubmit} className="flex items-center gap-1">
+            <div className="relative">
+              <input
+                type="number"
+                min="1"
+                max="100"
+                value={jumpInput}
+                onChange={(e) => setJumpInput(e.target.value)}
+                placeholder="1–100"
+                className={`w-16 sm:w-20 px-2 py-1 rounded-lg bg-[var(--card-bg)] border text-xs font-mono font-bold text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none transition ${
+                  jumpError 
+                    ? 'border-[var(--color-rose)] ring-2 ring-[var(--color-rose-border)]' 
+                    : 'border-[var(--border-subtle)] focus:border-[var(--color-cyan)]'
+                }`}
+                title="Enter any level number from 1 to 100"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-2.5 py-1 rounded-lg bg-[var(--color-indigo)] hover:bg-[var(--color-indigo-hover)] text-white text-xs font-bold transition cursor-pointer active:scale-95"
+            >
+              Go
+            </button>
+          </form>
+        </div>
+
+        {/* Right: Position Indicator & Zoom Controls */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Live Viewport Position Indicator */}
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-secondary)] shadow-inner">
+            <Eye className="w-3.5 h-3.5 text-[var(--color-cyan)] shrink-0" />
+            <span className="font-semibold text-[var(--text-primary)]">{visibleRangeText}</span>
+          </div>
+
+          {/* Zoom Toolbar */}
+          <div className="flex items-center bg-[var(--card-secondary-bg)] rounded-xl border border-[var(--border-subtle)] p-0.5 shadow-inner">
+            <button
+              onClick={handleZoomOut}
+              disabled={zoomIndex === 0}
+              className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:hover:text-[var(--text-muted)] transition-colors rounded cursor-pointer"
+              title="Zoom Out"
+            >
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+
+            <button
+              onClick={handleResetZoom}
+              className="px-2 py-0.5 text-xs font-mono font-bold text-[var(--text-primary)] hover:text-[var(--color-cyan)] transition-colors cursor-pointer"
+              title="Reset Zoom to 100%"
+            >
+              {Math.round(zoom * 100)}%
+            </button>
+
+            <button
+              onClick={handleZoomIn}
+              disabled={zoomIndex === ZOOM_STEPS.length - 1}
+              className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:hover:text-[var(--text-muted)] transition-colors rounded cursor-pointer"
+              title="Zoom In"
+            >
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+
+            {zoom !== 1.0 && (
+              <button
+                onClick={handleResetZoom}
+                className="p-1.5 ml-0.5 text-[var(--text-secondary)] hover:text-[var(--color-amber)] transition-colors rounded border-l border-[var(--border-subtle)] cursor-pointer"
+                title="Reset to 100%"
+              >
+                <RotateCcw className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 2. SECTION / ROW NAVIGATION CHIPS (1-10 ... 91-100) */}
+      <div className="flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 bg-[var(--header-bg)] border-b border-[var(--border-subtle)] overflow-x-auto text-[11px] font-mono shrink-0 custom-scrollbar z-20">
+        <span className="text-[var(--text-secondary)] font-semibold uppercase text-[10px] tracking-wider shrink-0 mr-1 flex items-center gap-1">
+          <Compass className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
+          <span>Jump Row:</span>
+        </span>
+        {ROW_SECTIONS.map((sec) => {
+          const isPlayerInRow = currentPosition >= sec.min && currentPosition <= sec.max;
+          return (
+            <button
+              key={sec.label}
+              onClick={() => scrollToTile(sec.center, true)}
+              className={`px-2 py-0.5 rounded-md font-bold transition shrink-0 cursor-pointer text-xs ${
+                isPlayerInRow
+                  ? 'bg-[var(--color-indigo-light)] border border-[var(--color-indigo)] text-[var(--color-indigo)] shadow-sm'
+                  : 'bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+              title={`Scroll to levels ${sec.label}`}
+            >
+              {sec.label}
+              {isPlayerInRow && <span className="ml-1 text-[9px] text-[var(--color-indigo)]">●</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 3. SCROLLABLE BOARD CANVAS */}
+      <div 
+        ref={viewportRef}
+        onScroll={handleScroll}
+        className="flex-1 w-full overflow-x-auto overflow-y-auto board-scroll-viewport relative select-none scroll-smooth focus:outline-none"
+        tabIndex={0}
+      >
+        <div className="min-w-fit min-h-fit w-full flex flex-col items-center justify-start p-4 sm:p-8 pb-36 sm:pb-48">
+          <BoardGrid
+            currentPosition={currentPosition}
+            completedSquares={completedSquares}
+            equippedMarker={equippedMarker}
+            boardTheme={boardTheme}
+            onSelectSquare={onSelectSquare}
+            tileWidth={tileWidth}
+            tileHeight={tileHeight}
+            topicMasteryMap={topicMasteryMap}
+          />
+        </div>
+      </div>
+
+      {/* 4. SUBTLE SCROLL DIRECTION CUES */}
+      {canScrollUp && (
+        <button
+          onClick={() => scrollPage('up')}
+          className="absolute top-20 left-1/2 -translate-x-1/2 z-30 px-3 py-1 rounded-full bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--color-cyan)] text-[11px] font-bold shadow-xl backdrop-blur-md flex items-center gap-1.5 transition-all animate-bounce cursor-pointer active:scale-95"
+          title="Scroll up to view higher levels"
+        >
+          <ChevronUp className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
+          <span>Levels Above (Scroll Up)</span>
+        </button>
+      )}
+
+      {canScrollDown && (
+        <button
+          onClick={() => scrollPage('down')}
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 px-3 py-1 rounded-full bg-[var(--card-bg)] hover:bg-[var(--card-secondary-bg)] border border-[var(--border-subtle)] text-[var(--color-cyan)] text-[11px] font-bold shadow-xl backdrop-blur-md flex items-center gap-1.5 transition-all animate-bounce cursor-pointer active:scale-95"
+          title="Scroll down to view lower levels"
+        >
+          <ChevronDown className="w-3.5 h-3.5 text-[var(--color-cyan)]" />
+          <span>Levels Below (Scroll Down)</span>
+        </button>
+      )}
     </div>
   );
 };

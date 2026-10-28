@@ -5,33 +5,32 @@ import { getSquarePercentCoords } from '../../engine/gameEngine';
 export const SnakeLadderSvg: React.FC = () => {
   return (
     <svg 
-      className="absolute inset-0 w-full h-full pointer-events-none z-10"
+      className="absolute inset-0 w-full h-full pointer-events-none z-0"
       viewBox="0 0 1000 1000"
       preserveAspectRatio="none"
     >
       <defs>
-        {/* Soft shadow for ladders */}
-        <filter id="ladder-shadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#000000" floodOpacity="0.25" />
+        {/* Glow filter for ladders */}
+        <filter id="ladder-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#f59e0b" floodOpacity="0.5" />
+        </filter>
+        {/* Glow filter for snakes */}
+        <filter id="snake-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#f43f5e" floodOpacity="0.6" />
         </filter>
 
-        {/* Soft shadow for snakes */}
-        <filter id="snake-shadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#000000" floodOpacity="0.3" />
-        </filter>
-
-        {/* Snake body gradient: coral/red with smooth finish */}
+        {/* Snake skin gradient */}
         <linearGradient id="snake-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#EF4444" />
-          <stop offset="50%" stopColor="#DC2626" />
-          <stop offset="100%" stopColor="#B91C1C" />
+          <stop offset="0%" stopColor="#f43f5e" />
+          <stop offset="50%" stopColor="#e11d48" />
+          <stop offset="100%" stopColor="#9f1239" />
         </linearGradient>
 
-        {/* Ladder rail gradient: warm golden wood */}
+        {/* Ladder rail gradient */}
         <linearGradient id="ladder-gradient" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="#D97706" />
-          <stop offset="50%" stopColor="#F59E0B" />
-          <stop offset="100%" stopColor="#FBBF24" />
+          <stop offset="0%" stopColor="#b45309" />
+          <stop offset="50%" stopColor="#f59e0b" />
+          <stop offset="100%" stopColor="#fef08a" />
         </linearGradient>
       </defs>
 
@@ -45,13 +44,14 @@ export const SnakeLadderSvg: React.FC = () => {
         const x2 = toCoord.x * 10;
         const y2 = toCoord.y * 10;
 
+        // Vector math for parallel ladder rails
         const dx = x2 - x1;
         const dy = y2 - y1;
         const length = Math.sqrt(dx * dx + dy * dy);
         if (length === 0) return null;
 
-        const perpX = (-dy / length) * 8;
-        const perpY = (dx / length) * 8;
+        const perpX = (-dy / length) * 12;
+        const perpY = (dx / length) * 12;
 
         const rail1Start = { x: x1 + perpX, y: y1 + perpY };
         const rail1End = { x: x2 + perpX, y: y2 + perpY };
@@ -59,7 +59,7 @@ export const SnakeLadderSvg: React.FC = () => {
         const rail2End = { x: x2 - perpX, y: y2 - perpY };
 
         // Generate ladder rungs
-        const rungCount = Math.max(4, Math.floor(length / 32));
+        const rungCount = Math.max(4, Math.floor(length / 28));
         const rungs = [];
         for (let i = 1; i < rungCount; i++) {
           const t = i / rungCount;
@@ -75,14 +75,14 @@ export const SnakeLadderSvg: React.FC = () => {
               x2={rx2}
               y2={ry2}
               stroke="url(#ladder-gradient)"
-              strokeWidth="3.5"
+              strokeWidth="4"
               strokeLinecap="round"
             />
           );
         }
 
         return (
-          <g key={ladder.id} filter="url(#ladder-shadow)">
+          <g key={ladder.id} filter="url(#ladder-glow)" opacity="0.9">
             {/* Left Rail */}
             <line
               x1={rail1Start.x}
@@ -90,7 +90,7 @@ export const SnakeLadderSvg: React.FC = () => {
               x2={rail1End.x}
               y2={rail1End.y}
               stroke="url(#ladder-gradient)"
-              strokeWidth="4"
+              strokeWidth="5"
               strokeLinecap="round"
             />
             {/* Right Rail */}
@@ -100,7 +100,7 @@ export const SnakeLadderSvg: React.FC = () => {
               x2={rail2End.x}
               y2={rail2End.y}
               stroke="url(#ladder-gradient)"
-              strokeWidth="4"
+              strokeWidth="5"
               strokeLinecap="round"
             />
             {/* Ladder Rungs */}
@@ -111,6 +111,7 @@ export const SnakeLadderSvg: React.FC = () => {
 
       {/* Render Snakes */}
       {SNAKES_AND_LADDERS.filter(item => item.type === 'snake').map(snake => {
+        // Snake starts at head (snake.from) and slides down to tail (snake.to)
         const headCoord = getSquarePercentCoords(snake.from);
         const tailCoord = getSquarePercentCoords(snake.to);
 
@@ -119,9 +120,10 @@ export const SnakeLadderSvg: React.FC = () => {
         const tx = tailCoord.x * 10;
         const ty = tailCoord.y * 10;
 
+        // Curving sinusoidal control points
         const midX = (hx + tx) / 2;
         const midY = (hy + ty) / 2;
-        const offset = ((snake.from % 2 === 0) ? 1 : -1) * 45;
+        const offset = ((snake.from % 2 === 0) ? 1 : -1) * 60;
 
         const cp1X = midX + offset;
         const cp1Y = hy + (midY - hy) * 0.4;
@@ -131,38 +133,31 @@ export const SnakeLadderSvg: React.FC = () => {
         const pathD = `M ${hx} ${hy} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${tx} ${ty}`;
 
         return (
-          <g key={snake.id} filter="url(#snake-shadow)">
-            {/* Snake Body */}
+          <g key={snake.id} filter="url(#snake-glow)" opacity="0.92">
+            {/* Outer body */}
             <path
               d={pathD}
               fill="none"
               stroke="url(#snake-gradient)"
-              strokeWidth="8"
+              strokeWidth="11"
               strokeLinecap="round"
             />
-            {/* Snake Spine pattern */}
+            {/* Inner scale texture pattern */}
             <path
               d={pathD}
               fill="none"
-              stroke="#FECACA"
-              strokeWidth="2"
-              strokeDasharray="4 6"
+              stroke="#fb7185"
+              strokeWidth="4"
+              strokeDasharray="6 8"
               strokeLinecap="round"
-              opacity="0.8"
             />
             {/* Snake Head */}
-            <circle
-              cx={hx}
-              cy={hy}
-              r="8"
-              fill="#DC2626"
-              stroke="#991B1B"
-              strokeWidth="1.5"
-            />
-            <circle cx={hx - 2.5} cy={hy - 2} r="1.5" fill="#FFFFFF" />
-            <circle cx={hx + 2.5} cy={hy - 2} r="1.5" fill="#FFFFFF" />
-            <circle cx={hx - 2.5} cy={hy - 2} r="0.8" fill="#000000" />
-            <circle cx={hx + 2.5} cy={hy - 2} r="0.8" fill="#000000" />
+            <circle cx={hx} cy={hy} r="10" fill="#e11d48" stroke="#fff" strokeWidth="2" />
+            <circle cx={hx - 3} cy={hy - 2} r="2" fill="#000" />
+            <circle cx={hx + 3} cy={hy - 2} r="2" fill="#000" />
+            
+            {/* Snake Tail */}
+            <circle cx={tx} cy={ty} r="4" fill="#9f1239" />
           </g>
         );
       })}
